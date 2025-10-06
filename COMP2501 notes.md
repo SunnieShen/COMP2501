@@ -4,7 +4,7 @@
 4. [Tidyverse](#4.Tidyverse)
 5. [Data.table](#5.Data.table)
 6. [Importing data](#6.Importing_data)
-7. [Data visualization](#Data_visualization)
+7. [Data visualization](#7.Data_visualization)
 8. [ggplot2](#)
 9. [Data visualization principles](#)
 10. [Data visualization in practice](#)
@@ -420,4 +420,47 @@ murders |> mutate(group = case_when(
 ```
 - between: `between(x, a, b)` same as `x>=a & x<=b`
 `between(rnorm(100), seq(-2,-1,length.out=100), rep(1, times=100))`
-6.Importing_data
+# 6.Importing_data
+# 7.Data_visualization
+- variable types: categorical(ordinal有序, not), numerical(discrete, continuous)
+- bar plot: (categorical)
+- histogram: (numerical) split intervals if continuous
+- eCDF: empirical cumulative distribution function
+- smoothed density plot: (can: compare 2 distribution with the same axes)
+- normal distribution
+	- most values (about 95%) are within 2 SDs from the average
+- box plot
+	- outliers: independent points, ignore _outliers_ when computing the range
+	- box: 0.25, 0.5, 0.75 quantile
+	- whiskers: to max & min regardless of outliers
+- stratification: split groups
+# 8.ggplot2
+`library(ggplot2)` `library(tidyverse)`
+"grammar of graphics" only for tidy data
+- component of graph: data, geometry(type of plot), aesthetic mapping(axes), other layers(labels, title, legend图例, caption)
+>DATA |> ggplot() + LAYER1 + LAYER2 + ...
+- Initializing an object with data: 
+	- `library(dslabs)`, `p <- murders |> ggplot()`
+	- equivalent expression: `ggplot(data = muders)` /  `murders|>ggplot()`
+- aesthetic mapping: link visual cues with data information
+	`aes(x_axe, y_axe)`
+	`aes(label = region)`(assign colors according to region, data-dependent)
+	- non-aesthetic argument: `nudge_x = 1.5, nudge_y = 1.5`
+```R
+murders|> ggplot() ## initializing an object with data
++ geom_point(aes(population/10^6,total), size=3)## aes(aes_x, aes_y)
++ geom_text(aes(population/10^6, total, label = abb), nudge_x = 2, nudge_y = 2) 
+```
+- global aesthetic mapping
+	- define a mapping in `ggplot`, all the geometries that are added as layers will default to this mapping
+	  `ggplot(aes(population/10^6, total))`
+	- override global mapping with local mapping
+	  `geom_text(x=10, y=800, label = "Hello there!")`
+- colors: 
+	- 1 color for all: `geom_point(color="blue")`
+	- data-dependent color: `geom_point(aes(color = region))`
+- scaling axes: `scale_x_continuous(trans = "log10")`
+- annotation: `labs(x="population in millions(log scale)", y = "total number of murders(log scale)", title = "US gun murders in 2010", color = "Region")`
+	- <AES> = "New <AES> legend title"
+	- adding global trend: `geom_abline()`
+- 
