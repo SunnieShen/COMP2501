@@ -458,11 +458,12 @@ murders|> ggplot() ## initializing an object with data
 	- override global mapping with local mapping
 	  `geom_text(x=10, y=800, label = "Hello there!")`
 - colors: 
-	- 1 color for all: `geom_point(color="blue")`
-	- data-dependent color: `geom_point(aes(color = region))`
+	- data independent(1 color for all): `geom_point(color="blue")`
+	- data dependent color: `geom_point(aes(color = region))`
 - scaling axes: `scale_x_continuous(trans = "log10")`
-- annotation: `labs(x="population in millions(log scale)", y = "total number of murders(log scale)", title = "US gun murders in 2010", color = "Region")`
-	- <AES> = "New <AES> legend title"
+- annotation: `labs(x="population in millions(log scale)", y = "total number of murders(log scale)", title = "US gun murders in 2010", color = "Region", <AES> = "New <AES> legend name")`
 	- adding global trend: `geom_abline()`
-- ggthemes: `install.packages(ggthemes)`
-- ggrepel: `intall.packeages(ggrepel)`
+- ggrepel: `Install.packages(ggrepel)`, `library(ggrepel)`
+	- display all labels(Inf) & automatically adjust `geom_text_repel(aes(label = state), max.overlaps = Inf)`
+# 9. Data_visualization_principle
+- 

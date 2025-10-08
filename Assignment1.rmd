@@ -123,7 +123,11 @@ murders |>
 #### b. (2 points) For all states having a murder rate per 100,000 people higher than 5, use the barplot function to create a barplot with the x-axis being the state name, and the y-axis being the murder rate per 100,000 people of each state. Order them by their murder rates. (Hints: check some barplot examples at <https://r-graph-gallery.com/210-custom-barplot-layout.html>)
 
 ```{r}
-barplot(height=data$rate, names=data$state)
+# create dummy data
+data <- data.frame(
+  murders |> mutate(rate = total/population*10^5) |> filter(rate>5) |> arrange(rate)
+)
+barplot(height = data$rate, names=data$state) 
 ```
 
 #### c. (3 points) Create a table called `my_states` that contains rows for states satisfying two conditions: 1) population is lower than 5 million, and 2) the murder rate per 100,000 people is less than 3.0. Use `select` to show only their state abbreviations, populations, and murder rates. Then use `top_n` function to find the 3 safest states among them.
@@ -149,13 +153,18 @@ murders |>
 #### e. (3 points) Use the ggplot2 package to create a scatterplot from the murders dataset, where the x-axis is the number of population, the y-axis is the murder rate per 100,000 people, and each point in the scatterplot is labeled with the state name. Please add an appropriate title, and axis labels to the plot. Select a theme that you prefer.
 
 ```{r}
+install.packages("ggrepel", "ggthemes")
+library("ggrepel", "ggthemes")
+
 murders |> 
   ggplot(aes(population/10^5, total/population*10^5)) + 
-  geom_point(position="jitter") + 
-  geom_text_repel(aes(label = abb)) + 
+  geom_point() + 
+  geom_text_repel(aes(label = state), max.overlaps = Inf) + 
   scale_x_log10() +
+  scale_y_log10()
   labs(x="Population in milions(log scale)", y="Murder rate per 100,000 people", 
        title="US Gun Murder rate in 2010 for each state")
+
 ```
 
 ------------------------------------------------------------------------
