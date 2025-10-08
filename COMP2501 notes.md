@@ -423,6 +423,7 @@ murders |> mutate(group = case_when(
 # 6.Importing_data
 # 7.Data_visualization
 - variable types: categorical(ordinal有序, not), numerical(discrete, continuous)
+- scatter plot散点图
 - bar plot: (categorical)
 - histogram: (numerical) split intervals if continuous
 - eCDF: empirical cumulative distribution function
@@ -463,4 +464,5 @@ murders|> ggplot() ## initializing an object with data
 - annotation: `labs(x="population in millions(log scale)", y = "total number of murders(log scale)", title = "US gun murders in 2010", color = "Region")`
 	- <AES> = "New <AES> legend title"
 	- adding global trend: `geom_abline()`
-- 
+- ggthemes: `install.packages(ggthemes)`
+- ggrepel: `intall.packeages(ggrepel)`

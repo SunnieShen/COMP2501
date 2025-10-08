@@ -69,9 +69,10 @@ mat[5:8, c(2, 5)]
 ### 2. (1 points) Write a function `compute_s_n` that for any given n, computes the $S_n = \frac{n*ln(n+5)}{\sqrt{n}}$. Print $S_n$ for $n$ from 10 to 20. (Hint: use `sapply`)
 
 ```{r}
-comput_s_n <- function(n){
-  return n*ln(n+5)/(n^(1/2))
+compute_s_n <- function(n){
+  n*log(x = n+5)/(n^(1/2))
 }
+sapply(10:20, compute_s_n)
 ```
 
 ------------------------------------------------------------------------
@@ -94,9 +95,9 @@ comput_s_n <- function(n){
 
     d.  not tidy: it is a matrix instead of a data frame.
 
-`ChickWeight` is [Input here]
+`ChickWeight` is b
 
-`co2` is [Input here]
+`co2` is d
 
 ------------------------------------------------------------------------
 
@@ -112,31 +113,49 @@ data("murders")
 #### a. (2 points) Compute the murder rate per 100,000 people for each state and store it in a column called "rate". Then use logical operators to find which state has a murder rate per 100,000 people higher than 5. Find these states, print their state names, abbreviations, total populations, and murder rates.
 
 ```{r}
-
+murders |> 
+  mutate(rate = total/population*10^5) |> 
+  filter(rate>5) |> 
+  select(state, abb, total, rate)
+  
 ```
 
 #### b. (2 points) For all states having a murder rate per 100,000 people higher than 5, use the barplot function to create a barplot with the x-axis being the state name, and the y-axis being the murder rate per 100,000 people of each state. Order them by their murder rates. (Hints: check some barplot examples at <https://r-graph-gallery.com/210-custom-barplot-layout.html>)
 
 ```{r}
-
+barplot(height=data$rate, names=data$state)
 ```
 
 #### c. (3 points) Create a table called `my_states` that contains rows for states satisfying two conditions: 1) population is lower than 5 million, and 2) the murder rate per 100,000 people is less than 3.0. Use `select` to show only their state abbreviations, populations, and murder rates. Then use `top_n` function to find the 3 safest states among them.
 
 ```{r}
-
+murders |> 
+  mutate(rate = total/population*10^5) |> 
+  filter(population<5000000 & rate < 3.0) |> 
+  select(abb, total, rate) |> 
+  slice_min(rate, n=3)
 ```
 
 #### d. (2 points) Categorize all states into two groups based on their population: Above median population – states with a population greater than the median. Below median population – states with a population less than or equal to the median. For each group, calculate the average murder rate per 100,000 people and display the results.
 
 ```{r}
-
+murders |> 
+  mutate(population_group = ifelse(population <= median(population), "Above median population", "Below median population")) |> 
+  group_by(population_group) |> 
+  summarize(average_murder_rate = sum(total)/sum(population)*10^5)
+  
 ```
 
 #### e. (3 points) Use the ggplot2 package to create a scatterplot from the murders dataset, where the x-axis is the number of population, the y-axis is the murder rate per 100,000 people, and each point in the scatterplot is labeled with the state name. Please add an appropriate title, and axis labels to the plot. Select a theme that you prefer.
 
 ```{r}
-
+murders |> 
+  ggplot(aes(population/10^5, total/population*10^5)) + 
+  geom_point(position="jitter") + 
+  geom_text_repel(aes(label = abb)) + 
+  scale_x_log10() +
+  labs(x="Population in milions(log scale)", y="Murder rate per 100,000 people", 
+       title="US Gun Murder rate in 2010 for each state")
 ```
 
 ------------------------------------------------------------------------
