@@ -422,9 +422,14 @@ murders |> mutate(group = case_when(
 `between(rnorm(100), seq(-2,-1,length.out=100), rep(1, times=100))`
 # 6.Importing_data
 # 7.Data_visualization
-- variable types: categorical(ordinal有序, not), numerical(discrete, continuous)
+- variable types
+	- categorical: ordinal(with order), nominal (no order)
+	- numerical: discrete, continuous
+	`str(<data.frame>)` to see the structure of a data frame, type of its component variable
 - scatter plot散点图
-- bar plot: (categorical)
+- bar plot
+	- (categorical, discrete): `heights |> ggplot(aes(sex)) + geom_bar()`
+	- (categorical, proportion) ``
 - histogram: (numerical) split intervals if continuous
 - eCDF: empirical cumulative distribution function
 - smoothed density plot: (can: compare 2 distribution with the same axes)
@@ -462,7 +467,7 @@ murders|> ggplot() ## initializing an object with data
 	- data dependent color: `geom_point(aes(color = region))`
 - scaling axes: `scale_x_continuous(trans = "log10")`
 - annotation: `labs(x="population in millions(log scale)", y = "total number of murders(log scale)", title = "US gun murders in 2010", color = "Region", <AES> = "New <AES> legend name")`
-	- adding global trend: `geom_abline()`
+	- adding global trend: `geom_abline(slope=1, interception=log(rate, base=10))`
 - ggrepel: `Install.packages(ggrepel)`, `library(ggrepel)`
 	- display all labels(Inf) & automatically adjust `geom_text_repel(aes(label = state), max.overlaps = Inf)`
 # 9. Data_visualization_principle

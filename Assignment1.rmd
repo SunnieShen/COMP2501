@@ -153,17 +153,16 @@ murders |>
 #### e. (3 points) Use the ggplot2 package to create a scatterplot from the murders dataset, where the x-axis is the number of population, the y-axis is the murder rate per 100,000 people, and each point in the scatterplot is labeled with the state name. Please add an appropriate title, and axis labels to the plot. Select a theme that you prefer.
 
 ```{r}
-install.packages("ggrepel", "ggthemes")
-library("ggrepel", "ggthemes")
+install.packages("ggrepel")
+library("ggrepel")
 
 murders |> 
   ggplot(aes(population/10^5, total/population*10^5)) + 
   geom_point() + 
   geom_text_repel(aes(label = state), max.overlaps = Inf) + 
   scale_x_log10() +
-  scale_y_log10()
-  labs(x="Population in milions(log scale)", y="Murder rate per 100,000 people", 
-       title="US Gun Murder rate in 2010 for each state")
+  scale_y_log10() +
+  labs(x="Population in milions(log scale)", y="Murder rate per 100,000 people", title="US Gun Murder rate in 2010 for each state")
 
 ```
 
