@@ -426,20 +426,33 @@ murders |> mutate(group = case_when(
 	- categorical: ordinal(with order), nominal (no order)
 	- numerical: discrete, continuous
 	`str(<data.frame>)` to see the structure of a data frame, type of its component variable
-- scatter plot散点图
+- scatter plot散点图: **(see in 8.ggplot2**)
 - bar plot
 	- (categorical, discrete): `heights |> ggplot(aes(sex)) + geom_bar()`
-	- (categorical, proportion) ``
-- histogram: (numerical) split intervals if continuous
-- eCDF: empirical cumulative distribution function
+	- (categorical, proportion): `height |> cout(sex) |> mutate(proportion = n/sum(n)) |> ggplot(aes(sex, proportion)) + geom_col()`
+- histogram : (numerical) split intervals if continuous
+	- `height |> ggplot(aes(height)) |> geom_histogram(binwidth=2.5, fill = 'paleturquose', col = 'whitesmoke`) 
+	- choose the best binwidth
+	- by default: counts as y axes ; change to density scale`aes(y=after_stat(density))`
+>eCDF: empirical cumulative distribution function
 - smoothed density plot: (can: compare 2 distribution with the same axes)
-- normal distribution
+	- `geom_density(adjust=1, alpha = 0.5)` 
+	- adjust 1/2 : using half of the binwidth
+```R
+##compare distribution
+geom_histogram(aes(y=after_stat(density)),binwidth,alpha, position)
+geom_density(adjust=1, alpha=0.5)
+```
+- Normal/ Gaussian distribution
 	- most values (about 95%) are within 2 SDs from the average
+- Q-Q plot (quantile-quantile)
+	- `geom_qq()+geom_qq_line()`
 - box plot
 	- outliers: independent points, ignore _outliers_ when computing the range
 	- box: 0.25, 0.5, 0.75 quantile
 	- whiskers: to max & min regardless of outliers
-- stratification: split groups
+- violin plot
+- stratification: split groups based on one or more variables
 # 8.ggplot2
 `library(ggplot2)` `library(tidyverse)`
 "grammar of graphics" only for tidy data
