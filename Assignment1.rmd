@@ -273,7 +273,6 @@ data <- storms |>
   arrange(name, timestamp)
 data |> 
   ggplot(aes(timestamp, wind, color = name)) +
-  geom_point() +
   geom_line() +
   labs(
     title = "Wind speed of storms in August 2005",
@@ -318,51 +317,150 @@ unique(covid$"countriesAndTerritories") |> length()
 
 ```{r}
 # (1) Whole dataset
-
+covid |>
+  summarise(sum_of_cases = sum(cases), sum_of_deaths = sum(deaths))
 ```
 
 ```{r}
 # (2) By countries and territories
-
+covid |>
+  group_by(countriesAndTerritories) |>
+  summarise(sum_of_cases = sum(cases), sum_of_deaths = sum(deaths)) |>
+  arrange(desc(sum_of_deaths)) |>
+  head(3)
 ```
 
 ```{r}
 # (3) By continents
-
+covid |>
+  group_by(continentExp) |>
+  summarise(sum_of_cases = sum(cases), sum_of_deaths = sum(deaths)) |>
+  arrange(desc(sum_of_deaths))
+# only 6 rows, so `|> head(3)` is unnecessary
 ```
 
 #### e. (1 points) Add a new column `date` with the standard date format "YYYY-MM-DD" to the data table according to the `dateRep` column. Be reminded the format of `dateRep` is "DD/MM/YYYY". Please use head() to show the result. (Hint: use functions from the `lubridate` package to read and write timestamps)
 
 ```{r}
-
+covid <- mutate(covid, date = dmy(dateRep))
+head(covid)
 ```
 
 #### f. (2 points) Create a scatterplot showing `cases` vs. `deaths`. Set an appropriate plot title and axis titles. Are there any dots that seem abnormal? Exclude those and plot again.
 
 ```{r}
+# (1) with outliers
+covid |>
+  ggplot(aes(cases, deaths)) +
+  geom_point(alpha = 0.3) +
+  labs(
+    title = "Relationship between COVID-19 cases and death (with outliers)",
+    x = "Number of Cases",
+    y = "Number of Deaths"
+  ) +
+  theme_minimal()
 
+# (2) without outliers
+covid_clean <- filter(covid, cases >= 0 & deaths >= 0)
+covid_clean |>
+  filter(cases >=0 & deaths >= 0) |>
+  ggplot(aes(cases, deaths)) +
+  geom_point(alpha = 0.3) +
+  labs(
+    title = "Relationship between COVID-19 cases and death (without outliers)",
+    x = "Number of Cases",
+    y = "Number of Deaths"
+  ) +
+  theme_minimal()
+  
 ```
 
 #### g. (2 points) Create a line plot showing cases per day versus date for China. Set an appropriate plot title and axis titles.
 
 ```{r}
-
+covid_clean |>
+  filter(countriesAndTerritories=="China") |>
+  ggplot(aes(date, cases)) +
+  geom_line() +
+  labs(
+    title = "Daily COVID-19 Cases in China (2020)",
+    x = "Date",
+    y = "Number of cases"
+  ) +
+  theme_minimal()
 ```
 
 #### h. (2 points) Similar to above, create a line plot using the data of six countries with the most total cases. Use different line colors for each country. Set an appropriate plot title and axis titles.
 
 ```{r}
+max_total_country <- covid_clean |>
+  group_by(countriesAndTerritories) |>
+  summarise(total_cases = sum(cases)) |>
+  arrange(desc(total_cases)) |>
+  head() |>
+  _$countriesAndTerritories
+
+covid_clean |>
+  filter(countriesAndTerritories %in% max_total_country) |>
+  ggplot(aes(as.Date(date), cases, color = countriesAndTerritories, group = countriesAndTerritories)) +
+  geom_line() +
+  labs(
+    title = "Daily COVID-19 Cases in top six countries (2020)",
+    x = "Date",
+    y = "Number of cases",
+    color = "Country"
+  ) +
+  theme_minimal() +
+  theme(
+    legend.position = "bottom",
+    legend.direction = "horizontal"
+  )
 
 ```
 
 #### i. (4 points) Filter out the data in Germany. Assume the Germany government determined an epidemic situation of national significance on 2020-06-10. A lot of restrictive measurements such as social distancing were implemented to prevent the spread of COVID-19. Find out the 1) average number of cases before the determination, 2) average number of cases after the determination, 3) average number of deaths before the determination, and 4) average number of deaths after the determination. Remove missing values from data if they are coded as NA, if there is any.
 
 ```{r}
-
+covid_clean |>
+  filter(countriesAndTerritories=="Germany" & is.na(cases)==FALSE & is.na(deaths)==FALSE) |>
+  mutate(period = if_else(date < "2020-06-10", 
+                          "Before_determination", "After_determination")) |>
+  group_by(period) |>
+  summarise(average_cases = mean(cases), average_deaths = mean(deaths)) |>
+  arrange(desc(period))
+  
 ```
 
 #### j. (4 points) In fact, the determination of epidemic situation was on another date. Make a reasonable guess with explanation by the following steps. Create a line plot using data with `countriesAndTerritories=="Germany"`, showing date on the x-axis, cases per day and death per day on the y-axis. Observe the pattern and make a reasonable guess. Find a way to indicate the date of the determination and 1 month after the date of determination. Set an appropriate plot title and axis titles. Marks would be given on answers with reasonable explanations. (Hints: It is expected that the cases confirmed would drop after 1 month of the implementation of determination of epidemic situation, with 14-week incubation period of COVID-19. It is a relatively open question, and reasonable explanations are acceptable. We want you to observe the trend of changes in the cases per day and the deaths per day on the date you have chosen and one month after it according to the line plot you created. No correct date is needed and we will judge your answers according to your thoughts and explanations.)
 
 ```{r}
-
+covid_clean |>
+  filter(countriesAndTerritories=="Germany" & is.na(cases)==FALSE & is.na(deaths)==FALSE) |>
+  ggplot(aes(x = as.Date(date))) +
+  geom_line(aes(y = cases, color = "Cases per day")) +
+  geom_line(aes(y = deaths, color = "Deaths per day")) +
+  labs(
+    title = "Daily COVID-19 Cases and Deaths in Germany (2020)",
+    x = "Date",
+    y = "Count",
+  ) +
+  geom_vline(
+    xintercept = c(as.Date("2020-03-20"), as.Date("2020-04-20")),
+    linetype = "dashed",
+    color = "gray",
+  )
+  theme_minimal() +
+  theme(legend.position = "bottom", legend.direction = "horizontal")
 ```
+
+Guess the date of determination: around 2020-03-20
+
+Explanation:
+
+-   before determination(\~ 2020-03-20): quick growth trend in daily confirmed cases, which aligns with a lenient containment measures, no control.
+
+-   determination to 1 month later (2020-03-20 \~ 2020-04-20): change of daily cases over time, shift from rapid growth to stabilization; Peak is reached in early April followed by gradual decline; Deaths' rate of growth slowed down, indicating the determination
+
+-   after 1 month (2020-04-20 \~): obvious declining trend in both number of daily cases and deaths
+
+Above trends aligns with the fact that: the cases confirmed would drop after 1 month of the implementation of determination of epidemic situation, with 14-week incubation period of COVID-19.
