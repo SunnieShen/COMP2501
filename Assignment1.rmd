@@ -4,6 +4,7 @@ output:
   word_document: default
   html_document:
     df_print: paged
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -153,8 +154,11 @@ murders |>
 #### e. (3 points) Use the ggplot2 package to create a scatterplot from the murders dataset, where the x-axis is the number of population, the y-axis is the murder rate per 100,000 people, and each point in the scatterplot is labeled with the state name. Please add an appropriate title, and axis labels to the plot. Select a theme that you prefer.
 
 ```{r}
+options(repos = c(CRAN = "https://cloud.r-project.org"))
 install.packages("ggrepel")
+install.packages("ggthemes")
 library("ggrepel")
+library("ggthemes")
 
 murders |> 
   ggplot(aes(population/10^5, total/population*10^5)) + 
@@ -162,7 +166,8 @@ murders |>
   geom_text_repel(aes(label = state), max.overlaps = Inf) + 
   scale_x_log10() +
   scale_y_log10() +
-  labs(x="Population in milions(log scale)", y="Murder rate per 100,000 people", title="US Gun Murder rate in 2010 for each state")
+  labs(x="Population in millions(log scale)", y="Murder rate per 100,000 people", title="US Gun Murder rate in 2010 for each state") +
+  theme_minimal()
 
 ```
 
@@ -180,12 +185,34 @@ data("gapminder")
 #### a. (2 points) Calculate the average life expectancy and GDP per capita for each continent in 2000. (Hint: Select data from year 2000, group by **continent** and compute for each continent: (i) average **life_expectancy**, and (ii) **gdp** per capita.) Sort the results by average life expectancy.
 
 ```{r}
-
+gapminder |>
+  filter(year==2000) |>
+  group_by(continent) |>
+  summarize(average_life_expectancy = sum(life_expectancy*population)/sum(population),
+            GDP_per_capita = sum(gdp)/sum(population)) |>
+  arrange(average_life_expectancy)
 ```
 
 #### b. (2 points) Show the **distribution** of life expectancy for each continent. Use an appropriate plot (**density** or **histogram**).
 
 ```{r}
+gapminder |>
+  filter(year %in% c(1960, 1970, 1980, 1990, 2000, 2010)) |>
+  mutate(year_factor = as.factor(year)) |>
+  ggplot(aes(life_expectancy)) +
+  geom_density(
+    adjust = 1, 
+    alpha = 0.5, 
+    aes(fill = year_factor),
+    color = NA) +
+  facet_grid(continent~., scales="free_y") +
+  labs(
+    title = "Life expectancy distribution for each continent across years",
+    x = "Life expectancy",
+    y = "Density (proportion of contries in the continent)",
+    fill = "Year"
+  ) +
+  theme_minimal()
 
 ```
 
@@ -203,31 +230,57 @@ data("storms")
 #### a. (1 point) List the observation with the **largest wind** speed.
 
 ```{r}
-
+storms |> filter(wind == max(wind))
 ```
 
 #### b. (2 points) For (1) the whole dataset, (2) by **year**, compute both: (i) the **maximum wind** and (ii) the **minimum pressure** observed. For the per-year stats, sort the results by maximum wind (descending) and show the top 10 rows.
 
 ```{r}
 # (1) Whole dataset
-
+storms |>
+  summarise(max_wind = max(wind), min_pressure = min(pressure))
 ```
 
 ```{r}
 # (2) By year
-
+storms |>
+  group_by(year) |>
+  summarise(max_wind = max(wind), min_pressure = min(pressure)) |>
+  arrange(desc(max_wind)) |>
+  top_n(10, max_wind)
 ```
 
 #### c. (1 point) Create a **scatter plot** of **wind** vs **pressure**. Note that the wind speeds are recorded in knots and pressures are recorded in millibars. Add a title and axis labels.
 
 ```{r}
-
+storms |>
+  ggplot(aes(wind, pressure)) +
+  geom_jitter(alpha = 0.05, width = 2.5, height = 2) +
+  labs(
+    title = "Relationship between Wind Speed and Atmospheric Pressure in Storms",
+    x = "Pressure (millibars)",
+    y = "Wind Speed (knots)"
+  ) +
+  theme_minimal()
 ```
 
 #### d. (3 points) Create a **multi-line plot** for all storms from August, 2005, showing **timestamp** on x-axis and **wind** on y-axis, with color indicating **storm name**. Add a legend, title, and labels. (Hint: use functions from the `lubridate` package to define timestamps)
 
 ```{r}
-
+data <- storms |> 
+  filter(year == 2005 & month == 8) |>
+  mutate(timestamp = make_datetime(year, month, day, hour)) |>
+  arrange(name, timestamp)
+data |> 
+  ggplot(aes(timestamp, wind, color = name)) +
+  geom_point() +
+  geom_line() +
+  labs(
+    title = "Wind speed of storms in August 2005",
+    x = "Date",
+    y = "Wind Speed (knots)",
+    color = "Storm name"
+  )
 ```
 
 ------------------------------------------------------------------------
@@ -243,19 +296,22 @@ library(lubridate)
 #### a. (2 points) Read the CSV formatted dataset. Find out how many observations (rows) and variables (columns) are in the dataset. Print the names of all variables.
 
 ```{r}
-
+library(tidyverse)
+covid <- read_csv("http://www.bio8.cs.hku.hk/comp2501/covid.csv")
+nrow(covid)
+names(covid)
 ```
 
 #### b. (1 points) List 5 observations that have the most amounts of `deaths` per day.
 
 ```{r}
-
+covid |> arrange(desc(deaths)) |> top_n(5, deaths)
 ```
 
 #### c. (2 points) How many unique `countriesAndTerritories` are in the dataset?
 
 ```{r}
-
+unique(covid$"countriesAndTerritories") |> length()
 ```
 
 #### d. (3 points) For (1) the whole dataset, (2) different `countriesAndTerritories`, and (3) different `continentExp`, compute both (i) the sum of cases, and (ii) the sum of deaths. Sort the results by the sum of deaths descendingly. Use `head` to show the top 3 entries if there are too many rows.

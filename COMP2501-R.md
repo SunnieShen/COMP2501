@@ -4,7 +4,7 @@
 4. [Tidyverse](#4.Tidyverse)
 5. [Data.table](#5.Data.table)
 6. [Importing data](#6.Importing_data)
-7. [Data visualization](#7.Data_visualization)
+7. [Data visualization](#7.Data_visualization_distribution)
 8. [ggplot2](#)
 9. [Data visualization principles](#)
 10. [Data visualization in practice](#)
@@ -421,7 +421,15 @@ murders |> mutate(group = case_when(
 - between: `between(x, a, b)` same as `x>=a & x<=b`
 `between(rnorm(100), seq(-2,-1,length.out=100), rep(1, times=100))`
 # 6.Importing_data
-# 7.Data_visualization
+- external data files and files format
+	- file format: csv, tsv, xls/xlsx, 
+- work with file system
+	- relative path:
+	  absolute path:
+	- working directory: `getwd()`
+- import data files
+	- `murders <- read_csv("murders.csv")`
+# 7.Data_visualization_distribution
 - variable types
 	- categorical: ordinal(with order), nominal (no order)
 	- numerical: discrete, continuous
@@ -453,6 +461,11 @@ geom_density(adjust=1, alpha=0.5)
 	- whiskers: to max & min regardless of outliers
 - violin plot
 - stratification: split groups based on one or more variables
+- grids of plot
+```R
+library(gridExtra)
+grid.arrange(p5, p6, ncol = 2)
+```
 # 8.ggplot2
 `library(ggplot2)` `library(tidyverse)`
 "grammar of graphics" only for tidy data
@@ -483,5 +496,15 @@ murders|> ggplot() ## initializing an object with data
 	- adding global trend: `geom_abline(slope=1, interception=log(rate, base=10))`
 - ggrepel: `Install.packages(ggrepel)`, `library(ggrepel)`
 	- display all labels(Inf) & automatically adjust `geom_text_repel(aes(label = state), max.overlaps = Inf)`
-# 9. Data_visualization_principle
-- 
+# 9. Data_visualization_practice
+## 9.1.Case1: fertility rate
+- scatterplots and faceting
+	- facet 2D: `facet_grid(year~continent)`
+	- facet 1D: `facet_grid(. ~ year)`, `facet_wrap(~ year, ncol=3)`
+	- free scaling: `facet_wrap(.~year, scales="free"`, 每张分图的坐标比例尺不同, 不利于数据对比, 不建议用 &lArr; Aim: facilitate comparison
+	- fixed scale for better comparison
+- time series (continuous trend over time)
+	- labels on the line: `geom_textpath() + theme(legend.position="none")`
+## 9.2.Case2: income
+>GDP per capita = GDP/population
+>
