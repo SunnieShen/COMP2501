@@ -128,7 +128,7 @@ murders |>
 data <- data.frame(
   murders |> mutate(rate = total/population*10^5) |> filter(rate>5) |> arrange(rate)
 )
-barplot(height = data$rate, names=data$state) 
+barplot(height = data$rate, names=data$state, cex.names = 0.7) 
 ```
 
 #### c. (3 points) Create a table called `my_states` that contains rows for states satisfying two conditions: 1) population is lower than 5 million, and 2) the murder rate per 100,000 people is less than 3.0. Use `select` to show only their state abbreviations, populations, and murder rates. Then use `top_n` function to find the 3 safest states among them.
@@ -138,14 +138,14 @@ murders |>
   mutate(rate = total/population*10^5) |> 
   filter(population<5000000 & rate < 3.0) |> 
   select(abb, total, rate) |> 
-  slice_min(rate, n=3)
+  top_n(-3)
 ```
 
 #### d. (2 points) Categorize all states into two groups based on their population: Above median population – states with a population greater than the median. Below median population – states with a population less than or equal to the median. For each group, calculate the average murder rate per 100,000 people and display the results.
 
 ```{r}
 murders |> 
-  mutate(population_group = ifelse(population <= median(population), "Above median population", "Below median population")) |> 
+  mutate(population_group = ifelse(population <= median(population), "Below median population", "Above median population")) |> 
   group_by(population_group) |> 
   summarize(average_murder_rate = sum(total)/sum(population)*10^5)
   
@@ -162,8 +162,8 @@ library("ggthemes")
 
 murders |> 
   ggplot(aes(population/10^5, total/population*10^5)) + 
-  geom_point() + 
-  geom_text_repel(aes(label = state), max.overlaps = Inf) + 
+  geom_point(size = 1) + 
+  geom_text_repel(aes(label = state), max.overlaps = Inf, size = 2) + 
   scale_x_log10() +
   scale_y_log10() +
   labs(x="Population in millions(log scale)", y="Murder rate per 100,000 people", title="US Gun Murder rate in 2010 for each state") +

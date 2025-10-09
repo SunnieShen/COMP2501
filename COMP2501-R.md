@@ -384,8 +384,10 @@ heights |> summarize(median_min_max(height))
     - `murders |> arrange(desc(rate)) |> head() 
     - default: ascending; desc(variable): descending
 - nested sorting: `murders|>arrange(region, rate)|>head()`
-- top_n: `murders |> slice_max(rate, n=5)`
-	- top_6: `head(): return first part, first 6 lines by default`
+- top_n: max top n
+	- `murders |> slice_max(rate, n=5)`
+	- top_n(\_, n) \==`head(): return first part, first 6 lines by default`
+	- `top_n(-3)` find min instead of max
 - between
 ## 4.6.Tibbles
 ## 4.7.Tibbles vs data frames
