@@ -505,36 +505,70 @@ murders|> ggplot() ## initializing an object with data
 - ggrepel: `Install.packages(ggrepel)`, `library(ggrepel)`
 	- display all labels(Inf) & automatically adjust `geom_text_repel(aes(label = state), max.overlaps = Inf)`
 # 9. Data_visualization_principle
-
+Good visualization?
+- primary message: show/compare? quantity/ distribution/ relationship?
+	- numerical variable: X/Y length , motion >> size/ angle/ orientation > color/ opacity&shade亮度
+	- avoid Pie chart &lArr; 
+- where to put 0
+	```r
+	
+	```
+- don't distort quantities
+- order categories in a meaningful way
+- show data
+- ease comparison
+- log transformation
+	- right-skewed
+	- ratios
+- 2 variable plot
+- 3 variabel plot
+- no 3D 
 # 10. Data_visualization_practice
-## 10.1.Case1: fertility rate
+>**10.1.Case1: fertility rate**
 - scatterplots and faceting
 	- facet 2D: `facet_grid(year~continent)`
 	- facet 1D: `facet_grid(. ~ year)`, `facet_wrap(~ year, ncol=3)`
 	- free scaling: `facet_wrap(.~year, scales="free"`, 
 	  每张分图的坐标比例尺不同, 不利于数据对比, 不建议用 &lArr; Aim: facilitate comparison
 	- fixed scale for better comparison
-- time series (continuous trend over time)
+- time series (continuous trend over time): `geom_line()`
+	- multiple lines &rarr; **set groups**: `ggplot(aes(x,y, group = country))`
+	  **set color &rArr; automatic grouping:** `ggplot(aes(x,y, color = country))`
 	- labels on the line: **package:** `geomtextpath`
 	  `geom_textpath() + theme(legend/position = "none)`
-## 10.2.Case2: income
+
+>**10.2.Case2: income**
 >GDP per capita = GDP/population
 - data transformation
 	- log(value) &rarr; heavy-tailed/ skewed: `ggplot(aes(log2(dollars_per_day)))`
 	- **log(scale)** : `scale_x_continuous(transform = "log2")`, `scale_x_log10()`
-- multimodal distribution (多个众数 mode)
-  mode 众数, mean 均值, median 中位数
+>multimodal distribution (多个众数 mode)
 - comparing multiple distribution
 	- median representing 1 country's stat: `mutate(region = reorder(region, dollars_per_day, FUN = median) |> 
 	  ggplot(aes(dollars_per_day, region))`
 	- rotate x label: `theme(axis.text.x = element_text(angle=90, hjust=1))`
-	- summarized & specific information: `geom_boxplot() + geom_beewarm()`
-	- stacked density: **Package:** `ggridges`
-	 ` geom_density_ridges()`
-	- vertical dendity: `geom_vioin(fill = "gray")`
+	-  **`geom_boxplot() + geom_beewarm()`**
+	- stacked density: **Package:** `ggridges`, ` geom_density_ridges() `
+		- ridge density + jitter: **`geom_density_ridges(jitter_points = TRUE)`**
+		- ridge density + rug竖条:
+		```R
+		geom_density_ridges(jittered_points = TRUE, 
+			position = position_points_jitter(height = 0),
+			point_shape = '|', point_size = 3, point_alpha = 1, alpha = 0.7)
+		```
+	- vertical density: `geom_vioin(fill = "gray")`
 - intersect of list: `country_list <- intersect(country_list1, country_list2)`
-- 
+- set group, change to **factor**(control order of levels): 
 ```R
-
+gapminder <- gapminder |> 
+	mutate(group = case_when(
+	    region %in% c("Western Europe", ...) ~ "West",
+	    continent == "Africa" & region != "Northern Africa" ~ "Sub-Saharan",
+		TRUE ~ "Others"))|>
+	mutate(group = factor(group, levels = c("Others", "Sub-Saharan", "West" )))   
 ```
-- 
+>10.3.Case study 2: ecological fallacy
+
+>10.4.Case study 3:vaccines and infectious diseases
+
+## 
