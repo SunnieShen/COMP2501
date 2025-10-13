@@ -15,8 +15,14 @@
 15. [Web scraping]
 16. [String processing]
 17. [Text analysis]
+```R
+# Load the required packages
+install.packages(c("dslabs", "dplyr", "ggplot2", "lubridate","geomtextpath"))
+library(c("dslabs", "dplyr", "ggplot2", "lubridate", "geomtextpath"))
+data(...)
+```
 # 2. R_basics 
-![[Pasted image 20250913200615.png]]
+
 ### Basics
 - <- for assigning values  = for providing values to argument
 ```R
@@ -498,15 +504,37 @@ murders|> ggplot() ## initializing an object with data
 	- adding global trend: `geom_abline(slope=1, interception=log(rate, base=10))`
 - ggrepel: `Install.packages(ggrepel)`, `library(ggrepel)`
 	- display all labels(Inf) & automatically adjust `geom_text_repel(aes(label = state), max.overlaps = Inf)`
-# 9. Data_visualization_practice
-## 9.1.Case1: fertility rate
+# 9. Data_visualization_principle
+
+# 10. Data_visualization_practice
+## 10.1.Case1: fertility rate
 - scatterplots and faceting
 	- facet 2D: `facet_grid(year~continent)`
 	- facet 1D: `facet_grid(. ~ year)`, `facet_wrap(~ year, ncol=3)`
-	- free scaling: `facet_wrap(.~year, scales="free"`, 每张分图的坐标比例尺不同, 不利于数据对比, 不建议用 &lArr; Aim: facilitate comparison
+	- free scaling: `facet_wrap(.~year, scales="free"`, 
+	  每张分图的坐标比例尺不同, 不利于数据对比, 不建议用 &lArr; Aim: facilitate comparison
 	- fixed scale for better comparison
 - time series (continuous trend over time)
-	- labels on the line: `geom_textpath() + theme(legend.position="none")`
-## 9.2.Case2: income
+	- labels on the line: **package:** `geomtextpath`
+	  `geom_textpath() + theme(legend/position = "none)`
+## 10.2.Case2: income
 >GDP per capita = GDP/population
->
+- data transformation
+	- log(value) &rarr; heavy-tailed/ skewed: `ggplot(aes(log2(dollars_per_day)))`
+	- **log(scale)** : `scale_x_continuous(transform = "log2")`, `scale_x_log10()`
+- multimodal distribution (多个众数 mode)
+  mode 众数, mean 均值, median 中位数
+- comparing multiple distribution
+	- median representing 1 country's stat: `mutate(region = reorder(region, dollars_per_day, FUN = median) |> 
+	  ggplot(aes(dollars_per_day, region))`
+	- rotate x label: `theme(axis.text.x = element_text(angle=90, hjust=1))`
+	- summarized & specific information: `geom_boxplot() + geom_beewarm()`
+	- stacked density: **Package:** `ggridges`
+	 ` geom_density_ridges()`
+	- vertical dendity: `geom_vioin(fill = "gray")`
+- intersect of list: `country_list <- intersect(country_list1, country_list2)`
+- 
+```R
+
+```
+- 
