@@ -571,4 +571,49 @@ gapminder <- gapminder |>
 
 >10.4.Case study 3:vaccines and infectious diseases
 
-## 
+# 11.Reshaping_data
+## 11.1.Data wrangling
+- purpose: missing data, outliers & incorrect, standard format
+- steps: data table operation, string processing, date/ time processing, wb page (html)parsing
+## 11.2.tidy, long, wide
+tidy: 1 row 1 observation, 1 col 1 diff variable
+wide: var spread across col (names contain variable)
+long: 相对于wide
+- Wide &rarr; Long: `pivot_longer()`
+	- \`col name\`  back quote to specify column name; "name" & "value" by default
+	- indexing with negative sign (specify which col is not included in the pivot): `-country`, `[-1]`
+	- names_to, values_to, names_from, values_from
+	- **convert names(char by default) type** accordingly
+```r
+pivot_longer(wide_data, `1960`:`2015`, names_to = "year", values_to = "fertility")
+pivot_longer(wide_data, -country, names_to = "year", values_to = "fertility")
+... |> mutate(year = as.integer(year))
+```
+- Long &rarr; Wide: `pivot_wider()`
+```r
+new_wide_data <- new_tidy_data |>
+	pivot_wider(names_from = year, values_from = fertility)
+select(new_wide_data, country, `1960`:`1970` )
+```
+- separate: `separate(col_name, c("new_col_1", "new_col_2"), "separator")`
+	- many delim: `separate_wider_delim(name, delim = "_", names = c("year", "name"), too_many = "merge")` 
+```r
+dat |> separate(name, c("year", "name"), "_", extra = "merge") |> 
+	pivot_wider() |> mutate(year = as.integer(year))
+#> # A tibble: 112 × 4
+#>   country  year fertility life_expectancy
+#>   <chr>   <int>     <dbl>           <dbl>
+#> 1 Germany  1960      2.41            69.3
+#> 2 Germany  1961      2.44            69.8
+#> 3 Germany  1962      2.47            70.0
+#> # ℹ 107 more rows
+```
+pivot_longer (separate individual number) &rarr; separate(specify variable name) &rarr; pivot_wider (combine rows)
+## 11.3.data.table (joining&binding)
+
+## 11.4.set operator
+# 12.joining_tables
+## 12.1.joinging
+## 12.2.binding
+## 12.3.set_operator
+# 16.String_processing
