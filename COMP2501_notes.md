@@ -587,7 +587,7 @@ long: 相对于wide
 ```r
 pivot_longer(wide_data, `1960`:`2015`, names_to = "year", values_to = "fertility")
 pivot_longer(wide_data, -country, names_to = "year", values_to = "fertility")
-... |> mutate(year = as.integer(year))
+... |> mutate(year = as.integer(year)) ## convert new col type to intendede ones
 ```
 - Long &rarr; Wide: `pivot_wider()`
 ```r
@@ -599,21 +599,25 @@ select(new_wide_data, country, `1960`:`1970` )
 	- many delim: `separate_wider_delim(name, delim = "_", names = c("year", "name"), too_many = "merge")` 
 ```r
 dat |> separate(name, c("year", "name"), "_", extra = "merge") |> 
-	pivot_wider() |> mutate(year = as.integer(year))
-#> # A tibble: 112 × 4
-#>   country  year fertility life_expectancy
-#>   <chr>   <int>     <dbl>           <dbl>
-#> 1 Germany  1960      2.41            69.3
-#> 2 Germany  1961      2.44            69.8
-#> 3 Germany  1962      2.47            70.0
-#> # ℹ 107 more rows
+	pivot_wider() |> 
+	mutate(year = as.integer(year))## convert varible type
 ```
 pivot_longer (separate individual number) &rarr; separate(specify variable name) &rarr; pivot_wider (combine rows)
-## 11.3.data.table (joining&binding)
-
-## 11.4.set operator
-# 12.joining_tables
-## 12.1.joinging
-## 12.2.binding
+# 12.joining_tables (joining and binding)
+- joining: join col by matching
+`left_join(tab1, tab2, by = "state")` matching col same as left (tab1)
+`right_join(tab1, tab2, by = "state")` matching col same as right(tab2)
+`inner_join()` 交集
+`full_join()` 并集 
+`semi_join()` 交集, 只保留tab1 col, 不添加tab2 col
+`anti_join(A,B,by=...)`  A\B, 只保留tab1 col, 不添加tab2 col
+- bind without matching: `bind_rows(tab1, tab2)`, `bind_cols(tab1,tab2)`
+	- bind_cols: tab1 tab2 have same variable name
+	- bind_rows: tab1 tab2 have diff var
+	![[Pasted image 20251016172958.png]]
 ## 12.3.set_operator
+`intersect()`, `union()`, `setdiff(A,B)`A\B, `setequal()`&rArr; `TRUE/FALSE`, 
+# 15.Web_scraping
+tidyverse &rArr; rvest &rArr; read_html
+
 # 16.String_processing
