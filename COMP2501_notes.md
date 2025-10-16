@@ -605,12 +605,14 @@ dat |> separate(name, c("year", "name"), "_", extra = "merge") |>
 pivot_longer (separate individual number) &rarr; separate(specify variable name) &rarr; pivot_wider (combine rows)
 # 12.joining_tables (joining and binding)
 - joining: join col by matching
+
 `left_join(tab1, tab2, by = "state")` matching col same as left (tab1)
 `right_join(tab1, tab2, by = "state")` matching col same as right(tab2)
 `inner_join()` 交集
 `full_join()` 并集 
 `semi_join()` 交集, 只保留tab1 col, 不添加tab2 col
 `anti_join(A,B,by=...)`  A\B, 只保留tab1 col, 不添加tab2 col
+
 - bind without matching: `bind_rows(tab1, tab2)`, `bind_cols(tab1,tab2)`
 	- bind_cols: tab1 tab2 have same variable name
 	- bind_rows: tab1 tab2 have diff var
@@ -619,5 +621,35 @@ pivot_longer (separate individual number) &rarr; separate(specify variable name)
 `intersect()`, `union()`, `setdiff(A,B)`A\B, `setequal()`&rArr; `TRUE/FALSE`, 
 # 15.Web_scraping
 tidyverse &rArr; rvest &rArr; read_html
-
+`read_html()` read from url link
+`html_text()` display raw code
+`html_elements()` extract only some element
+`html_table()` convert the extracted nodes to R data frames
+`setNames(c("state", "population", "total", "murder_rate"))` set col names 
+```r
+tab <- read_html("some_URL") |> 
+	html_elements("table")
+murders <- tab[[1]] |>
+	html_table() |>
+	setNames(c("state", "population", "total", "murder_rate"))
+```
 # 16.String_processing
+## 16.1.stringr
+`library(tidyverse)`, `library(stringr)` 
+tidyverse &rArr; stringr &rArr; piping, operation are vectorized
+`str_detect(murders_raw$population, ",")` whether certain col contain comma
+```r
+reported_heights |> 
+  mutate(new_height = as.numeric(height)) |>
+  filter(is.na(new_height)) |> 
+  head(n = 4)
+#>             time_stamp    sex                 height new_height
+#> 1  2014-09-02 15:16:28   Male                  5' 4"         NA
+#> 2  2014-09-02 15:16:37 Female                  165cm         NA
+#> 3  2014-09-02 15:16:52   Male                    5'7         NA
+#> 4  2014-09-02 15:16:56   Male                  >9000         NA
+```
+## 16.2.regular_expression
+## 16.3.Parsing_date_and_time
+
+# 17.Text_mining
