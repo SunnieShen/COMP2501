@@ -648,8 +648,18 @@ reported_heights |>
 #> 2  2014-09-02 15:16:37 Female                  165cm         NA
 #> 3  2014-09-02 15:16:52   Male                    5'7         NA
 #> 4  2014-09-02 15:16:56   Male                  >9000         NA
+
+str_replace_all(",","")
+mutate(population = test_1)
+parse_number()
+
+lines <- readlines(filename)
+str_split(lines, ",")
+col_names <-
 ```
-## 16.2.regular_expression
-## 16.3.Parsing_date_and_time
+
+## 16.2.escaping_characters
+## 16.3.regular_expression
+## 16.4.Parsing_date_and_time
 
 # 17.Text_mining
