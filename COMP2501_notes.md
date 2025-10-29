@@ -535,7 +535,7 @@ Good visualization?
 	- multiple lines &rarr; **set groups**: `ggplot(aes(x,y, group = country))`
 	  **set color &rArr; automatic grouping:** `ggplot(aes(x,y, color = country))`
 	- labels on the line: **package:** `geomtextpath`
-	  `geom_textpath() + theme(legend/position = "none)`
+	  `geom_textpath() + theme(legend.position = "none)`
 
 >**10.2.Case2: income**
 >GDP per capita = GDP/population
@@ -663,3 +663,21 @@ col_names <-
 ## 16.4.Parsing_date_and_time
 
 # 17.Text_mining
+
+
+# midterm summary
+
+29. `count(a,b)`  is same as `group_by(a,b) |> summarise(n = n())`
+30. `billboard |> filter(artist == "Jay-Z") |> mutate(accross(`wk1`:`wk2`), ~ replace_na(.,100))` ?
+- use of replace()
+31. 
+```r
+    billboard |> 
+    rowwise() |> 
+    mutate(
+	    weeks_on_chart = sum(!is.na(c_across(`wk1`:`wk76`))) 
+	)
+  ```
+	  `rowwise`
+	  `c_across`
+32. `sum (na.rm = TRUE)` NA should be removed 
