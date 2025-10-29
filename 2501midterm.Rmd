@@ -1,0 +1,226 @@
+---
+title: "2501midterm"
+author: "Sunnie"
+date: "2025-10-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Environment setup
+
+```{r, warning = FALSE}
+# Load the required packages
+# install.packages(c("dslabs", "dplyr", "ggplot2", "lubridate"))
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(stringr)
+```
+
+### Task1: billboard
+
+27. How many colums in this dataset?
+
+    ```{r}
+    install.packages("tidyr") ##the statement in the question is not clear, billboard dataset is from tidyr packsge, instead of bilboard package
+    library(tidyr)
+    data(billboard)
+    ncol(billboard)
+                       
+    ```
+
+28. Refer to the billboard dataset. Which calendar month contains the highest number of entries (tracks) in this dataset?
+
+    ```{r}
+    monthly_count <- billboard |>
+      mutate(
+        date.entered = as.Date(date.entered),
+        month_year = format(date.entered, "%B,%Y") ##ST
+      ) |>
+      count(month_year) |>
+      arrange(desc(n))
+    monthly_count[1, ]
+    ```
+
+    ```{r}
+    ## this is a simple version, recommended
+    billboard |> count(month(date.entered), year(date.entered)) |> arrange(desc(n))
+    ```
+
+29. Refer to the billboard dataset. What is the mean number of songs per artist in the billboard dataset?
+
+    ```{r}
+    billboard |> count(artist) |> summarise(mean = mean(n))
+    ## count returns a dataset, which can not be transferred to mean(takes in an object in a dataset)
+    ```
+
+30. Refer to the billboards dataset. For tracks by Jay-Z appearing in the dataset, which week after realease did they have the highest rank? You can consider `wk1` as the first week after release. For NA entries, you can treat them as rank 100.
+
+    ```{r}
+    billboard |> filter(artist == "Jay-Z") 
+    ```
+
+31. Refer to the billboard dataset. Which artist has the most tracks that stayed for 10 or more weeks in the billboard dataset?
+
+    ```{r}
+    billboard |> rowwise() |> 
+      mutate(
+        weeks_on_chart = sum(!is.na(c_across(`wk1`:`wk76`)))
+      )|> 
+      filter(weeks_on_chart >=10) |> 
+      count(artist) |>
+      arrange(desc(n))
+    ```
+
+32. Refer to the billboard dataset. For tracks that have ever hit top 50 (inclusive) at any point, what are the mean and median number of weeks they remain within top 50 (inclusive). For simplicity, consider any week with a rank of 50 or lower as part of the top 50, regardless of whether the weeks are consecutive.
+
+    ```{r}
+    data <- billboard |> rowwise() |>
+      mutate(
+        top50 = sum(c_across(`wk1`:`wk76`)<=50, na.rm = TRUE)
+      ) |>
+      filter (top50>0)|>
+      rowwise() 
+    mean(data$top50)
+    median(data$top50)
+    ```
+
+### Task2: Nvidia
+
+33. Refer to the Nvidia dataset ([http://www.bio8.cs.hku.hk/comp2501/Nvidia.csv)](http://www.bio8.cs.hku.hk/comp2501/Nvidia.csv)) for the next 6 questions. What was the highest opening price for the Nvidia stock?
+
+    ```{r}
+    library(readr)
+    nvidia <- read_csv("http://www.bio8.cs.hku.hk/comp2501/Nvidia.csv")
+    str(nvidia)
+    max(nvidia$Open)
+    ```
+
+34. Refer to the Nvidia dataset. How many days did Nvidia stock close between 240 and 250 inclusive? Use the column `Close`.
+
+    ```{r}
+    nvidia |> filter(Close >= 240 & Close <= 250) |> nrow()
+    ```
+
+35. Refer to the Nvidia dataset. How many days in the dataset did Nvidia close higher than it opened? Use the 'Close column.
+
+    ```{r}
+    nvidia|> filter(Close > Open) |>nrow()
+    ```
+
+36. Refer to the Nvidia dataset. On which date did Nvidia have the fifth highest opening price in the dataset?
+
+    ```{r}
+    nvidia |> arrange(desc(Open)) |> head(5) 
+    ```
+
+37. Refer to the Nvidia dataset. On which date did we observe the largest difference between the high and low values?
+
+    ```{r}
+    nvidia |> mutate(difference = High - Low) |> arrange(desc(difference)) |> head(1)
+    ##nvidia |> mutate(difference = High - Low) |> arrange(difference) > head(1)
+    ```
+
+38. Refer to the Nvidia dataset. Define daily percentage change of stock price as (closing price of today - closing price of yesterday) / closing price of yesterday. On which date did nvidia stock price undergo the largest absolute percentage change?
+
+    ```{r}
+
+    ```
+
+### Task3: Netfilx
+
+39. Refer to the provided Netflix dataset ([http://www.bio8.cs.hku.hk/comp2501/Netflix.csv)](http://www.bio8.cs.hku.hk/comp2501/Netflix.csv)) for the next 6 questions. How many productions does 'David Fincher' directed?
+
+40. Refer to the provided Netflix dataset. How many movies released after 2015 (inclusive) have a duration between 100 and 120 minutes (inclusive)?
+
+41. Refer to the provided Netflix dataset. How many productions released in 2018 have a cast size of 10 or more actors? (Assume cast size is the number of names listed in the "cast" column, separated by commas.)
+
+42. Refer to the provided Netflix dataset. What is the average SpecialScore for rating TV-14?
+
+43. Refer to the provided Netflix dataset. What is the total number of unique directors in the dataset that have 5 or more works and an average SpecialScore greater than 5?
+
+44. Refer to the provided Netflix dataset. Which country's productions have the highest average SpecialScore?\
+    You can neglect all collaboration works that have two (or more) countries involved. And don't consider countries that have less than 5 productions.
+
+### Task4: vgsales
+
+45. Refer to the provided vgsales dataset ([http://www.bio8.cs.hku.hk/comp2501/vgsales.csv)](http://www.bio8.cs.hku.hk/comp2501/vgsales.csv)) for the next 6 questions. What are the dimensions of the dataset?
+
+46. Refer to the provided vgsales dataset. How many games "ASCII Entertainment" has published?
+
+47. Refer to the provided vgsales dataset. How many games have a rating that signifies that they're a blockbuster game? (Hint: Blockbuster games typically have overall ratings greater than 4)
+
+48. Refer to the provided vgsales dataset. How many games were released by Sony (all publishers that contain "Sony" in their names) in the Playstation console?\
+    Include all Playstation variants that start with "PS", such as "PS", "PS2", "PS3", and "PS4".
+
+49. Refer to the provided vgsales dataset. Analyze how regional sales (NA_Sales, EU_Sales, JP_Sales) are distributed across Publishers, and determine which Publisher has the largest average discrepancy in regional sales, defined as the difference between the best and the worst sales performance across these three regions, over time? Hint: you can use pmax".
+
+50. Analyze the relationship between the platform type, genre, and global sales. Specifically, determine which conbinations of platform and genre has the highest Global_Sales over the years.
+
+### Task5: Walmart
+
+51. Refer to the provided Walmart stockprices dataset (<http://www.bio8.cs.hku.hk/comp2501/walmart.csv>) for the next 6 questions. Plot the stock prices and estimate when Walmart's stock price consistently surpasses \$20 (without falling below that level during any subsequent 12-month period).
+
+52. Refer to the provided Walmart stock prices dataset. Describe the trend of the stock price.
+
+53. Refer to the provided Walmart stock prices dataset. Which year recorded the highest year-over-year percentage increase in stock price? Calculate the increase using the average closing price for each full calendar year.
+
+54. Refer to the provided Walmart stock prices dataset. Consider data from 1973 to 2009 (inclusive), which calendar day has the highest volumes of trades?
+
+55. Refer to the provided Walmart stock prices dataset. Which of the following codes best visualizes the trend of the stock price over time?
+
+    ![](images/clipboard-816785910.png)
+
+56. Refer to the providd Walmart stock prices dataset. Identify the quarter (3-month period: January-March, April-June, etc.) between 1973 and 2009 (inclusive) with the highest volatility in daily closing prices, measured as the standard deviation of daily returns.
+
+    Daily return here is calculated as the percentage change in closing price from the previous day: (today_closing_price - previous_day_closing_price)/previous_day_closing_price.
+
+### Task6: BBC
+
+57. Refer to the BBC Full Text Document (subset) dataset for the following 6 questions. Download the dataset from: <https://drive.google.com/file/d/1dFx7ul%7CPH23A4Hicbh70pLoaPaveu9XL/view?usp=drive_link> and unzip the file, you don't need to do this through R.
+
+    This dataset contains a series of text files, each containing a news report. For each file, the first line/paragraph is the title of the news report, and the following texts are the body (main text) of the report.
+
+    Build an R data.frame based on these text files and include the following columns: file_name, title, main_text. Each row should contain only one news report.
+
+    How many rows does this data.frame contain?
+
+58. Refer to your constructed BBC full text data frame for this question. On average how many paragraphs do these news report have?
+
+    You can treat a series of bullet points as one paragraph. In other words, only texts separated by a blank line are treated as different paragraphs.
+
+59. Refer to your constructed BBC full text data frame for this question. On average how many words do the news report titles contain?
+
+    Hint: use unnest tokens.
+
+60. Refer to your constructed BBC full text data frame for this question. Use the AFINN lexicon to analyze the main texts of these reports. Which report has the most positive sentiment?
+
+    Use 'get_sentiments("afinn") to access the AFINN lexicon. The value column in this lexicon indicates sentiment scores: positive values represent positive sentiment, and negative values represent negative sentiment. You can approximate the sentiment of a report by the average sentiment of the words in its main text.
+
+61. Refer to your constructed BBC full text data frame for this question. Exclude reports longer than 1500 words and plot the distribution of report lengths in number of words. You might notice that the distribution has two modes (local maxima), where is the first/smaller mode located?
+
+# Some system remark
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
