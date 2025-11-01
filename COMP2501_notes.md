@@ -1,5 +1,5 @@
 ## Table of contents
-2. [R Basics](#2.R_basics)
+2. [R Basics](#2.R_basics)!
 3. [Markdown](#3.Markdown)
 4. [Tidyverse](#4.Tidyverse)
 5. [Data.table](#5.Data.table)

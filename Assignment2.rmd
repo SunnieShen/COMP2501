@@ -84,7 +84,7 @@ co2_wide |>
   filter(Year >=1970 & Year <=1975)
 ```
 
-#### 3) (1 point) Use an appropriate graph to plot co2 values of January, April, July, and October across years. Which month has the highest co2 levels?  
+#### 3) (1 point) Use an appropriate graph to plot co2 values of January, April, July, and October across years. Which month has the highest co2 levels?
 
 ```{r}
 month4_long <- co2_long_named |>
@@ -99,7 +99,8 @@ month4_long |>
   summarise(mean_co2 = mean(co2)) |> 
   arrange(desc(mean_co2)) |>
   head(1) |> 
-  Month()
+  pull(Month)
+
 ```
 
 ### 2. (2 points) Perform different types of joins between the following `employees` and `payroll` data frames using the `"emp_id"` column. Use `left_join`, `right_join`, `inner_join`, and `full_join` to create four resulting data frames, name them appropriately. Display the data frame that contains the most rows.
@@ -115,6 +116,19 @@ payroll <- data.frame(
   month = c(1,2,1,1,2,3,1),
   salary = c(95,100,88,76,80,82,70)
 )
+
+left_join_df <- left_join(employees, payroll, by = "emp_id")
+right_join_df <- right_join(employees, payroll, by = "emp_id")
+inner_join_df <- inner_join(employees, payroll, by = "emp_id")
+full_join_df <- full_join(employees, payroll, by = "emp_id")
+
+list_df = list(left_join_df, right_join_df, inner_join_df, full_join_df)
+max_row <- max(sapply(list_df, nrow))
+for(df in list_df){
+  if(nrow(df) == max_row){
+    print(df)
+  }
+}
 ```
 
 ### 3. (2 points) Find the union, intersection, and set difference of the following `df1` and `df2` data frames, and display all resulting data frames. Additionally, calculate the union, intersection, and set difference using only the `"value"` column from both data frames, and show these results as well.
@@ -122,12 +136,47 @@ payroll <- data.frame(
 ```{r}
 df1 <- data.frame(id = c(1, 2, 3, 3, 5), value = c("a", "b", "c", "d", "e"))
 df2 <- data.frame(id = c(3, 4, 5), value = c("a", "f", "e"))
+
+union(df1,df2)
+intersect(df1,df2)
+setdiff(df1,df2)
+setdiff(df2,df1)
+
+union(df1$value,df2$value)
+intersect(df1$value,df2$value)
+setdiff(df1$value,df2$value)
+setdiff(df1$value,df2$value)
 ```
 
 ### 4. (4 points) Use the `rvest` package to scrape the titles, ratings, and prices of books from <https://books.toscrape.com/> (the 20 entries on the first page). Store the scraped data in a data frame named `books` and display the top 5 entries ranked by price (highest to lowest). Refer to this tutorial to learn more about HTML scraping: <https://r4ds.hadley.nz/webscraping.html>.
 
 ```{r}
 url <- "https://books.toscrape.com/"
+html <- read_html(url)
+
+titles <- html |>
+  html_elements("article.product_pod h3 a")|>
+  html_attr("title")
+
+ratings <- html%>%
+  html_elements("article.product_pod p.star-rating") %>%
+  html_attr("class")%>%
+  gsub("star-rating ", "", .) 
+
+prices <- html %>%
+  html_elements("article.product_pod p.price_color") %>%
+  html_text() %>%
+  gsub("£", "", .) %>%
+  as.numeric()
+
+books <- data.frame(
+  Title = titles,
+  Rating_stars = ratings,
+  Price = prices
+)
+
+book <- books |> arrange(desc(Price))
+head(books, 5)
 ```
 
 ### 5. (3 points) Extract entries from the following texts using regular expression:
@@ -136,18 +185,27 @@ url <- "https://books.toscrape.com/"
 
 ```{r}
 text <- "You can reach us through +1(123)456-7890, (+852) 1234 5678, +86-10-12345678."
+pattern <- "\\(?\\+[0-9()\\s-]+\\)?"
+phone_number <- str_extract_all(text, pattern)[[1]]
+phone_number
 ```
 
 #### 2) (1 point) Extract all the email addresses from the following text: "Contact us at [info\@example.com](mailto:info@example.com){.email}, [support\@example.com](mailto:support@example.com){.email}." Note that email addresses may contain letters, numbers, dots, and underscores. Do not include the trailing period (.) in this text example.
 
 ```{r}
 text <- "Contact us at info@example.com or support@example.com."
+pattern <- "[a-z]+@example.com"
+email <- str_extract_all(text, pattern)[[1]]
+email
 ```
 
 #### 3) (1 point) Extract all valid IPv4 addresses from the following texts: "Servers: 192.168.0.1, 10.0.0.5, and 251.0.0.1".
 
 ```{r}
 text <- "Servers: 192.168.0.1, 10.0.0.5, and 251.0.0.1"
+pattern <- "[0-9]+.[0-9]+.[0-9]+.[0-9]+"
+address <- str_extract_all(text, pattern)[[1]]
+address
 ```
 
 ### 6. (2 points) Use the `lubridate` package in R to parse the `"date_time"` column in the `date_data`. Create new columns for year, month, day, hour in Hong Kong time (`"Asia/Hong_Kong"`). You might need to use `mapply` or `sapply` to vectorize the time parse step.
@@ -157,6 +215,17 @@ date_data <- data.frame(date_time = c("2025-09-22 07:30:15 America/New_York",
                                       "2025-09-23 12:15:30 America/Los_Angeles",
                                       "2025-09-24 23:56:50 Europe/London",
                                       "2025-09-25 13:50:05 Asia/Shanghai"))
+
+date_data <- date_data %>%
+  mutate(
+    parsed_datetime = as.POSIXct(date_time, tz = "UTC") %>% with_tz("Asia/Hong_Kong"),
+    year = year(parsed_datetime),
+    month = month(parsed_datetime),
+    day = day(parsed_datetime),
+    hour = hour(parsed_datetime)
+  )
+
+date_data
 ```
 
 ### 7. (7 points) Scrape data from Wikipedia with the `rvest` package, and answer the following questions.
@@ -164,19 +233,61 @@ date_data <- data.frame(date_time = c("2025-09-22 07:30:15 America/New_York",
 #### a. (2 points) Choose a Wikipedia page of your interest (or just use today's featured article). Scrape the first paragraph from the Introduction section of that page. Store the scraped text in a variable and print it.
 
 ```{r}
+url <- "https://en.wikipedia.org/wiki/Quantum_entanglement"
+page <- read_html(url)
 
+paragraphs <- page %>%
+  html_elements("p") %>%
+  html_text() 
+
+first_paragraph <- 
+  paragraphs[grepl("[a-z]", paragraphs)] %>% 
+  ##dismiss the paragraphs without words e.g. "\n\n"
+  .[1]
+first_paragraph
+  
 ```
 
 #### b. (2 points) If there is an image in the page you picked, try to get the image URL of the first image. Please output the full image URL, prepend "https:" if necessary. Download the image and display it using `knitr::include_graphics`.
 
 ```{r}
+image_url <- page |>
+  html_node("img") |>
+  html_attr("src")
 
+if (grepl("^//", image_url)) { 
+  ##prepend "https:" if relative path
+  image_url <- paste0("https:", image_url)
+} else if (grepl("^/", image_url)) {
+  ## prepend base URL if absolute path
+  base_url <- "https://en.wikipedia.org"
+  image_url <- paste0(base_url, image_url)
+}
+
+print(paste("Image URL:", image_url))
+knitr::include_graphics(image_url)
 ```
 
 #### c. (3 points) Visit the Wikipedia page of "Hong Kong" (<https://en.wikipedia.org/wiki/Hong_Kong>) and identify a table that lists monthly climate data (such as average temperatures, precipitation, etc.). Scrape the data and transform it into a data frame by. The first column's header should be named as "Measurement", entries should be "Record high °C (°F)", etc. Following columns' headers should be January, February, etc. (hints: you can use the first row of data as your column headers.)
 
 ```{r}
 url <- "https://en.wikipedia.org/wiki/Hong_Kong"
+page <- read_html(url) 
+tables <- page |>
+  html_nodes("table")
+for (table in tables){
+  table_text <- table |> html_text()
+  if (grepl("Climate data|Averag.*temperature|Precipitation", table_text, ignore.case = TRUE)){
+    climate_table = table
+    break
+  }
+}
+table_df <- climate_table |> html_table()
+new_col_name = c("Measurement", month.name[], "Year")
+table_df <- table_df[-c(1, nrow(table_df)), ]
+colnames(table_df) <- new_col_name
+
+table_df
 ```
 
 ### 8. (10 points) Explore the Twitter US Airline Sentiment dataset (<https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment>). The main data file is provided as `A2_airline_tweets.csv`.
@@ -184,24 +295,82 @@ url <- "https://en.wikipedia.org/wiki/Hong_Kong"
 #### a. (2 points) Load the dataset. Count the number of positive, negative, and neutral tweets (using the `"airline_sentiment"` column) for each airline. Then calculate an `average_score` for each airline using tweets, where a positive tweet is scored as +1, a negative tweet as -1, and a neutral tweet as 0. Rank all airlines by their average scores.
 
 ```{r}
+A2 <- read_csv("A2_airline_tweets.csv")
 
+tweets <- A2 |> group_by(airline) |> count(airline_sentiment) |>
+  pivot_wider(names_from = airline_sentiment, values_from = n)
+
+rank_A2 <- tweets |> 
+  mutate(average_score = (positive - negative)/(positive+negative+neutral))|>
+  arrange(desc(average_score)) 
+
+rank_A2
 ```
 
 #### b. (3 points) Extract the hour of day using the column `tweet_created` (the timestamps were Pacific Standard Time, use `"America/Los_Angeles"` for time zone), and create a line plot showing the proportion of positive and negative tweets across the hours of day (0–23). Do not exclude neutral tweets. When do you see highest proportions of negative tweets?
 
 ```{r}
 
+A2_timed <- A2 |>
+  mutate(
+    #time zone
+    tweet_time = as.POSIXct(tweet_created, tz = "America/Los_Angeles"),
+    hour_of_day = hour(tweet_time)
+  ) |> 
+  select(airline_sentiment, hour_of_day)|>
+  group_by(hour_of_day)|>
+  count(airline_sentiment)
+
+A2_timed_wide <- A2_timed |>
+  pivot_wider(names_from = airline_sentiment, values_from = n) |>
+  mutate(
+    positive_rate = positive/(positive+negative+neutral),
+    negative_rate = negative/(positive+negative+neutral)
+  )
+
+A2_timed_long <- A2_timed_wide |>
+  pivot_longer(c(positive_rate, negative_rate),names_to = "tweet", values_to = "rate")
+
+A2_timed_long |> ggplot(aes(hour_of_day, rate, color = tweet)) +
+  geom_line() +
+  labs(
+    title = "proportion of positive and negative tweets for hours in a day",
+    x = "Hour",
+    y = "proportion", 
+    label = "Type of tweets"
+  )
+
+A2_timed_wide |> 
+  filter(negative_rate == max(A2_timed_wide$negative_rate)) |>
+  select(hour_of_day, negative_rate)
+
 ```
 
 #### c. (2 points) Extract all words from negative tweets using the `text` column. Exclude stop words, pure numbers, and compute the top 20 most frequent words.
 
 ```{r}
-
+negative_comment <- A2 |>
+  filter(airline_sentiment =="negative")|>
+  select(text)
+negative_words <- negative_comment |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(!str_detect(word, "^[0-9]+$")) |>
+  count(word, sort = TRUE)
+head(negative_words,20)
 ```
 
 #### d. (3 points) Use the `nrc` lexicon to assign an emotion category to each word. Calculate the total counts of different emotion categories and sort the categories by their occurrences. Do you find the results counter-intuitive? Inspect the top-occurring words and their related emotion categories, are there any words that you think should be excluded?
 
 ```{r}
+nrc <- get_sentiments("nrc")
+words_with_emotions <- negative_words |>
+  inner_join(nrc, by = "word")
+category <- words_with_emotions |>
+  group_by(sentiment) |>
+  summarise(occurrence = sum(n))|>
+  arrange(desc(occurrence))
+category
 
 ```
 
@@ -210,43 +379,99 @@ url <- "https://en.wikipedia.org/wiki/Hong_Kong"
 #### a. (1 points) Load `gutenberg_metadata` as `books`. Print the number of entries (rows) and variables (columns) of the metadata, as well as the names of all variables in `books`. Print the first 5 rows.
 
 ```{r}
-
+data("gutenberg_metadata")
+books <- gutenberg_metadata
+dim(books) 
+names(books) |> head(5)
 ```
 
 #### b. (2 points) Create a subset of `books` containing only English language books with known authors (excluding "NA", Various" and "Anonymous"), named `english_books`. Then, identify the top 5 authors with the most publications, show their names and number of publications. Store their names in a vector called `top_authors`.
 
 ```{r}
+english_books <- books |>
+  filter(language =="en", 
+         !is.na(author),
+         author != "Various",
+         author != "Anonymous"
+  )
+top_authors <- (english_books |> count(author, sort = TRUE) |> head(5) )$author 
 
 ```
 
 #### c. (3 points) For each author in `top_authors`, find the work in English with the shortest title. If there are ties, use the entry with a smaller "gutenberg_id". Create a subset of `books` containing these five works by the five authors. (Hint: use `slice`, `slice_min`, or `slice_max`.)
 
 ```{r}
-
+shortest_title_df <- english_books|>
+  filter(author %in% top_authors) |>
+  mutate(title_length = str_length(title)) |>
+  group_by(author) |>
+  slice_min(order_by = title_length, n = 1, with_ties = TRUE) |>
+  slice_min(order_by = gutenberg_id, n = 1) 
+short_title_books <- shortest_title_df$title
 ```
 
 #### d. (2 points) Download your favourite book out of the five entries above. Pick Hamlet if you don't have a preference (wait, you don't see Hamlet in the output? Emmm, try part c again). Use `gutenberg_download` to access the texts of the book, named the resulting data frame as `texts`. Join `texts` with the metadata table to append metadata. Remove empty lines that contain no characters, and show line 150-200 of `texts`.
 
 ```{r}
+Hamlet_id <- 1787
+texts <- gutenberg_download(Hamlet_id)
 
+texts_cleaned <- texts |>
+  left_join(gutenberg_metadata, by = "gutenberg_id")|>
+  mutate(
+    text = str_trim(text),
+    char_count = str_length(text)
+  ) |>
+  filter(
+    char_count > 0
+  )
+
+slice(texts_cleaned,150:200)
 ```
 
 #### e. (2 points) Perform sentiment analysis on your book of interest. Use the sentiment lexicon `afinn` through `get_sentiments()` using the `textdata` package, save it as a data frame named `word_sentiments`. Tokenize `texts` of your book of interest into words, remove stop words and numbers, and then map the words to `word_sentiments` using an appropriate join function. You only need to keep words that have corresponding sentiments in `afinn`. Count the occurrences of `word` and their corresponding sentiment `value`, sort the results in a descending order according to the occurrence count (`n`) column. What are the five most frequent words and what are their sentiment values?
 
 ```{r}
+word_sentiments <- get_sentiments("afinn")
 
+tokenized_words <- texts |>
+  unnest_tokens(word, text) |>
+  anti_join(stop_words, by = "word") |>
+  filter(!str_detect(word, "^[0-9]+$")) 
+
+words_with_sentiment <- tokenized_words |>
+  inner_join(word_sentiments, by = "word") |>
+  count(word, value, sort = TRUE)
+
+head(words_with_sentiment, 5)
 ```
 
 #### f. (2 points) Plot a bar plot showing the occurrence counts of different sentiment values. (Hint: use `geom_col`)
 
 ```{r}
-
+words_with_sentiment |> 
+  group_by(value) |>
+  summarise(occurrence = sum(n))|>
+  ggplot(aes(value, occurrence)) +
+  geom_col() 
+  
 ```
 
 #### g. (3 points) Analyze the sentiment progression throughout your book of interest. Group lines in `texts` into 100-line segments, then calculate the average sentiment score for each segment using `word_sentiments`. In this case, do not discard words that have no corresponding sentiment, assign a neutral score of 0. Plot the progression of sentiment across the text using an appropriate graph. You should use line number (instead of segment number) wherever applicable.
 
 ```{r}
+segments <- seq(1, nrow(texts_cleaned), by = 100)
 
+line_sentiments <- texts_cleaned |>
+  unnest_tokens(word, text)|>
+  left_join(word_sentiments, by = "word") |>
+  mutate(value = ifelse(is.na(value), 0, value)) |>
+  group_by(value) |>
+  summarise(
+    line_sentiment = mean(value, na.rm = TRUE),
+    word_count = n()
+  ) |>
+  ungroup()
 ```
 
 #### h. (2 points) Find the 5 most emotionally intense lines, defined as lines with the most amounts of emotional words (absolute of `afinn` score greater or equal than 2). For draws, pick lines that appear towards the end of the text. Show the lines, along with their line numbers and counts of emotional words.
