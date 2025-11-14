@@ -19,9 +19,12 @@ The project proposal submission will be in the form of Moodle quiz, answer the f
 - [ ] topic given
 - [ ] sample report &rarr; logic
 - [ ] constructing your work
-quantum computing stock https://www.kaggle.com/datasets/nourajo/quantum-computing-companies-stock-data/data
-Behavioral Finance and Investment Decision 
-https://www.kaggle.com/datasets/fatihdll/investment-behaviors-of-students-in-metu
+##### idea from Deepseek:
+- 香港人才流失与引入
+	- 格局分析: 总量、结构
+	- 趋势: 时间、净流入、流出?
+	- 匹配度: 人才的专业技能 Vs 香港重点发展的产业需求 &rarr; ? 水土不服? 才高就低
+	- 留存情况分析
 # report 
 • Compose your report in **R Markdown** and knit it into an html page; 
 • Include the data files used in your analysis in the submission, i.e., zip them together; 
