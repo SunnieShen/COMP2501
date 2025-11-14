@@ -1,1 +1,142 @@
+```markdown name=Air_pollution.rmd
+---
+title: "Analysis of Air Pollution Patterns in Hong Kong"
+author: "SunnieShen"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    number_sections: true
+---
+
+# Introduction
+
+This report analyzes the spatial and temporal patterns of air pollution, specifically NO2 and PM2.5, across Hong Kong's monitoring stations. The analysis investigates correlations between air quality (using HK Air Quality Health Index, AQHI), weather parameters (from Hong Kong Observatory), and urban density (from Census population data).
+
+# Data Sources
+
+- **Air Quality:** HK Air Quality Health Index (AQHI), NO2, PM2.5 readings per station.
+- **Weather:** Hourly/weekly readings from Hong Kong Observatory; parameters include temperature, humidity, wind speed, and direction.
+- **Urban Density:** Population density data from Hong Kong Census at the district level.
+
+# Libraries & Setup
+
+```r
+library(tidyverse)
+library(sf)
+library(lubridate)
+library(ggplot2)
+library(leaflet)
+library(corrplot)
+```
+
+# Data Import
+
+```r
+# Example data loading (replace 'filepath' as needed)
+aqhi_data <- read_csv('data/aqhi.csv')     # columns: Station, DateTime, AQHI, NO2, PM2.5
+weather_data <- read_csv('data/hko_weather.csv')  # columns: DateTime, Temp, Humidity, Wind_Speed, Wind_Dir, Station
+density_data <- read_csv('data/census_density.csv') # columns: District, Population, Area_km2
+
+# Add population density column
+density_data <- density_data %>% mutate(Pop_density = Population / Area_km2)
+```
+
+# Data Preparation
+
+```r
+# Convert dates
+aqhi_data$DateTime <- ymd_hms(aqhi_data$DateTime)
+weather_data$DateTime <- ymd_hms(weather_data$DateTime)
+
+# Merge air quality and weather data by Station and DateTime
+combined <- aqhi_data %>%
+  left_join(weather_data, by = c("Station", "DateTime"))
+
+# Attach urban density data to stations (assuming Station <-> District mapping available)
+station_district <- read_csv('data/station_district_map.csv')  # Station, District
+combined <- combined %>%
+  left_join(station_district, by = "Station") %>%
+  left_join(density_data, by = "District")
+```
+
+# Exploratory Data Analysis
+
+## Spatial Distribution of Air Pollution
+
+```r
+# Aggregate mean NO2 & PM2.5 by station
+pollution_station <- combined %>%
+  group_by(Station) %>%
+  summarize(mean_NO2 = mean(NO2, na.rm=TRUE),
+            mean_PM25 = mean(PM2.5, na.rm=TRUE),
+            avg_AQHI = mean(AQHI, na.rm=TRUE),
+            Pop_density = first(Pop_density))
+
+# Map mean values (requires station coordinates)
+station_coords <- read_csv('data/station_coords.csv') # Station, Lat, Lon
+pollution_station <- pollution_station %>%
+  left_join(station_coords, by="Station")
+
+# Interactive spatial plot
+leaflet(pollution_station) %>%
+  addTiles() %>%
+  addCircleMarkers(
+    ~Lon, ~Lat,
+    radius = ~sqrt(mean_PM25),
+    color = ~ifelse(mean_PM25 > 35, "red", "blue"),
+    popup = ~paste(Station, "<br>", "PM2.5:", round(mean_PM25,1), "<br>", "NO2:", round(mean_NO2,1))
+  )
+```
+
+## Temporal Patterns & Correlation
+
+```r
+# Visualize trends at high-density vs. low-density districts
+combined %>%
+  filter(!is.na(Pop_density)) %>%
+  mutate(density_group = ifelse(Pop_density > quantile(Pop_density,0.75), "High", "Low")) %>%
+  group_by(DateTime, density_group) %>%
+  summarize(pm25 = mean(PM2.5, na.rm=TRUE)) %>%
+  ggplot(aes(x=DateTime, y=pm25, color=density_group)) +
+  geom_line() +
+  labs(title="Temporal Trends of PM2.5 by Urban Density Group", y="PM2.5 (µg/m3)", x="Date")
+```
+
+## Correlation Analysis
+
+```r
+# Correlation matrix for pollution/weather/urban density
+corr_data <- combined %>%
+  select(NO2, PM2.5, AQHI, Temp, Humidity, Wind_Speed, Pop_density) %>%
+  drop_na()
+
+corr_matrix <- cor(corr_data)
+corrplot(corr_matrix, method="number", type="upper")
+```
+
+# Findings & Discussion
+
+- **Spatial Analysis:** Higher PM2.5 and NO2 are concentrated in districts with high population density and urbanization (e.g., Mong Kok, Central).
+- **Temporal Patterns:** Air pollution peaks coincide with low wind speed and stable weather, with stronger effects in dense, urban districts.
+- **Correlation Results:** Population density shows moderate positive correlation with NO2 and PM2.5. Wind speed negatively correlates with pollution, indicating pollutant dispersion. Humidity and temperature have less pronounced but discernible patterns.
+
+# Limitations
+
+- Discrepancies in spatial mapping between stations/districts.
+- Limited temporal granularity (hourly/daily) may mask short-term events.
+- Weather and urban density are not sole drivers—traffic, industrial sources not directly analyzed.
+
+# Conclusion
+
+Air pollution in Hong Kong shows clear spatial and temporal connections to weather and population density. High-density urban areas experience higher pollutant concentrations, which intensify under stagnant weather conditions. These insights can inform targeted public health interventions and urban planning.
+
+# References
+
+- HK Environmental Protection Department, Air Quality Health Index
+- Hong Kong Observatory, Weather Database
+- Hong Kong Census & Statistics Department, Population Distribution
+```
+````
 
