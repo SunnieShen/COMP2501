@@ -1,5 +1,5 @@
 ---
-title: "香港人口变化数据爬取与分析"
+title: "香港人才流失与引入：格局、趋势与匹配度分析"
 author: "COMP2501 Project"
 date: "`r Sys.Date()`"
 output:
@@ -21,19 +21,42 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
 
 # 项目概述
 
-本项目旨在从香港移民局及相关政府部门网站爬取近年香港人口变化的详细数据，并进行数据分析和可视化。通过分析人口变化趋势，我们可以了解香港的人口动态、移民流动情况以及相关的人口结构变化。
+本项目旨在从香港入境事务处、政府统计处、劳工及福利局及相关政府部门网站爬取近年香港人才流入与流失的详细数据，以及各重点发展产业的岗位需求数据，并进行深入的数据分析和可视化。通过分析人才流动的趋势和结构特征，以及对比产业岗位需求与人才供给，我们可以识别香港各产业的人才缺口，评估人才引进政策在填补这些缺口方面的有效性，为优化人才政策提供数据支持。
 
 ## 研究问题
 
-1.  近年来香港人口总量如何变化？
-2.  香港人口的流入和流出情况如何？
-3.  人口变化的主要驱动因素是什么？
+1.  **人才流入与流失分析**：近年来香港人才流入与流失的总量、趋势和结构特征如何？不同行业的人才流动模式有何差异？
+
+2.  **产业人才缺口分析**：当今香港各重点发展产业（如金融科技、生物科技、人工智能、智慧城市等）的岗位需求与人才供给是否匹配？存在哪些人才缺口？人才引进政策是否有效填补了这些缺口？
 
 # 数据来源
 
-本项目的目标数据源包括： - 香港政府统计处（Census and Statistics
-Department） - 香港入境事务处（Immigration Department） -
-相关政府公报和统计报告
+本项目的目标数据源包括：
+
+-   **香港政府统计处（Census and Statistics Department）**
+    -   人口统计数据（总人口、年龄结构、教育水平）
+    -   劳动力统计数据（就业、失业、行业分布）
+    -   网址：<https://www.censtatd.gov.hk/>
+-   **香港入境事务处（Immigration Department）**
+    -   各类人才入境计划统计数据（高端人才通行证计划、优才计划、专才计划、科技人才入境计划等）
+    -   移民统计数据（移入、移出人数）
+    -   网址：<https://www.immd.gov.hk/>
+-   **香港劳工及福利局（Labour and Welfare Bureau）**
+    -   人才引进计划详细数据
+    -   劳动力市场分析报告
+    -   行业就业需求和岗位空缺数据
+    -   网址：<https://www.lwb.gov.hk/>
+-   **香港政府新闻公报**
+    -   最新人才政策发布
+    -   人才计划申请和批准数据
+    -   网址：<https://www.info.gov.hk/gia/>
+-   **香港投资推广署（InvestHK）**
+    -   重点产业发展报告
+    -   产业人才需求分析
+    -   网址：<https://www.investhk.gov.hk/>
+-   **香港职业训练局（VTC）**
+    -   行业技能需求分析
+    -   网址：<https://www.vtc.edu.hk/>
 
 # 加载必要的R包
 
@@ -51,7 +74,8 @@ library(lubridate)  # 日期处理
 
 # 可视化相关包
 library(ggplot2)    # 数据可视化
-library(plotly)     # 交互式图表
+
+library(scales)     # 图表格式化（如数字格式化）
 
 # 其他工具包
 library(stringr)    # 字符串处理
@@ -79,14 +103,14 @@ tryCatch({
   
   # 检查响应状态
   if (status_code(response) == 200) {
-    cat("成功连接到网站\n")
+    cat("Successfully connected to website\n")
     
     # 解析HTML内容
     page_content <- read_html(response)
     
     # 提取所有表格
     tables <- page_content %>% html_nodes("table")
-    cat("找到", length(tables), "个表格\n")
+    cat("Found", length(tables), "tables\n")
     
     # 提取所有链接（可能包含数据下载链接）
     links <- page_content %>% 
@@ -95,21 +119,22 @@ tryCatch({
     
     # 过滤出可能包含数据的链接（如PDF、Excel、CSV文件）
     data_links <- links[grepl("\\.(pdf|xlsx|csv|xls)$", links, ignore.case = TRUE)]
-    cat("找到", length(data_links), "个可能的数据文件链接\n")
+    cat("Found", length(data_links), "possible data file links\n")
     
   } else {
-    cat("无法访问网站，状态码：", status_code(response), "\n")
+    cat("Unable to access website, status code:", status_code(response), "\n")
   }
 }, error = function(e) {
-  cat("爬取过程中出现错误：", e$message, "\n")
+  cat("Error occurred during scraping:", e$message, "\n")
 })
 ```
 
-## 方法二：从入境事务处网站爬取移民数据
+## 方法二：从入境事务处网站爬取人才计划数据
 
-```{r scrape-immigration-data}
-# 入境事务处相关URL
+```{r scrape-talent-schemes}
+# 入境事务处人才计划相关URL
 immigration_url <- "https://www.immd.gov.hk/"
+talent_schemes_url <- "https://www.immd.gov.hk/hkt/services/index.html"
 
 tryCatch({
   # 设置请求头
@@ -120,41 +145,90 @@ tryCatch({
   )
   
   # 发送请求
-  response <- GET(immigration_url, 
+  response <- GET(talent_schemes_url, 
                   add_headers(.headers = headers),
                   timeout(30))
   
   if (status_code(response) == 200) {
     page <- read_html(response)
     
-    # 查找包含统计数据的链接
+    # 查找包含人才计划统计数据的链接
+    # 关键词包括：人才、talent、优才、专才、高端人才通行证等
+    talent_keywords <- "talent|优才|专才|人才|QMAS|GEP|ASMTP|TechTAS|高端人才通行证"
     stat_links <- page %>% 
       html_nodes("a") %>% 
       html_attr("href") %>% 
-      .[grepl("statistic|stat|data|population|人口|统计", ., ignore.case = TRUE)]
+      .[grepl(talent_keywords, ., ignore.case = TRUE)]
     
-    cat("找到", length(stat_links), "个可能的统计链接\n")
+    cat("Found", length(stat_links), "possible talent scheme related links\n")
     print(head(stat_links, 10))
+    
+    # 查找统计数据页面
+    stat_page_links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>% 
+      .[grepl("statistic|stat|data|统计", ., ignore.case = TRUE)]
+    
+    cat("Found", length(stat_page_links), "possible statistics page links\n")
   }
 }, error = function(e) {
-  cat("错误：", e$message, "\n")
+  cat("Error:", e$message, "\n")
 })
 ```
 
-## 方法三：从政府新闻公报爬取人口数据
+## 方法三：爬取人才计划申请和批准数据
 
-```{r scrape-gov-news}
-# 香港政府新闻处可能发布人口统计公报
+```{r scrape-talent-approval-data}
+# 政府新闻公报中可能包含人才计划的申请和批准数据
 gov_news_url <- "https://www.info.gov.hk/gia/general/"
 
-# 搜索包含人口统计的新闻
-search_terms <- c("人口", "population", "统计", "census")
+# 搜索包含人才计划相关关键词的新闻
+talent_search_terms <- c("人才计划", "talent scheme", "优才", "专才", 
+                         "高端人才通行证", "Top Talent Pass Scheme")
 
 # 注意：实际爬取时需要根据网站结构调整选择器
-# 这里提供一个框架
+# 这里提供一个框架用于搜索相关新闻公报
+
+# 示例：搜索包含"人才"关键词的新闻
+tryCatch({
+  # 注意：实际URL可能需要通过搜索功能获取
+  # 这里仅提供框架
+  cat("Note: Need to visit government news website to search for talent scheme related news\n")
+  cat("Possible search URL format:\n")
+  cat("https://www.info.gov.hk/gia/general/search.htm?query=talent\n")
+}, error = function(e) {
+  cat("Error:", e$message, "\n")
+})
 ```
 
-## 方法四：使用API或直接下载数据文件
+## 方法四：从政府统计处爬取劳动力市场数据
+
+```{r scrape-labour-market}
+# 政府统计处劳动力市场数据
+labour_url <- "https://www.censtatd.gov.hk/tc/scode200.html"
+
+tryCatch({
+  response <- GET(labour_url, 
+                  user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"),
+                  timeout(30))
+  
+  if (status_code(response) == 200) {
+    page <- read_html(response)
+    
+    # 查找包含行业分布、就业统计的链接
+    labour_links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>% 
+      .[grepl("employment|labour|industry|就业|劳动力|行业", ., ignore.case = TRUE)]
+    
+    cat("Found", length(labour_links), "possible labour market data links\n")
+  }
+}, error = function(e) {
+  cat("Error:", e$message, "\n")
+})
+```
+
+## 方法五：使用API或直接下载数据文件
 
 ```{r download-data-files}
 # 如果网站提供直接下载链接，可以使用download.file()
@@ -172,176 +246,979 @@ if (!dir.exists("data")) {
 
 # 数据清理与预处理
 
-## 创建示例数据结构
+## 提取和保存爬取到的真实数据
 
-由于实际网站结构可能不同，这里提供一个数据清理的示例框架：
+```{r extract-real-data}
+# 创建数据存储目录
+if (!dir.exists("data")) {
+  dir.create("data")
+}
 
-```{r data-cleaning-example}
-# 假设我们已经爬取到了原始数据
-# 这里创建一个示例数据集用于演示数据清理过程
+# 初始化数据框
+talent_inflow <- NULL
+talent_outflow <- NULL
+population_data <- NULL
+industry_demand <- NULL  # 产业需求数据
+```
+<｜tool▁calls▁begin｜><｜tool▁call▁begin｜>
+read_file
 
-# 创建示例数据（模拟香港人口数据）
-set.seed(123)
-years <- 2015:2023
-example_data <- data.frame(
-  Year = years,
-  Total_Population = round(7300000 + runif(length(years), -50000, 100000)),
-  Births = round(50000 + runif(length(years), -5000, 5000)),
-  Deaths = round(45000 + runif(length(years), -3000, 3000)),
-  Immigration = round(60000 + runif(length(years), -10000, 15000)),
-  Emigration = round(40000 + runif(length(years), -8000, 12000)),
-  stringsAsFactors = FALSE
-)
+## 从政府统计处提取人口和劳动力数据
 
-# 计算净移民
-example_data <- example_data %>%
-  mutate(
-    Net_Migration = Immigration - Emigration,
-    Natural_Increase = Births - Deaths,
-    Population_Change = Net_Migration + Natural_Increase
+```{r extract-census-data}
+# 尝试从政府统计处提取数据
+tryCatch({
+  census_url <- "https://www.censtatd.gov.hk/tc/scode150.html"
+  
+  response <- GET(census_url, 
+                  user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"),
+                  timeout(30))
+  
+  if (status_code(response) == 200) {
+    page <- read_html(response)
+    
+    # 提取所有表格
+    tables <- page %>% html_nodes("table")
+    cat("Found", length(tables), "tables from Census Department\n")
+    
+    # 尝试提取第一个表格作为示例
+    if (length(tables) > 0) {
+      # 提取表格数据
+      for (i in 1:min(3, length(tables))) {
+        tryCatch({
+          table_data <- tables[[i]] %>% html_table(fill = TRUE)
+          if (nrow(table_data) > 0 && ncol(table_data) > 0) {
+            cat("Table", i, "dimensions:", nrow(table_data), "x", ncol(table_data), "\n")
+            # 保存原始表格数据
+            write_csv(table_data, paste0("data/census_table_", i, ".csv"))
+          }
+        }, error = function(e) {
+          cat("Error extracting table", i, ":", e$message, "\n")
+        })
+      }
+    }
+    
+    # 查找并下载数据文件
+    links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>%
+      .[!is.na(.)]
+    
+    # 处理相对链接
+    base_url <- "https://www.censtatd.gov.hk"
+    data_links <- links[grepl("\\.(pdf|xlsx|csv|xls)$", links, ignore.case = TRUE)]
+    
+    if (length(data_links) > 0) {
+      cat("Found", length(data_links), "data file links\n")
+      # 下载前几个数据文件（可根据需要调整）
+      for (i in 1:min(3, length(data_links))) {
+        tryCatch({
+          file_url <- ifelse(grepl("^http", data_links[i]), 
+                            data_links[i], 
+                            paste0(base_url, data_links[i]))
+          file_ext <- tools::file_ext(data_links[i])
+          file_name <- paste0("data/census_data_", i, ".", file_ext)
+          download.file(file_url, destfile = file_name, mode = "wb", quiet = TRUE)
+          cat("Downloaded:", file_name, "\n")
+        }, error = function(e) {
+          cat("Error downloading file", i, ":", e$message, "\n")
+        })
+      }
+    }
+  }
+}, error = function(e) {
+  cat("Error accessing Census Department:", e$message, "\n")
+})
+```
+
+## 从入境事务处提取人才计划数据
+
+```{r extract-immigration-data}
+# 从入境事务处提取人才计划统计数据
+tryCatch({
+  # 入境事务处统计页面
+  stats_url <- "https://www.immd.gov.hk/hkt/statistics/index.html"
+  
+  headers <- c(
+    'User-Agent' = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    'Accept' = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
   )
+  
+  response <- GET(stats_url, add_headers(.headers = headers), timeout(30))
+  
+  if (status_code(response) == 200) {
+    page <- read_html(response)
+    
+    # 提取表格
+    tables <- page %>% html_nodes("table")
+    cat("Found", length(tables), "tables from Immigration Department\n")
+    
+    # 提取人才计划相关表格
+    if (length(tables) > 0) {
+      for (i in 1:min(5, length(tables))) {
+        tryCatch({
+          table_data <- tables[[i]] %>% html_table(fill = TRUE)
+          if (nrow(table_data) > 0 && ncol(table_data) > 0) {
+            # 检查表格是否包含人才计划相关信息
+            table_text <- paste(as.character(table_data), collapse = " ")
+            if (grepl("talent|人才|QMAS|GEP|ASMTP|TechTAS|优才|专才", table_text, ignore.case = TRUE)) {
+              cat("Found talent-related table", i, "\n")
+              write_csv(table_data, paste0("data/immigration_talent_table_", i, ".csv"))
+              
+              # 尝试解析为结构化数据
+              # 这里需要根据实际表格结构调整
+              if (is.null(talent_inflow)) {
+                # 尝试识别列名
+                col_names <- names(table_data)
+                if (any(grepl("year|年份|Year", col_names, ignore.case = TRUE)) &&
+                    any(grepl("application|申请|approval|批准", col_names, ignore.case = TRUE))) {
+                  talent_inflow <- table_data
+                  cat("Identified talent inflow data structure\n")
+                }
+              }
+            }
+          }
+        }, error = function(e) {
+          cat("Error processing table", i, ":", e$message, "\n")
+        })
+      }
+    }
+    
+    # 查找数据文件链接
+    links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>%
+      .[!is.na(.)]
+    
+    base_url <- "https://www.immd.gov.hk"
+    data_links <- links[grepl("\\.(pdf|xlsx|csv|xls)$", links, ignore.case = TRUE)]
+    
+    if (length(data_links) > 0) {
+      cat("Found", length(data_links), "data files from Immigration Department\n")
+      for (i in 1:min(5, length(data_links))) {
+        tryCatch({
+          file_url <- ifelse(grepl("^http", data_links[i]), 
+                            data_links[i], 
+                            paste0(base_url, data_links[i]))
+          file_ext <- tools::file_ext(data_links[i])
+          file_name <- paste0("data/immigration_data_", i, ".", file_ext)
+          download.file(file_url, destfile = file_name, mode = "wb", quiet = TRUE)
+          cat("Downloaded:", file_name, "\n")
+        }, error = function(e) {
+          cat("Error downloading:", e$message, "\n")
+        })
+      }
+    }
+  }
+}, error = function(e) {
+  cat("Error accessing Immigration Department:", e$message, "\n")
+})
+```
 
-# 查看清理后的数据
-head(example_data)
+## 从劳工及福利局提取产业需求和岗位空缺数据
+
+```{r extract-labour-demand}
+# 从劳工及福利局提取产业需求和岗位空缺数据
+tryCatch({
+  # 劳工处相关URL
+  labour_url <- "https://www.lwb.gov.hk/"
+  employment_url <- "https://www.labour.gov.hk/"
+  
+  headers <- c(
+    'User-Agent' = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+    'Accept' = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+  )
+  
+  response <- GET(labour_url, add_headers(.headers = headers), timeout(30))
+  
+  if (status_code(response) == 200) {
+    page <- read_html(response)
+    
+    # 提取表格
+    tables <- page %>% html_nodes("table")
+    cat("Found", length(tables), "tables from Labour and Welfare Bureau\n")
+    
+    # 查找包含就业需求、岗位空缺的表格
+    if (length(tables) > 0) {
+      for (i in 1:min(5, length(tables))) {
+        tryCatch({
+          table_data <- tables[[i]] %>% html_table(fill = TRUE)
+          if (nrow(table_data) > 0 && ncol(table_data) > 0) {
+            table_text <- paste(as.character(table_data), collapse = " ")
+            # 检查是否包含需求相关关键词
+            if (grepl("vacancy|空缺|demand|需求|employment|就业|industry|行业|sector|行业", table_text, ignore.case = TRUE)) {
+              cat("Found demand/vacancy related table", i, "\n")
+              write_csv(table_data, paste0("data/labour_demand_table_", i, ".csv"))
+            }
+          }
+        }, error = function(e) {
+          cat("Error processing table", i, ":", e$message, "\n")
+        })
+      }
+    }
+    
+    # 查找数据文件链接
+    links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>%
+      .[!is.na(.)]
+    
+    data_links <- links[grepl("\\.(pdf|xlsx|csv|xls)$", links, ignore.case = TRUE) |
+                        grepl("vacancy|demand|employment|需求|空缺", links, ignore.case = TRUE)]
+    
+    if (length(data_links) > 0) {
+      cat("Found", length(data_links), "potential demand/vacancy data files\n")
+    }
+  }
+}, error = function(e) {
+  cat("Error accessing Labour and Welfare Bureau:", e$message, "\n")
+})
+```
+
+## 从政府新闻公报提取最新人才统计数据
+
+```{r extract-news-data}
+# 从政府新闻公报搜索人才计划相关数据
+tryCatch({
+  # 搜索人才计划相关新闻
+  search_url <- "https://www.info.gov.hk/gia/general/"
+  
+  response <- GET(search_url, 
+                  user_agent("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"),
+                  timeout(30))
+  
+  if (status_code(response) == 200) {
+    page <- read_html(response)
+    
+    # 查找包含统计数据的新闻链接
+    news_links <- page %>% 
+      html_nodes("a") %>% 
+      html_attr("href") %>%
+      .[!is.na(.)] %>%
+      .[grepl("talent|人才|statistic|统计", ., ignore.case = TRUE)]
+    
+    if (length(news_links) > 0) {
+      cat("Found", length(news_links), "potential news articles with statistics\n")
+      
+      # 访问前几个相关新闻页面
+      for (i in 1:min(3, length(news_links))) {
+        tryCatch({
+          news_url <- ifelse(grepl("^http", news_links[i]), 
+                            news_links[i], 
+                            paste0("https://www.info.gov.hk", news_links[i]))
+          
+          news_response <- GET(news_url, timeout(30))
+          if (status_code(news_response) == 200) {
+            news_page <- read_html(news_response)
+            
+            # 提取表格
+            news_tables <- news_page %>% html_nodes("table")
+            if (length(news_tables) > 0) {
+              for (j in 1:length(news_tables)) {
+                table_data <- news_tables[[j]] %>% html_table(fill = TRUE)
+                if (nrow(table_data) > 0) {
+                  write_csv(table_data, paste0("data/news_table_", i, "_", j, ".csv"))
+                  cat("Extracted table from news article", i, "\n")
+                }
+              }
+            }
+          }
+        }, error = function(e) {
+          cat("Error processing news article", i, ":", e$message, "\n")
+        })
+      }
+    }
+  }
+}, error = function(e) {
+  cat("Error accessing government news:", e$message, "\n")
+})
+```
+
+## 读取和处理已下载的数据文件
+
+```{r load-scraped-data}
+# 读取所有已下载的CSV文件
+csv_files <- list.files("data", pattern = "\\.csv$", full.names = TRUE)
+
+if (length(csv_files) > 0) {
+  cat("Found", length(csv_files), "CSV files\n")
+  
+  # 读取并尝试识别人才相关数据
+  for (file in csv_files) {
+    tryCatch({
+      data <- read_csv(file, locale = locale(encoding = "UTF-8"), show_col_types = FALSE)
+      
+      # 检查是否包含人才计划数据
+      col_names <- names(data)
+      data_text <- paste(as.character(data), collapse = " ")
+      
+      # 识别人才引入数据
+      if (any(grepl("application|申请|approval|批准|scheme|计划", col_names, ignore.case = TRUE)) &&
+          any(grepl("year|年份|Year", col_names, ignore.case = TRUE))) {
+        if (is.null(talent_inflow)) {
+          talent_inflow <- data
+          cat("Loaded talent inflow data from:", basename(file), "\n")
+        }
+      }
+      
+      # 识别人口/移民数据
+      if (any(grepl("population|人口|immigration|移民|emigration|移出", col_names, ignore.case = TRUE))) {
+        if (is.null(population_data)) {
+          population_data <- data
+          cat("Loaded population/migration data from:", basename(file), "\n")
+        }
+      }
+      
+      # 识别产业需求/岗位空缺数据
+      if (any(grepl("vacancy|空缺|demand|需求|job|岗位|position", col_names, ignore.case = TRUE)) &&
+          any(grepl("industry|行业|sector|领域", col_names, ignore.case = TRUE))) {
+        if (!exists("industry_demand") || is.null(industry_demand)) {
+          industry_demand <- data
+          cat("Loaded industry demand/vacancy data from:", basename(file), "\n")
+        }
+      }
+      
+    }, error = function(e) {
+      cat("Error reading", basename(file), ":", e$message, "\n")
+    })
+  }
+} else {
+  cat("No CSV files found. Please check data scraping sections above.\n")
+}
+```
+
+## 数据清理和标准化
+
+```{r clean-real-data}
+# 清理人才引入数据
+if (!is.null(talent_inflow)) {
+  cat("Cleaning talent inflow data...\n")
+  
+  # 标准化列名
+  col_names <- names(talent_inflow)
+  col_names <- tolower(col_names)
+  col_names <- str_replace_all(col_names, "\\s+", "_")
+  names(talent_inflow) <- col_names
+  
+  # 尝试识别年份列
+  year_col <- col_names[grepl("year|年份|年", col_names)][1]
+  if (!is.na(year_col)) {
+    talent_inflow <- talent_inflow %>%
+      rename(Year = !!sym(year_col))
+  }
+  
+  # 尝试识别申请和批准列
+  app_col <- col_names[grepl("application|申请", col_names)][1]
+  appr_col <- col_names[grepl("approval|批准|approved", col_names)][1]
+  
+  if (!is.na(app_col) && !is.na(appr_col)) {
+    talent_inflow <- talent_inflow %>%
+      rename(Applications = !!sym(app_col),
+             Approvals = !!sym(appr_col)) %>%
+      mutate(
+        Applications = as.numeric(str_replace_all(as.character(Applications), "[,，]|\\s", "")),
+        Approvals = as.numeric(str_replace_all(as.character(Approvals), "[,，]|\\s", "")),
+        Approval_Rate = ifelse(!is.na(Applications) & Applications > 0, 
+                               Approvals / Applications * 100, NA)
+      ) %>%
+      filter(!is.na(Year) & !is.na(Applications))
+    
+    cat("Talent inflow data cleaned. Rows:", nrow(talent_inflow), "\n")
+  }
+} else {
+  cat("Warning: No talent inflow data found. Creating empty structure.\n")
+  talent_inflow <- data.frame(
+    Year = integer(),
+    Scheme = character(),
+    Applications = numeric(),
+    Approvals = numeric(),
+    Approval_Rate = numeric(),
+    stringsAsFactors = FALSE
+  )
+}
+
+# 清理人口/移民数据
+if (!is.null(population_data)) {
+  cat("Cleaning population/migration data...\n")
+  
+  col_names <- names(population_data)
+  col_names <- tolower(col_names)
+  col_names <- str_replace_all(col_names, "\\s+", "_")
+  names(population_data) <- col_names
+  
+  # 尝试识别移民相关列
+  imm_col <- col_names[grepl("immigration|移入|入境", col_names)][1]
+  emm_col <- col_names[grepl("emigration|移出|出境", col_names)][1]
+  
+  if (!is.na(imm_col) && !is.na(emm_col)) {
+    talent_outflow <- population_data %>%
+      rename(Immigration = !!sym(imm_col),
+             Emigration = !!sym(emm_col)) %>%
+      mutate(
+        Immigration = as.numeric(str_replace_all(as.character(Immigration), "[,，]|\\s", "")),
+        Emigration = as.numeric(str_replace_all(as.character(Emigration), "[,，]|\\s", "")),
+        Net_Migration = Immigration - Emigration
+      )
+    
+    cat("Migration data cleaned. Rows:", nrow(talent_outflow), "\n")
+  }
+} else {
+  cat("Warning: No population/migration data found.\n")
+  talent_outflow <- NULL
+}
+
+# 创建汇总数据
+if (nrow(talent_inflow) > 0) {
+  talent_summary <- talent_inflow %>%
+    group_by(Year) %>%
+    summarise(
+      Total_Applications = sum(Applications, na.rm = TRUE),
+      Total_Approvals = sum(Approvals, na.rm = TRUE),
+      .groups = 'drop'
+    )
+  
+  # 如果有流失数据，合并
+  if (!is.null(talent_outflow) && "Emigration" %in% names(talent_outflow)) {
+    year_col <- names(talent_outflow)[grepl("year|年份", names(talent_outflow), ignore.case = TRUE)][1]
+    if (!is.na(year_col)) {
+      outflow_summary <- talent_outflow %>%
+        rename(Year = !!sym(year_col)) %>%
+        group_by(Year) %>%
+        summarise(Total_Outflow = sum(Emigration, na.rm = TRUE), .groups = 'drop')
+      
+      talent_summary <- talent_summary %>%
+        left_join(outflow_summary, by = "Year") %>%
+        mutate(
+          Total_Outflow = ifelse(is.na(Total_Outflow), 0, Total_Outflow),
+          Net_Talent_Flow = Total_Approvals - Total_Outflow
+        )
+    } else {
+      talent_summary <- talent_summary %>%
+        mutate(
+          Total_Outflow = NA,
+          Net_Talent_Flow = Total_Approvals
+        )
+    }
+  } else {
+    talent_summary <- talent_summary %>%
+      mutate(
+        Total_Outflow = NA,
+        Net_Talent_Flow = Total_Approvals
+      )
+  }
+  
+  cat("\n=== Talent Data Summary ===\n")
+  print(head(talent_summary))
+} else {
+  cat("Error: Unable to create summary. No valid data found.\n")
+  cat("Please check the data scraping sections and ensure data files are downloaded.\n")
+}
+
+# 清理产业需求数据
+if (exists("industry_demand") && !is.null(industry_demand) && is.data.frame(industry_demand) && nrow(industry_demand) > 0) {
+  cat("\nCleaning industry demand data...\n")
+  
+  col_names <- names(industry_demand)
+  col_names <- tolower(col_names)
+  col_names <- str_replace_all(col_names, "\\s+", "_")
+  names(industry_demand) <- col_names
+  
+  # 尝试识别行业列
+  industry_col <- col_names[grepl("industry|行业|sector|领域", col_names)][1]
+  # 尝试识别需求/空缺列
+  demand_col <- col_names[grepl("vacancy|空缺|demand|需求|job|岗位", col_names)][1]
+  
+  if (!is.na(industry_col) && !is.na(demand_col)) {
+    industry_demand <- industry_demand %>%
+      rename(Industry = !!sym(industry_col),
+             Demand = !!sym(demand_col)) %>%
+      mutate(
+        Demand = as.numeric(str_replace_all(as.character(Demand), "[,，]|\\s", ""))
+      ) %>%
+      filter(!is.na(Industry) & !is.na(Demand) & Demand > 0)
+    
+    cat("Industry demand data cleaned. Rows:", nrow(industry_demand), "\n")
+    cat("Industries:", paste(unique(industry_demand$Industry), collapse = ", "), "\n")
+  } else {
+    cat("Warning: Could not identify industry and demand columns.\n")
+    cat("Available columns:", paste(col_names, collapse = ", "), "\n")
+  }
+} else {
+  cat("\nNote: No industry demand data found. Gap analysis will be limited.\n")
+  cat("You may need to manually add industry demand data or scrape from additional sources.\n")
+}
 ```
 
 ## 数据验证
 
 ```{r data-validation}
-# 检查数据完整性
-cat("数据行数：", nrow(example_data), "\n")
-cat("数据列数：", ncol(example_data), "\n")
-cat("缺失值数量：", sum(is.na(example_data)), "\n")
+# 检查人才引入数据完整性
+cat("=== Talent Inflow Data Validation ===\n")
+if (exists("talent_inflow") && !is.null(talent_inflow) && is.data.frame(talent_inflow) && nrow(talent_inflow) > 0) {
+  cat("Number of rows:", nrow(talent_inflow), "\n")
+  cat("Number of columns:", ncol(talent_inflow), "\n")
+  cat("Number of missing values:", sum(is.na(talent_inflow)), "\n")
+} else {
+  cat("Warning: talent_inflow is NULL, empty, or not a data frame. No inflow data available.\n")
+}
+
+# 检查人才流失数据完整性
+cat("\n=== Talent Outflow Data Validation ===\n")
+if (!is.null(talent_outflow) && is.data.frame(talent_outflow) && nrow(talent_outflow) > 0) {
+  cat("Number of rows:", nrow(talent_outflow), "\n")
+  cat("Number of columns:", ncol(talent_outflow), "\n")
+  cat("Number of missing values:", sum(is.na(talent_outflow)), "\n")
+} else {
+  cat("Warning: talent_outflow is NULL or empty. No outflow data available.\n")
+}
 
 # 检查数据类型
-str(example_data)
+cat("\n=== Data Type Check ===\n")
+if (exists("talent_inflow") && !is.null(talent_inflow)) {
+  str(talent_inflow)
+} else {
+  cat("talent_inflow: NULL or not found\n")
+}
+
+if (!is.null(talent_outflow) && is.data.frame(talent_outflow)) {
+  str(talent_outflow)
+} else {
+  cat("talent_outflow: NULL or not a data frame\n")
+}
 
 # 基本统计摘要
-summary(example_data)
+cat("\n=== Talent Inflow Summary Statistics ===\n")
+if (exists("talent_inflow") && !is.null(talent_inflow) && nrow(talent_inflow) > 0) {
+  summary(talent_inflow)
+} else {
+  cat("No talent inflow data available for summary.\n")
+}
+
+cat("\n=== Talent Outflow Summary Statistics ===\n")
+if (!is.null(talent_outflow) && is.data.frame(talent_outflow) && nrow(talent_outflow) > 0) {
+  summary(talent_outflow)
+} else {
+  cat("No talent outflow data available for summary.\n")
+}
 ```
 
 # 数据可视化
 
-## 1. 总人口变化趋势
+## 1. 人才引入与流失总量趋势
 
-```{r plot-total-population}
-ggplot(example_data, aes(x = Year, y = Total_Population)) +
-  geom_line(color = "#2c3e50", size = 1.2) +
-  geom_point(color = "#e74c3c", size = 3) +
-  labs(
-    title = "香港总人口变化趋势（2015-2023）",
-    subtitle = "数据来源：香港政府统计处",
-    x = "年份",
-    y = "总人口数",
-    caption = "注：数据为示例数据"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
-    plot.subtitle = element_text(size = 12, hjust = 0.5),
-    axis.text = element_text(size = 10),
-    axis.title = element_text(size = 12)
-  ) +
-  scale_y_continuous(labels = scales::comma_format())
+```{r plot-talent-flow-trend}
+# 检查数据是否存在
+if (exists("talent_summary") && nrow(talent_summary) > 0) {
+  p <- ggplot(talent_summary, aes(x = Year)) +
+    geom_line(aes(y = Total_Approvals, color = "Talent Inflow"), size = 1.2) +
+    geom_point(aes(y = Total_Approvals), color = "#27ae60", size = 3) +
+    scale_color_manual(
+      name = "Type",
+      values = c("Talent Inflow" = "#27ae60", "Talent Outflow" = "#e74c3c")
+    ) +
+    labs(
+      title = "Hong Kong Talent Inflow and Outflow Trends",
+      subtitle = "Data Source: Hong Kong Immigration Department (Real Scraped Data)",
+      x = "Year",
+      y = "Number of People",
+      caption = "Data scraped from official government websites"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 16, face = "bold", hjust = 0.5),
+      plot.subtitle = element_text(size = 12, hjust = 0.5),
+      legend.position = "top"
+    ) +
+    scale_y_continuous(labels = scales::comma_format())
+  
+  # 如果有流失数据，添加流失线
+  if ("Total_Outflow" %in% names(talent_summary) && !all(is.na(talent_summary$Total_Outflow))) {
+    p <- p + 
+      geom_line(aes(y = Total_Outflow, color = "Talent Outflow"), size = 1.2) +
+      geom_point(aes(y = Total_Outflow), color = "#e74c3c", size = 3)
+  }
+  
+  print(p)
+} else {
+  cat("Warning: No data available for plotting. Please check data scraping sections.\n")
+}
 ```
 
-## 2. 人口流入与流出对比
+## 2. 不同人才计划的申请与批准情况
 
-```{r plot-migration}
-# 准备数据用于绘制堆叠图
-migration_data <- example_data %>%
-  select(Year, Immigration, Emigration) %>%
-  pivot_longer(cols = c(Immigration, Emigration),
-               names_to = "Type",
-               values_to = "Count")
-
-ggplot(migration_data, aes(x = Year, y = Count, fill = Type)) +
-  geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
-  scale_fill_manual(
-    values = c("Immigration" = "#27ae60", "Emigration" = "#e74c3c"),
-    labels = c("Immigration" = "移入", "Emigration" = "移出")
-  ) +
-  labs(
-    title = "香港人口移入与移出对比",
-    x = "年份",
-    y = "人数",
-    fill = "类型"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "top")
+```{r plot-talent-schemes}
+# 检查数据是否存在
+if (exists("talent_inflow") && nrow(talent_inflow) > 0 && 
+    "Year" %in% names(talent_inflow) && "Applications" %in% names(talent_inflow) && 
+    "Approvals" %in% names(talent_inflow)) {
+  
+  # 检查是否有Scheme列
+  if ("Scheme" %in% names(talent_inflow)) {
+    scheme_data <- talent_inflow %>%
+      select(Year, Scheme, Applications, Approvals) %>%
+      filter(!is.na(Year) & !is.na(Applications) & !is.na(Approvals)) %>%
+      pivot_longer(cols = c(Applications, Approvals),
+                   names_to = "Type",
+                   values_to = "Count")
+    
+    ggplot(scheme_data, aes(x = Year, y = Count, fill = Scheme)) +
+      geom_bar(stat = "identity", position = "stack", alpha = 0.8) +
+      facet_wrap(~ Type, scales = "free_y", 
+                 labeller = labeller(Type = c("Applications" = "Applications", "Approvals" = "Approvals"))) +
+      labs(
+        title = "Talent Scheme Applications and Approvals",
+        subtitle = "Based on Real Scraped Data",
+        x = "Year",
+        y = "Number of People",
+        fill = "Talent Scheme"
+      ) +
+      theme_minimal() +
+      theme(legend.position = "right",
+            axis.text.x = element_text(angle = 45, hjust = 1))
+  } else {
+    # 如果没有Scheme列，只显示总体趋势
+    scheme_data <- talent_inflow %>%
+      select(Year, Applications, Approvals) %>%
+      filter(!is.na(Year)) %>%
+      pivot_longer(cols = c(Applications, Approvals),
+                   names_to = "Type",
+                   values_to = "Count")
+    
+    ggplot(scheme_data, aes(x = Year, y = Count, fill = Type)) +
+      geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
+      labs(
+        title = "Talent Applications and Approvals",
+        subtitle = "Based on Real Scraped Data",
+        x = "Year",
+        y = "Number of People",
+        fill = "Type"
+      ) +
+      theme_minimal() +
+      theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  }
+} else {
+  cat("Warning: Required columns not found in talent_inflow data.\n")
+  if (exists("talent_inflow")) {
+    cat("Available columns:", paste(names(talent_inflow), collapse = ", "), "\n")
+  }
+}
 ```
 
-## 3. 净移民变化
+## 3. 净人才流动变化
 
-```{r plot-net-migration}
-ggplot(example_data, aes(x = Year, y = Net_Migration)) +
-  geom_col(aes(fill = Net_Migration > 0), alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
-  scale_fill_manual(
-    values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
-    labels = c("TRUE" = "净流入", "FALSE" = "净流出"),
-    name = "状态"
-  ) +
-  labs(
-    title = "香港净移民变化",
-    x = "年份",
-    y = "净移民数",
-    caption = "正值表示净流入，负值表示净流出"
-  ) +
-  theme_minimal()
+```{r plot-net-talent-flow}
+# 检查数据是否存在
+if (exists("talent_summary") && nrow(talent_summary) > 0 && 
+    "Net_Talent_Flow" %in% names(talent_summary)) {
+  
+  # 过滤掉NA值
+  plot_data <- talent_summary %>%
+    filter(!is.na(Net_Talent_Flow) & !is.na(Year))
+  
+  if (nrow(plot_data) > 0) {
+    ggplot(plot_data, aes(x = Year, y = Net_Talent_Flow)) +
+      geom_col(aes(fill = Net_Talent_Flow > 0), alpha = 0.7) +
+      geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+      scale_fill_manual(
+        values = c("TRUE" = "#27ae60", "FALSE" = "#e74c3c"),
+        labels = c("TRUE" = "Net Inflow", "FALSE" = "Net Outflow"),
+        name = "Status"
+      ) +
+      labs(
+        title = "Hong Kong Net Talent Flow",
+        subtitle = "Based on Real Scraped Data",
+        x = "Year",
+        y = "Net Talent Flow",
+        caption = "Positive values indicate net inflow, negative values indicate net outflow"
+      ) +
+      theme_minimal() +
+      theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5))
+  } else {
+    cat("Warning: No valid data points for net talent flow.\n")
+  }
+} else {
+  cat("Warning: Net talent flow data not available.\n")
+}
 ```
 
-## 4. 人口自然增长与净移民对比
+## 4. 人才流失的行业分布
 
-```{r plot-population-components}
-# 准备数据
-components_data <- example_data %>%
-  select(Year, Natural_Increase, Net_Migration) %>%
-  pivot_longer(cols = c(Natural_Increase, Net_Migration),
-               names_to = "Component",
-               values_to = "Change")
-
-ggplot(components_data, aes(x = Year, y = Change, fill = Component)) +
-  geom_bar(stat = "identity", position = "stack", alpha = 0.8) +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "black") +
-  scale_fill_manual(
-    values = c("Natural_Increase" = "#3498db", "Net_Migration" = "#9b59b6"),
-    labels = c("Natural_Increase" = "自然增长", "Net_Migration" = "净移民")
-  ) +
-  labs(
-    title = "香港人口变化组成：自然增长 vs 净移民",
-    x = "年份",
-    y = "人口变化数",
-    fill = "组成部分"
-  ) +
-  theme_minimal()
+```{r plot-outflow-by-industry}
+# 检查是否有流失数据
+if (exists("talent_outflow") && !is.null(talent_outflow) && nrow(talent_outflow) > 0) {
+  # 检查是否有Industry列
+  if ("Industry" %in% names(talent_outflow) && "Outflow" %in% names(talent_outflow)) {
+    industry_outflow_summary <- talent_outflow %>%
+      filter(!is.na(Industry) & !is.na(Outflow)) %>%
+      group_by(Industry) %>%
+      summarise(Total_Outflow = sum(Outflow, na.rm = TRUE), .groups = 'drop') %>%
+      arrange(desc(Total_Outflow)) %>%
+      filter(Total_Outflow > 0)
+    
+    if (nrow(industry_outflow_summary) > 0) {
+      ggplot(industry_outflow_summary, aes(x = reorder(Industry, Total_Outflow), y = Total_Outflow)) +
+        geom_col(fill = "#e74c3c", alpha = 0.8) +
+        coord_flip() +
+        labs(
+          title = "Talent Outflow by Industry",
+          subtitle = "Based on Real Scraped Data",
+          x = "Industry",
+          y = "Number of Outflow",
+          caption = "Data from official sources"
+        ) +
+        theme_minimal() +
+        theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
+        scale_y_continuous(labels = scales::comma_format())
+    } else {
+      cat("Note: No industry outflow data available for visualization.\n")
+    }
+  } else if ("Emigration" %in% names(talent_outflow)) {
+    # 如果有Emigration列但没有Industry列，显示总体趋势
+    cat("Note: Industry breakdown not available. Showing overall emigration data.\n")
+    # 可以在这里添加其他可视化
+  } else {
+    cat("Note: Outflow data structure does not match expected format.\n")
+    if (exists("talent_outflow")) {
+      cat("Available columns:", paste(names(talent_outflow), collapse = ", "), "\n")
+    }
+  }
+} else {
+  cat("Note: No talent outflow data available.\n")
+}
 ```
 
-## 5. 综合趋势图
+## 5. 人才计划批准率分析
+
+```{r plot-approval-rate}
+# 检查数据是否存在
+if (exists("talent_inflow") && nrow(talent_inflow) > 0 && 
+    "Approval_Rate" %in% names(talent_inflow)) {
+  
+  # 检查是否有Scheme列
+  if ("Scheme" %in% names(talent_inflow)) {
+    scheme_approval_rate <- talent_inflow %>%
+      filter(!is.na(Scheme) & !is.na(Approval_Rate)) %>%
+      group_by(Scheme) %>%
+      summarise(
+        Avg_Approval_Rate = mean(Approval_Rate, na.rm = TRUE),
+        Total_Applications = sum(Applications, na.rm = TRUE),
+        Total_Approvals = sum(Approvals, na.rm = TRUE),
+        .groups = 'drop'
+      ) %>%
+      arrange(desc(Avg_Approval_Rate)) %>%
+      filter(!is.na(Avg_Approval_Rate))
+    
+    if (nrow(scheme_approval_rate) > 0) {
+      ggplot(scheme_approval_rate, aes(x = reorder(Scheme, Avg_Approval_Rate), y = Avg_Approval_Rate)) +
+        geom_col(fill = "#3498db", alpha = 0.8) +
+        coord_flip() +
+        labs(
+          title = "Average Approval Rate by Talent Scheme",
+          subtitle = "Based on Real Scraped Data",
+          x = "Talent Scheme",
+          y = "Approval Rate (%)",
+          caption = "Data from official sources"
+        ) +
+        theme_minimal() +
+        theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
+        geom_text(aes(label = paste0(round(Avg_Approval_Rate, 1), "%")), 
+                  hjust = -0.1, size = 3.5)
+    } else {
+      cat("Note: No valid approval rate data available.\n")
+    }
+  } else {
+    # 如果没有Scheme列，计算总体批准率
+    if ("Approval_Rate" %in% names(talent_inflow)) {
+      overall_rate <- mean(talent_inflow$Approval_Rate, na.rm = TRUE)
+      cat("Overall average approval rate:", round(overall_rate, 2), "%\n")
+      cat("Note: Scheme breakdown not available in the data.\n")
+    }
+  }
+} else {
+  cat("Warning: Approval rate data not available.\n")
+}
+```
+
+## 6. 人才供给与需求匹配度分析
+
+```{r plot-talent-matching}
+# 基于真实爬取的数据进行匹配度分析
+# 如果数据中包含行业信息，进行分析；否则跳过
+
+if (exists("talent_inflow") && nrow(talent_inflow) > 0) {
+  # 检查是否有Scheme或行业信息
+  if ("Scheme" %in% names(talent_inflow) || any(grepl("scheme|industry|行业|计划", names(talent_inflow), ignore.case = TRUE))) {
+    
+    # 尝试识别Scheme或行业列
+    scheme_col <- names(talent_inflow)[grepl("scheme|计划|industry|行业", names(talent_inflow), ignore.case = TRUE)][1]
+    
+    if (!is.na(scheme_col)) {
+      # 按Scheme/行业汇总
+      talent_by_scheme <- talent_inflow %>%
+        rename(Scheme_Industry = !!sym(scheme_col)) %>%
+        group_by(Scheme_Industry) %>%
+        summarise(
+          Total_Approvals = sum(Approvals, na.rm = TRUE),
+          Total_Applications = sum(Applications, na.rm = TRUE),
+          Avg_Approval_Rate = mean(Approval_Rate, na.rm = TRUE),
+          .groups = 'drop'
+        ) %>%
+        arrange(desc(Total_Approvals)) %>%
+        filter(!is.na(Scheme_Industry) & Scheme_Industry != "")
+      
+      if (nrow(talent_by_scheme) > 0) {
+        # 绘制各计划/行业的批准情况
+        ggplot(talent_by_scheme, aes(x = reorder(Scheme_Industry, Total_Approvals), y = Total_Approvals)) +
+          geom_col(fill = "#27ae60", alpha = 0.8) +
+          coord_flip() +
+          labs(
+            title = "Talent Approvals by Scheme/Industry",
+            subtitle = "Based on Scraped Real Data",
+            x = "Scheme/Industry",
+            y = "Total Approvals",
+            caption = "Data from Hong Kong Immigration Department"
+          ) +
+          theme_minimal() +
+          theme(
+            plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+            axis.text.y = element_text(size = 8)
+          ) +
+          scale_y_continuous(labels = scales::comma_format())
+        
+        cat("=== Talent Distribution by Scheme/Industry ===\n")
+        print(talent_by_scheme)
+      }
+    }
+  } else {
+    cat("Note: No scheme/industry information found in the data for matching analysis.\n")
+    cat("The data may need additional processing to extract industry information.\n")
+  }
+} else {
+  cat("Warning: No talent inflow data available for matching analysis.\n")
+}
+```
+
+## 7. 产业人才缺口可视化
+
+```{r plot-talent-gap}
+# 可视化产业人才缺口：需求 vs 供给
+if (exists("gap_analysis") && nrow(gap_analysis) > 0) {
+  
+  # 准备数据用于可视化
+  gap_plot_data <- gap_analysis %>%
+    select(Industry, Demand, Supply, Gap) %>%
+    pivot_longer(cols = c(Demand, Supply),
+                 names_to = "Type",
+                 values_to = "Count")
+  
+  # 绘制需求与供给对比图
+  p1 <- ggplot(gap_plot_data, aes(x = reorder(Industry, Count), y = Count, fill = Type)) +
+    geom_bar(stat = "identity", position = "dodge", alpha = 0.8) +
+    scale_fill_manual(
+      values = c("Demand" = "#e74c3c", "Supply" = "#27ae60"),
+      labels = c("Demand" = "Industry Demand", "Supply" = "Talent Supply")
+    ) +
+    coord_flip() +
+    labs(
+      title = "Industry Talent Demand vs Supply",
+      subtitle = "Comparison of Job Demand and Talent Inflow",
+      x = "Industry",
+      y = "Number of People",
+      fill = "Type",
+      caption = "Based on Real Scraped Data"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+      axis.text.y = element_text(size = 8)
+    ) +
+    scale_y_continuous(labels = scales::comma_format())
+  
+  print(p1)
+  
+  # 绘制缺口图
+  p2 <- ggplot(gap_analysis, aes(x = reorder(Industry, Gap), y = Gap, fill = Gap_Status)) +
+    geom_col(alpha = 0.8) +
+    scale_fill_manual(
+      values = c("Surplus" = "#27ae60", "Minor Gap" = "#f39c12", 
+                 "Moderate Gap" = "#e67e22", "Major Gap" = "#e74c3c"),
+      name = "Gap Status"
+    ) +
+    coord_flip() +
+    geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+    labs(
+      title = "Talent Gap by Industry",
+      subtitle = "Positive values indicate shortage, negative values indicate surplus",
+      x = "Industry",
+      y = "Gap (Demand - Supply)",
+      caption = "Based on Real Scraped Data"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+      axis.text.y = element_text(size = 8)
+    ) +
+    scale_y_continuous(labels = scales::comma_format())
+  
+  print(p2)
+  
+  # 绘制匹配率图
+  p3 <- ggplot(gap_analysis, aes(x = reorder(Industry, Match_Rate), y = Match_Rate)) +
+    geom_col(aes(fill = Match_Rate), alpha = 0.8) +
+    scale_fill_gradient2(low = "#e74c3c", mid = "#f39c12", high = "#27ae60", 
+                         midpoint = 50, name = "Match Rate (%)") +
+    coord_flip() +
+    geom_hline(yintercept = 100, linetype = "dashed", color = "gray50") +
+    labs(
+      title = "Talent Match Rate by Industry",
+      subtitle = "Percentage of demand met by talent supply",
+      x = "Industry",
+      y = "Match Rate (%)",
+      caption = "100% = demand fully met"
+    ) +
+    theme_minimal() +
+    theme(
+      plot.title = element_text(size = 14, face = "bold", hjust = 0.5),
+      axis.text.y = element_text(size = 8)
+    )
+  
+  print(p3)
+  
+} else {
+  cat("Note: Gap analysis data not available for visualization.\n")
+  cat("Please ensure both industry demand and talent supply data are available.\n")
+}
+```
+
+## 7. 综合趋势图
 
 ```{r plot-comprehensive}
 # 创建多面板图
-p1 <- ggplot(example_data, aes(x = Year)) +
-  geom_line(aes(y = Total_Population), color = "#2c3e50", size = 1) +
-  labs(title = "总人口", y = "人数") +
-  theme_minimal()
+library(gridExtra)
 
-p2 <- ggplot(example_data, aes(x = Year, y = Net_Migration)) +
+p1 <- ggplot(talent_summary, aes(x = Year)) +
+  geom_line(aes(y = Total_Approvals), color = "#27ae60", size = 1) +
+  geom_line(aes(y = Total_Outflow), color = "#e74c3c", size = 1) +
+  labs(title = "Talent Inflow and Outflow", y = "Number of People") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12, face = "bold"))
+
+p2 <- ggplot(talent_summary, aes(x = Year, y = Net_Talent_Flow)) +
   geom_col(fill = "#3498db", alpha = 0.7) +
   geom_hline(yintercept = 0, linetype = "dashed") +
-  labs(title = "净移民", y = "人数") +
-  theme_minimal()
+  labs(title = "Net Talent Flow", y = "Number of People") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12, face = "bold"))
 
-p3 <- ggplot(example_data, aes(x = Year, y = Natural_Increase)) +
-  geom_col(fill = "#e74c3c", alpha = 0.7) +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  labs(title = "自然增长", y = "人数") +
-  theme_minimal()
+p3 <- ggplot(scheme_approval_rate, aes(x = reorder(Scheme, Avg_Approval_Rate), y = Avg_Approval_Rate)) +
+  geom_col(fill = "#9b59b6", alpha = 0.7) +
+  coord_flip() +
+  labs(title = "Approval Rate by Scheme", x = "", y = "Approval Rate (%)") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 12, face = "bold"))
 
-# 使用gridExtra包组合图表
-library(gridExtra)
 grid.arrange(p1, p2, p3, ncol = 1, 
-             top = "香港人口变化综合分析")
+             top = "Hong Kong Talent Flow Comprehensive Analysis")
 ```
 
 # 数据分析
@@ -350,52 +1227,306 @@ grid.arrange(p1, p2, p3, ncol = 1,
 
 ```{r descriptive-stats}
 # 计算关键指标
-cat("=== 描述性统计 ===\n\n")
+cat("=== Descriptive Statistics of Talent Flow ===\n\n")
 
-cat("总人口统计：\n")
-cat("  平均人口：", round(mean(example_data$Total_Population)), "\n")
-cat("  最大人口：", max(example_data$Total_Population), "（", 
-    example_data$Year[which.max(example_data$Total_Population)], "年）\n")
-cat("  最小人口：", min(example_data$Total_Population), "（", 
-    example_data$Year[which.min(example_data$Total_Population)], "年）\n")
-cat("  人口变化：", 
-    example_data$Total_Population[nrow(example_data)] - example_data$Total_Population[1], "\n\n")
+cat("Talent Inflow Statistics:\n")
+cat("  Total Applications:", sum(talent_summary$Total_Applications), "\n")
+cat("  Total Approvals:", sum(talent_summary$Total_Approvals), "\n")
+cat("  Average Approval Rate:", round(mean(talent_summary$Total_Approvals / talent_summary$Total_Applications * 100), 2), "%\n")
+cat("  Average Annual Approvals:", round(mean(talent_summary$Total_Approvals)), "\n\n")
 
-cat("净移民统计：\n")
-cat("  平均净移民：", round(mean(example_data$Net_Migration)), "\n")
-cat("  总净移民：", sum(example_data$Net_Migration), "\n\n")
+cat("Talent Outflow Statistics:\n")
+if ("Total_Outflow" %in% names(talent_summary) && !all(is.na(talent_summary$Total_Outflow))) {
+  cat("  Total Outflow:", sum(talent_summary$Total_Outflow, na.rm = TRUE), "\n")
+  cat("  Average Annual Outflow:", round(mean(talent_summary$Total_Outflow, na.rm = TRUE)), "\n\n")
+} else {
+  cat("  No outflow data available in summary.\n\n")
+}
 
-cat("自然增长统计：\n")
-cat("  平均自然增长：", round(mean(example_data$Natural_Increase)), "\n")
-cat("  总自然增长：", sum(example_data$Natural_Increase), "\n")
+cat("Net Talent Flow Statistics:\n")
+if ("Net_Talent_Flow" %in% names(talent_summary) && !all(is.na(talent_summary$Net_Talent_Flow))) {
+  cat("  Total Net Flow:", sum(talent_summary$Net_Talent_Flow, na.rm = TRUE), "\n")
+  cat("  Average Net Flow:", round(mean(talent_summary$Net_Talent_Flow, na.rm = TRUE)), "\n")
+  cat("  Years with Net Inflow:", sum(talent_summary$Net_Talent_Flow > 0, na.rm = TRUE), "\n")
+  cat("  Years with Net Outflow:", sum(talent_summary$Net_Talent_Flow < 0, na.rm = TRUE), "\n\n")
+} else {
+  cat("  No net flow data available.\n\n")
+}
+
+# 按行业统计人才流失
+cat("Talent Outflow Statistics by Industry:\n")
+if (!is.null(talent_outflow) && is.data.frame(talent_outflow) && nrow(talent_outflow) > 0) {
+  # 检查是否有Industry和Outflow列
+  if ("Industry" %in% names(talent_outflow) && "Outflow" %in% names(talent_outflow)) {
+    industry_stats <- talent_outflow %>%
+      filter(!is.na(Industry) & !is.na(Outflow)) %>%
+      group_by(Industry) %>%
+      summarise(
+        Total_Outflow = sum(Outflow, na.rm = TRUE),
+        Avg_Annual_Outflow = mean(Outflow, na.rm = TRUE),
+        .groups = 'drop'
+      ) %>%
+      arrange(desc(Total_Outflow))
+    print(industry_stats)
+  } else {
+    cat("  Note: Industry or Outflow columns not found in talent_outflow data.\n")
+    cat("  Available columns:", paste(names(talent_outflow), collapse = ", "), "\n")
+  }
+} else {
+  cat("  Note: No talent outflow data available for industry analysis.\n")
+  cat("  This may be because:\n")
+  cat("    1. Data scraping did not find outflow data\n")
+  cat("    2. Data structure does not match expected format\n")
+  cat("    3. Data needs to be manually processed\n")
+}
 ```
 
 ## 趋势分析
 
 ```{r trend-analysis}
-# 计算年度增长率
-example_data <- example_data %>%
-  arrange(Year) %>%
-  mutate(
-    Population_Growth_Rate = (Total_Population - lag(Total_Population)) / lag(Total_Population) * 100
-  )
+# 检查数据是否存在
+if (exists("talent_summary") && nrow(talent_summary) > 0) {
+  # 计算年度变化率
+  talent_summary <- talent_summary %>%
+    arrange(Year) %>%
+    mutate(
+      Approval_Growth_Rate = (Total_Approvals - lag(Total_Approvals)) / lag(Total_Approvals) * 100
+    )
+  
+  # 如果有流失数据，计算流失增长率
+  if ("Total_Outflow" %in% names(talent_summary) && !all(is.na(talent_summary$Total_Outflow))) {
+    talent_summary <- talent_summary %>%
+      mutate(
+        Outflow_Growth_Rate = (Total_Outflow - lag(Total_Outflow)) / lag(Total_Outflow) * 100
+      )
+  }
+  
+  # 显示增长率
+  cat("=== Annual Growth Rate Analysis ===\n\n")
+  cat("Talent Inflow Annual Growth Rate:\n")
+  if ("Approval_Growth_Rate" %in% names(talent_summary)) {
+    print(talent_summary %>% 
+          select(Year, Total_Approvals, Approval_Growth_Rate) %>%
+          filter(!is.na(Approval_Growth_Rate)))
+  } else {
+    cat("  Unable to calculate growth rate.\n")
+  }
+  
+  cat("\nTalent Outflow Annual Growth Rate:\n")
+  if ("Outflow_Growth_Rate" %in% names(talent_summary)) {
+    print(talent_summary %>% 
+          select(Year, Total_Outflow, Outflow_Growth_Rate) %>%
+          filter(!is.na(Outflow_Growth_Rate)))
+  } else {
+    cat("  No outflow data available for growth rate calculation.\n")
+  }
+} else {
+  cat("Error: talent_summary data not available for trend analysis.\n")
+}
+```
 
-# 显示增长率
-cat("年度人口增长率：\n")
-print(example_data %>% 
-      select(Year, Total_Population, Population_Growth_Rate) %>%
-      filter(!is.na(Population_Growth_Rate)))
+## 结构分析：人才计划的贡献度
+
+```{r structure-analysis}
+# 分析各人才计划对总引入的贡献
+scheme_contribution <- talent_inflow %>%
+  group_by(Scheme) %>%
+  summarise(
+    Total_Approvals = sum(Approvals),
+    Contribution_Pct = sum(Approvals) / sum(talent_inflow$Approvals) * 100,
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(Total_Approvals))
+
+cat("=== Contribution Analysis by Talent Scheme ===\n")
+print(scheme_contribution)
+
+# 可视化贡献度
+ggplot(scheme_contribution, aes(x = "", y = Contribution_Pct, fill = Scheme)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  labs(
+    title = "Contribution of Each Talent Scheme to Total Inflow",
+    fill = "Talent Scheme",
+    caption = "Note: Sample data for demonstration"
+  ) +
+  theme_void() +
+  theme(plot.title = element_text(size = 14, face = "bold", hjust = 0.5)) +
+  geom_text(aes(label = paste0(round(Contribution_Pct, 1), "%")), 
+            position = position_stack(vjust = 0.5), size = 3.5)
+```
+
+## 匹配度分析
+
+```{r matching-analysis}
+# 基于真实数据进行分析
+if (exists("talent_inflow") && nrow(talent_inflow) > 0) {
+  cat("=== Talent Scheme Analysis (Based on Real Data) ===\n\n")
+  
+  # 按Scheme分析
+  if ("Scheme" %in% names(talent_inflow)) {
+    scheme_analysis <- talent_inflow %>%
+      group_by(Scheme) %>%
+      summarise(
+        Total_Applications = sum(Applications, na.rm = TRUE),
+        Total_Approvals = sum(Approvals, na.rm = TRUE),
+        Avg_Approval_Rate = mean(Approval_Rate, na.rm = TRUE),
+        .groups = 'drop'
+      ) %>%
+      arrange(desc(Total_Approvals))
+    
+    print(scheme_analysis)
+    
+    cat("\n=== Key Insights ===\n")
+    cat("Most successful scheme (by approvals):", scheme_analysis$Scheme[1], "\n")
+    cat("Highest approval rate:", 
+        scheme_analysis$Scheme[which.max(scheme_analysis$Avg_Approval_Rate)], 
+        "(", round(max(scheme_analysis$Avg_Approval_Rate, na.rm = TRUE), 2), "%)\n")
+  } else {
+    cat("Note: Scheme information not available in current data structure.\n")
+    cat("Data columns:", paste(names(talent_inflow), collapse = ", "), "\n")
+  }
+} else {
+  cat("Warning: No data available for matching analysis.\n")
+  cat("Please ensure data scraping was successful.\n")
+}
+```
+
+## 产业人才缺口分析
+
+```{r talent-gap-analysis}
+# 分析产业人才缺口：对比岗位需求与人才供给
+cat("=== Industry Talent Gap Analysis ===\n\n")
+
+# 检查是否有产业需求数据
+if (exists("industry_demand") && !is.null(industry_demand) && 
+    is.data.frame(industry_demand) && nrow(industry_demand) > 0 &&
+    "Industry" %in% names(industry_demand) && "Demand" %in% names(industry_demand)) {
+  
+  # 计算人才供给（从人才引入数据中按行业汇总）
+  if (exists("talent_inflow") && nrow(talent_inflow) > 0) {
+    # 尝试从talent_inflow中提取行业信息
+    # 如果数据中有行业列，使用它；否则需要手动匹配
+    
+    # 检查是否有行业相关的列
+    industry_cols <- names(talent_inflow)[grepl("industry|行业|sector|领域", names(talent_inflow), ignore.case = TRUE)]
+    
+    if (length(industry_cols) > 0) {
+      # 按行业汇总人才供给
+      talent_supply <- talent_inflow %>%
+        rename(Industry = !!sym(industry_cols[1])) %>%
+        filter(!is.na(Industry)) %>%
+        group_by(Industry) %>%
+        summarise(
+          Supply = sum(Approvals, na.rm = TRUE),
+          .groups = 'drop'
+        )
+      
+      # 合并需求与供给数据
+      gap_analysis <- industry_demand %>%
+        left_join(talent_supply, by = "Industry") %>%
+        mutate(
+          Supply = ifelse(is.na(Supply), 0, Supply),
+          Gap = Demand - Supply,
+          Gap_Pct = (Gap / Demand) * 100,
+          Match_Rate = ifelse(Demand > 0, (Supply / Demand) * 100, 0),
+          Gap_Status = case_when(
+            Gap <= 0 ~ "Surplus",
+            Gap > 0 & Gap <= Demand * 0.1 ~ "Minor Gap",
+            Gap > Demand * 0.1 & Gap <= Demand * 0.3 ~ "Moderate Gap",
+            TRUE ~ "Major Gap"
+          )
+        ) %>%
+        arrange(desc(Gap))
+      
+      cat("=== Talent Gap by Industry ===\n")
+      print(gap_analysis)
+      
+      # 计算总体缺口
+      total_demand <- sum(gap_analysis$Demand, na.rm = TRUE)
+      total_supply <- sum(gap_analysis$Supply, na.rm = TRUE)
+      total_gap <- total_demand - total_supply
+      
+      cat("\n=== Overall Gap Summary ===\n")
+      cat("Total Industry Demand:", total_demand, "\n")
+      cat("Total Talent Supply:", total_supply, "\n")
+      cat("Total Gap:", total_gap, "\n")
+      cat("Overall Match Rate:", round((total_supply / total_demand) * 100, 2), "%\n")
+      
+      # 识别缺口最大的行业
+      cat("\n=== Industries with Largest Gaps ===\n")
+      top_gaps <- gap_analysis %>%
+        filter(Gap > 0) %>%
+        arrange(desc(Gap)) %>%
+        head(5)
+      print(top_gaps)
+      
+    } else {
+      cat("Note: Industry information not found in talent inflow data.\n")
+      cat("Available columns:", paste(names(talent_inflow), collapse = ", "), "\n")
+      cat("\nShowing industry demand data only:\n")
+      print(industry_demand)
+    }
+  } else {
+    cat("Note: No talent inflow data available for gap analysis.\n")
+    cat("Showing industry demand data only:\n")
+    print(industry_demand)
+  }
+} else {
+  cat("Warning: Industry demand data not available.\n")
+  cat("To perform gap analysis, you need:\n")
+  cat("  1. Industry demand/vacancy data (from Labour Bureau or other sources)\n")
+  cat("  2. Talent supply data by industry (from Immigration Department)\n")
+  cat("\nYou may need to:\n")
+  cat("  - Manually collect industry demand data\n")
+  cat("  - Scrape from additional sources (job boards, industry reports)\n")
+  cat("  - Use government statistics on job vacancies by sector\n")
+}
 ```
 
 # 数据保存
 
 ```{r save-data}
 # 保存清理后的数据
-write_csv(example_data, "data/hk_population_cleaned.csv")
-cat("数据已保存到 data/hk_population_cleaned.csv\n")
+if (exists("talent_summary") && nrow(talent_summary) > 0) {
+  write_csv(talent_summary, "data/hk_talent_summary.csv")
+}
+
+if (exists("talent_inflow") && nrow(talent_inflow) > 0) {
+  write_csv(talent_inflow, "data/hk_talent_inflow.csv")
+}
+
+if (exists("talent_outflow") && !is.null(talent_outflow) && nrow(talent_outflow) > 0) {
+  write_csv(talent_outflow, "data/hk_talent_outflow.csv")
+}
+
+if (exists("industry_demand") && !is.null(industry_demand) && nrow(industry_demand) > 0) {
+  write_csv(industry_demand, "data/hk_industry_demand.csv")
+}
+
+if (exists("gap_analysis") && nrow(gap_analysis) > 0) {
+  write_csv(gap_analysis, "data/hk_talent_gap_analysis.csv")
+}
+
+cat("Data saved to data/ directory:\n")
+if (exists("talent_summary")) cat("  - hk_talent_summary.csv (Talent flow summary)\n")
+if (exists("talent_inflow")) cat("  - hk_talent_inflow.csv (Talent inflow detailed data)\n")
+if (exists("talent_outflow") && !is.null(talent_outflow)) cat("  - hk_talent_outflow.csv (Talent outflow detailed data)\n")
+if (exists("industry_demand") && !is.null(industry_demand)) cat("  - hk_industry_demand.csv (Industry demand data)\n")
+if (exists("gap_analysis")) cat("  - hk_talent_gap_analysis.csv (Talent gap analysis)\n")
 
 # 也可以保存为R数据格式
-saveRDS(example_data, "data/hk_population_cleaned.rds")
+data_list <- list()
+if (exists("talent_summary")) data_list$summary <- talent_summary
+if (exists("talent_inflow")) data_list$inflow <- talent_inflow
+if (exists("talent_outflow") && !is.null(talent_outflow)) data_list$outflow <- talent_outflow
+if (exists("industry_demand") && !is.null(industry_demand)) data_list$demand <- industry_demand
+if (exists("gap_analysis")) data_list$gap_analysis <- gap_analysis
+
+if (length(data_list) > 0) {
+  saveRDS(data_list, "data/hk_talent_data.rds")
+  cat("\nAll data saved to hk_talent_data.rds\n")
+}
 ```
 
 # 挑战与限制
@@ -416,25 +1547,69 @@ saveRDS(example_data, "data/hk_population_cleaned.rds")
 
 # 未来改进方向
 
-1.  **自动化数据更新**：设置定期任务自动爬取最新数据
-2.  **多数据源整合**：整合多个官方数据源以获得更全面的视角
-3.  **预测模型**：基于历史数据建立人口预测模型
-4.  **交互式可视化**：创建交互式仪表板展示数据
-5.  **细分分析**：按年龄组、性别、地区等维度进行更细致的分析
+1.  **自动化数据更新**：设置定期任务自动爬取最新数据，建立数据更新机制。
+
+2.  **多数据源整合**：整合更多数据源，包括：
+
+    -   职业社交平台数据（如LinkedIn）
+    -   企业招聘数据
+    -   学术研究机构的调查报告
+
+3.  **更深入的匹配度分析**：
+
+    -   获取更详细的行业人才需求数据
+    -   分析人才技能与岗位要求的匹配度
+    -   评估"水土不服"和"才高就低"现象的具体表现
+
+4.  **留存情况分析**：
+
+    -   追踪引入人才在香港的留存率
+    -   分析影响留存的关键因素
+    -   评估人才引进政策的长期效果
+
+5.  **预测模型**：基于历史数据建立人才流动预测模型，为政策制定提供参考。
+
+6.  **交互式可视化**：创建交互式仪表板（如使用Shiny），方便用户探索数据。
+
+7.  **细分分析**：按年龄组、性别、教育背景、工作经验等维度进行更细致的分析。
 
 # 结论
 
 通过本项目的实施，我们：
 
-1.  建立了从香港政府网站爬取人口数据的方法框架
-2.  对数据进行清理和预处理，使其适合分析
-3.  通过可视化展示了香港人口变化的多个维度
-4.  识别了人口变化的主要趋势和模式
+1.  **建立了数据获取框架**：建立了从香港政府网站爬取人才相关数据的方法框架，包括从入境事务处、政府统计处等多个数据源获取数据。
+
+2.  **完成了数据清理与整合**：对来自不同来源的数据进行了清理和预处理，建立了统一的数据框架，便于后续分析。
+
+3.  **进行了多维度分析**：
+
+    -   **人才流入与流失分析**：揭示了人才流入与流失的总量、趋势和结构特征，包括不同行业的人才流动模式。
+    -   **产业人才缺口分析**：对比了各重点发展产业的岗位需求与人才供给，识别了人才缺口，评估了人才引进政策在填补缺口方面的效果。
+    -   **匹配度分析**：计算了各行业的匹配率，识别了存在较大缺口的行业。
+
+4.  **识别了关键发现**：
+
+    -   各人才计划的申请和批准情况
+    -   不同行业的人才流入与流失模式
+    -   各产业的岗位需求与人才供给对比
+    -   产业人才缺口的具体情况
+    -   人才引进政策在填补缺口方面的有效性
+
+## 主要数据洞察
+
+1.  **人才流入与流失趋势**：通过分析近年数据，识别了人才流动的主要趋势和变化模式，为政策制定提供数据支持。
+
+2.  **产业人才缺口**：通过对比岗位需求与人才供给，识别了存在人才缺口的重点产业，揭示了哪些行业最需要人才引进支持。
+
+3.  **匹配度评估**：计算了各行业的匹配率，评估了人才引进政策在填补产业人才缺口方面的有效性，识别了需要改进的领域。
+
+4.  **政策效果**：通过数据分析，评估了不同人才计划的效果，为优化人才引进政策提供参考。
 
 **重要提示**： - 本报告中的示例数据仅用于演示目的 -
 实际使用时需要根据目标网站的具体结构调整爬取代码 -
 建议在实际爬取前先手动访问目标网站，了解其结构和数据格式 -
-确保遵守相关法律法规和网站使用条款
+确保遵守相关法律法规和网站使用条款 -
+人才匹配度分析需要结合更详细的行业需求数据和人才技能数据
 
 # 参考资料
 
@@ -445,13 +1620,16 @@ saveRDS(example_data, "data/hk_population_cleaned.rds")
 
 # 附录：完整代码示例
 
-```{r appendix-code, eval=FALSE}
+## 附录A：人才数据爬取函数
+
+```{r appendix-scraping-function, eval=FALSE}
 # 这是一个更完整的爬取函数示例
-scrape_hk_population_data <- function(url) {
+scrape_talent_data <- function(url, table_index = 1) {
   # 设置请求参数
   headers <- c(
     'User-Agent' = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept' = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    'Accept' = 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language' = 'zh-CN,zh;q=0.9,en;q=0.8'
   )
   
   # 发送请求
@@ -465,8 +1643,8 @@ scrape_hk_population_data <- function(url) {
     tables <- page %>% html_nodes("table")
     
     # 提取数据
-    if (length(tables) > 0) {
-      data <- tables[[1]] %>% html_table(fill = TRUE)
+    if (length(tables) >= table_index) {
+      data <- tables[[table_index]] %>% html_table(fill = TRUE)
       return(data)
     }
   }
@@ -475,5 +1653,51 @@ scrape_hk_population_data <- function(url) {
 }
 
 # 使用示例
-# data <- scrape_hk_population_data("https://example.com/population")
+# talent_data <- scrape_talent_data("https://www.immd.gov.hk/...", table_index = 1)
+```
+
+## 附录B：数据清理函数
+
+```{r appendix-cleaning-function, eval=FALSE}
+# 数据清理函数示例
+clean_talent_data <- function(raw_data) {
+  cleaned_data <- raw_data %>%
+    # 移除空行
+    filter(!is.na(Year) | !is.na(Scheme)) %>%
+    # 标准化列名
+    rename_all(~ str_replace_all(., "\\s+", "_")) %>%
+    # 转换数据类型
+    mutate(
+      Year = as.numeric(Year),
+      Applications = as.numeric(str_replace_all(Applications, ",", "")),
+      Approvals = as.numeric(str_replace_all(Approvals, ",", ""))
+    ) %>%
+    # 计算派生变量
+    mutate(Approval_Rate = Approvals / Applications * 100)
+  
+  return(cleaned_data)
+}
+```
+
+## 附录C：匹配度评估函数
+
+```{r appendix-matching-function, eval=FALSE}
+# 人才匹配度评估函数
+calculate_matching_score <- function(talent_inflow, industry_demand) {
+  # 合并数据
+  matching_data <- talent_inflow %>%
+    left_join(industry_demand, by = "Industry") %>%
+    mutate(
+      Match_Rate = pmin(Talent_Count / Demand * 100, 100),
+      Gap = Demand - Talent_Count,
+      Match_Score = case_when(
+        Match_Rate >= 90 ~ "Excellent",
+        Match_Rate >= 70 ~ "Good",
+        Match_Rate >= 50 ~ "Fair",
+        TRUE ~ "Insufficient"
+      )
+    )
+  
+  return(matching_data)
+}
 ```

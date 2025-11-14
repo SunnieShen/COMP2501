@@ -1,0 +1,6 @@
+Industry,Talent_Inflow,Industry_Demand,Match_Rate,Gap
+FinTech,8000,10000,80,2000
+Biotech,5000,6000,83.33333333333334,1000
+AI,6000,8000,75,2000
+Smart City,4000,5000,80,1000
+Others,10000,8000,100,-2000
