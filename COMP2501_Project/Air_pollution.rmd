@@ -1,4 +1,3 @@
-```markdown name=Air_pollution.rmd
 ---
 title: "Analysis of Air Pollution Patterns in Hong Kong"
 author: "SunnieShen"
@@ -16,13 +15,13 @@ This report analyzes the spatial and temporal patterns of air pollution, specifi
 
 # Data Sources
 
-- **Air Quality:** HK Air Quality Health Index (AQHI), NO2, PM2.5 readings per station.
-- **Weather:** Hourly/weekly readings from Hong Kong Observatory; parameters include temperature, humidity, wind speed, and direction.
-- **Urban Density:** Population density data from Hong Kong Census at the district level.
+-   **Air Quality:** HK Air Quality Health Index (AQHI), NO2, PM2.5 readings per station.
+-   **Weather:** Hourly/weekly readings from Hong Kong Observatory; parameters include temperature, humidity, wind speed, and direction.
+-   **Urban Density:** Population density data from Hong Kong Census at the district level.
 
 # Libraries & Setup
 
-```r
+``` r
 library(tidyverse)
 library(sf)
 library(lubridate)
@@ -33,7 +32,7 @@ library(corrplot)
 
 # Data Import
 
-```r
+``` r
 # Example data loading (replace 'filepath' as needed)
 aqhi_data <- read_csv('data/aqhi.csv')     # columns: Station, DateTime, AQHI, NO2, PM2.5
 weather_data <- read_csv('data/hko_weather.csv')  # columns: DateTime, Temp, Humidity, Wind_Speed, Wind_Dir, Station
@@ -45,7 +44,7 @@ density_data <- density_data %>% mutate(Pop_density = Population / Area_km2)
 
 # Data Preparation
 
-```r
+``` r
 # Convert dates
 aqhi_data$DateTime <- ymd_hms(aqhi_data$DateTime)
 weather_data$DateTime <- ymd_hms(weather_data$DateTime)
@@ -65,7 +64,7 @@ combined <- combined %>%
 
 ## Spatial Distribution of Air Pollution
 
-```r
+``` r
 # Aggregate mean NO2 & PM2.5 by station
 pollution_station <- combined %>%
   group_by(Station) %>%
@@ -92,7 +91,7 @@ leaflet(pollution_station) %>%
 
 ## Temporal Patterns & Correlation
 
-```r
+``` r
 # Visualize trends at high-density vs. low-density districts
 combined %>%
   filter(!is.na(Pop_density)) %>%
@@ -106,7 +105,7 @@ combined %>%
 
 ## Correlation Analysis
 
-```r
+``` r
 # Correlation matrix for pollution/weather/urban density
 corr_data <- combined %>%
   select(NO2, PM2.5, AQHI, Temp, Humidity, Wind_Speed, Pop_density) %>%
@@ -118,15 +117,15 @@ corrplot(corr_matrix, method="number", type="upper")
 
 # Findings & Discussion
 
-- **Spatial Analysis:** Higher PM2.5 and NO2 are concentrated in districts with high population density and urbanization (e.g., Mong Kok, Central).
-- **Temporal Patterns:** Air pollution peaks coincide with low wind speed and stable weather, with stronger effects in dense, urban districts.
-- **Correlation Results:** Population density shows moderate positive correlation with NO2 and PM2.5. Wind speed negatively correlates with pollution, indicating pollutant dispersion. Humidity and temperature have less pronounced but discernible patterns.
+-   **Spatial Analysis:** Higher PM2.5 and NO2 are concentrated in districts with high population density and urbanization (e.g., Mong Kok, Central).
+-   **Temporal Patterns:** Air pollution peaks coincide with low wind speed and stable weather, with stronger effects in dense, urban districts.
+-   **Correlation Results:** Population density shows moderate positive correlation with NO2 and PM2.5. Wind speed negatively correlates with pollution, indicating pollutant dispersion. Humidity and temperature have less pronounced but discernible patterns.
 
 # Limitations
 
-- Discrepancies in spatial mapping between stations/districts.
-- Limited temporal granularity (hourly/daily) may mask short-term events.
-- Weather and urban density are not sole drivers—traffic, industrial sources not directly analyzed.
+-   Discrepancies in spatial mapping between stations/districts.
+-   Limited temporal granularity (hourly/daily) may mask short-term events.
+-   Weather and urban density are not sole drivers—traffic, industrial sources not directly analyzed.
 
 # Conclusion
 
@@ -134,9 +133,6 @@ Air pollution in Hong Kong shows clear spatial and temporal connections to weath
 
 # References
 
-- HK Environmental Protection Department, Air Quality Health Index
-- Hong Kong Observatory, Weather Database
-- Hong Kong Census & Statistics Department, Population Distribution
-```
-````
-
+-   HK Environmental Protection Department, Air Quality Health Index
+-   Hong Kong Observatory, Weather Database
+-   Hong Kong Census & Statistics Department, Population Distribution

@@ -89,31 +89,28 @@ library(jsonlite)   # JSON数据处理（如果数据是JSON格式）
 
 ### 主要数据源URL：
 
-1. **一般就业政策（GEP）统计页面** - 包含按行业类别的获批数据
-   - URL: https://www.immd.gov.hk/hkt/statistics/stat_gep.html
-   - 数据内容：按行业类别（如艺术/文化、学术研究和教育、康乐和体育等）统计的获批人数
-   - 数据格式：HTML表格
-
-2. **优才计划（QMAS）统计页面**
-   - URL: https://www.immd.gov.hk/hkt/statistics/stat_qmas.html
-   - 数据内容：优才计划的申请和获批数据
-   - 数据格式：HTML表格
-
-3. **入境事务处主统计页面**
-   - URL: https://www.immd.gov.hk/hkt/statistics/index.html
-   - 数据内容：各类人才计划的汇总统计
-   - 数据格式：HTML表格、PDF、Excel文件
-
-4. **政府统计处劳动力统计**
-   - URL: https://www.censtatd.gov.hk/tc/scode200.html
-   - 数据内容：按行业分类的就业数据
-   - 数据格式：HTML表格、数据文件
+1.  **一般就业政策（GEP）统计页面** - 包含按行业类别的获批数据
+    -   URL: <https://www.immd.gov.hk/hkt/statistics/stat_gep.html>
+    -   数据内容：按行业类别（如艺术/文化、学术研究和教育、康乐和体育等）统计的获批人数
+    -   数据格式：HTML表格
+2.  **优才计划（QMAS）统计页面**
+    -   URL: <https://www.immd.gov.hk/hkt/statistics/stat_qmas.html>
+    -   数据内容：优才计划的申请和获批数据
+    -   数据格式：HTML表格
+3.  **入境事务处主统计页面**
+    -   URL: <https://www.immd.gov.hk/hkt/statistics/index.html>
+    -   数据内容：各类人才计划的汇总统计
+    -   数据格式：HTML表格、PDF、Excel文件
+4.  **政府统计处劳动力统计**
+    -   URL: <https://www.censtatd.gov.hk/tc/scode200.html>
+    -   数据内容：按行业分类的就业数据
+    -   数据格式：HTML表格、数据文件
 
 ### 数据特点：
 
-- **一般就业政策（GEP）**数据通常包含最详细的行业分布信息
-- 行业类别包括：其他行业、艺术/文化、学术研究和教育、康乐和体育等
-- 数据按年度和行业类别统计获批人数
+-   **一般就业政策（GEP）**数据通常包含最详细的行业分布信息
+-   行业类别包括：其他行业、艺术/文化、学术研究和教育、康乐和体育等
+-   数据按年度和行业类别统计获批人数
 
 ## 方法一：从香港政府统计处网站爬取
 
