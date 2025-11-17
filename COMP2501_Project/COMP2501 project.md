@@ -14,12 +14,20 @@ The project proposal submission will be in the form of Moodle quiz, answer the f
 	1) Which workplace factors and demographic characteristics are most predictive of needing mental health treatment?
 	2) how to build a machine learning model to identify individuals who would benefit from mental health intervention based on their survey responses?
 4. A **short proposal (within 300 words)** stating: 
-	• **Importance** of the question(s); 
+	-  **Importance** of the question(s); 
 	Mental health issues in workplace environments is a significant public health concern with economic and social consequences. Early identification of individuals who need mental health support can facilitate timely intervention, reduce workplace productivity loss, and improve overall well-being. This project addresses the need for data-driven approaches to mental health screening in professional settings.
-	• **Challenges/difficulties** envisioned in answering the question(s)? 
-	Several challenges are anticipated, including handling class imbalance in the target variable, managing missing survey data, and addressing potential response bias. The subjective nature of self-reported mental health data may introduce noise, and ensuring model interpretability for practical healthcare applications presents additional complexity. Feature selection from numerous survey variables while avoiding overfitting requires careful methodology.
-	• If there are notable **existing works** related to the question(s), describe them briefly. 
-	• A brief **overview of your planned approach or methods**. 
+	- **Challenges/difficulties** envisioned in answering the question(s)? 
+	Several challenges are anticipated, including handling ==class imbalance== in the target variable, managing missing survey data, and addressing potential ==response bias==. The subjective nature of self-reported mental health data may introduce noise. 
+	- If there are notable **existing works** related to the question(s), describe them briefly. 
+	Previous research has established correlations between workplace stress and mental health outcomes. The analyzed notebook demonstrates successful application of multiple machine learning algorithms to similar mental health prediction tasks, achieving approximately 80-85% accuracy with ensemble methods. Existing literature shows that factors like work interference, family history, and employer support significantly impact mental health treatment needs.
+	 - A brief **overview of your planned approach or methods**. 
+	 1. data loading and exploration using tidyverse
+	 2. data cleaning: remove irrelevant columns, handle missing value and outliers. 
+	 3. standardizing variables and data type conversion
+	 4. data analysis and visualization using ggplot2: uncover patterns, relationships, and potential biases in the data. This will include examining the bivariate relationships between workplace factors and the outcome variable (treatment).
+	 5. statistical modeling using logistic regression: Identify key predictors using logistic regression to quantify relationships between predictors and treatment-seeking behaviour. We will complement this with subgroup analyses to examine how these relationships vary by gender, country, and company size
+	 6. conclusion
+	
 5. Do you want to give a short 10 min presentation (+5 min Q&A) in-class? 
  - 5-point bonus to your raw midterm (60) and final (~90) scores, subject to the maximum score limit
  
