@@ -1,0 +1,443 @@
+---
+title: "COMP2501 Assignment 1"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Requirements
+
+**Submission deadline: October 9th, 2025 at 23:59 (HKT).**
+
+**Full mark of assignment 1: 50.**
+
+For the following questions, please:
+
+1. Replace all [Input here] places with your information or your answer (for multiple choice).
+2. Complete the code block by adding your own code to fulfill the requirements in each question. Please use the existing code block and do not add your own code block.
+
+Please make sure your Rmd file is a valid Markdown document and can be successfully knitted.
+
+For assignment submission, please knit your final Rmd file into a Word document, and submit both your **Rmd** file and the knitted **Microsoft Word** document file to Moodle. You get 0 score if 1) the Rmd file you submitted cannot be knitted, and 2) you have not submitted a Word document. For each visualization question, please make sure that the generated plot is shown in-place with the question and after the code block. 
+
+---
+
+## Name and UID
+
+Name: [Input here]
+
+UID: [Input here]
+
+---
+
+### Environmental setup 
+You need to have the `dslabs`, `dplyr`, `ggplot2`, and `lubridate` packages installed. If not yet, please run `install.packages(c("dslabs", "dplyr", "ggplot2", "lubridate"))` in your R environment. If you have installed the `tidyverse` package, `dplyr` is installed by default.
+
+```{r, warning=FALSE}
+# Load the required packages
+# install.packages(c("dslabs", "dplyr", "ggplot2", "lubridate"))
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+### Example question. Print the first 2 records of the murders dataset.
+
+```{r}
+data("murders")
+head(murders, 2)
+```
+
+---
+
+### 1. (1 points) Define a matrix `mat` with 10 rows and 5 columns, print the entries of rows 5-8 and columns 2 & 5 simultaneously.
+
+```{r}
+mat <- matrix(1:50, nrow = 10, ncol = 5)
+mat[5:8, c(2, 5)]
+```
+
+---
+
+### 2. (1 points) Write a function `compute_s_n`  that for any given n, computes the $S_n = \frac{n*ln(n+5)}{\sqrt{n}}$. Print $S_n$ for $n$ from 10 to 20. (Hint: use `sapply`)
+
+```{r}
+compute_s_n <- function(n) {
+  S_n <- (n * log(n + 5)) / sqrt(n)  # Compute S_n
+  return(S_n)
+}
+sapply(10:20, compute_s_n)
+```   
+
+---
+
+### 3. (2 points)  Examine the built-in datasets `ChickWeight` and `co2`. Which of the following is true?
+- a.	tidy data: all small datasets are tidy by definition.
+- b.	tidy data: it has one observation for each row.
+- c.	not tidy: there are multiple rows corresponding to the same observation.
+- d.	not tidy: it is a matrix instead of a data frame.
+
+`ChickWeight` is **b**
+
+`co2` is **d**
+
+---
+
+### 4. (12 points) Utilize the murders dataset and execute the following tasks.
+
+```{r, warning=FALSE}
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+data("murders")
+```
+
+#### a. (2 points) Compute the murder rate per 100,000 people for each state and store it in a column called "rate". Then use logical operators to find which state has a murder rate per 100,000 people higher than 5. Find these states, print their state names, abbreviations, total populations, and murder rates.
+
+```{r}
+murders <- murders |> mutate(rate = total / population * 100000)
+
+high_murder_states <- murders |>
+  filter(rate > 5) |>
+  select(state, abb, population, rate)
+
+high_murder_states
+
+```
+
+#### b. (2 points) For all states having a murder rate per 100,000 people higher than 5, use the barplot function to create a barplot with the x-axis being the state name, and the y-axis being the murder rate per 100,000 people of each state. Order them by their murder rates. (Hints: check some barplot examples at https://r-graph-gallery.com/210-custom-barplot-layout.html)
+
+```{r}
+high_murder_states <- high_murder_states |>
+  arrange(desc(rate))
+
+barplot(
+  height = high_murder_states$rate,
+  names.arg = high_murder_states$state,
+  main = "States with Murder Rate > 5",
+  xlab = "State",
+  ylab = "Murder Rate per 100,000 People"
+)
+
+```
+
+#### c. (3 points) Create a table called `my_states` that contains rows for states satisfying two conditions: 1) population is lower than 5 million, and 2) the murder rate per 100,000 people is less than 3.0. Use `select` to show only their state abbreviations, populations, and murder rates. Then use `top_n` function to find the 3 safest states among them.
+
+```{r}
+my_states <- murders |>
+  filter((population < 5000000) & (rate < 3)) |>
+  select(abb, population, rate)
+
+# Find the 3 safest states
+safest_states <- my_states |>
+  top_n(3, desc(rate))  # Smallest murder rates
+
+# Print the results
+safest_states
+```
+
+#### d. (2 points) Categorize all states into two groups based on their population: Above median population – states with a population greater than the median. Below median population – states with a population less than or equal to the median. For each group, calculate the average murder rate per 100,000 people and display the results.
+
+```{r}
+median_population <- median(murders$population)
+
+population_groups <- murders |>
+  mutate(pop_group = ifelse(population > median_population, "Population Above Median", "Population Below Median")) |>
+  group_by(pop_group) |>
+  summarise(avg_murder_rate = sum(total) / sum(population) * 100000)
+
+population_groups
+
+```
+
+#### e. (3 points) Use the ggplot2 package to create a scatterplot from the murders dataset, where the x-axis is the number of population, the y-axis is the murder rate per 100,000 people, and each point in the scatterplot is labeled with the state name. Please add an appropriate title, and axis labels to the plot. Select a theme that you prefer.
+
+```{r}
+murders |> 
+  ggplot(aes(x = population, y = rate, label = abb)) +
+  geom_point(size = 3) +
+  geom_text(vjust = -1, hjust = 1, size = 3) +
+  labs(
+    title = "Murder Rate vs Population",
+    x = "Population",
+    y = "Murder Rate per 100,000 People"
+  ) +
+  theme_minimal()
+
+```
+
+---
+
+### 5. (4 points) Factors affecting life expectancy with `gapminder`
+
+```{r, warning=FALSE}
+library(dslabs)
+library(dplyr)
+library(ggplot2)
+data("gapminder")
+```
+
+#### a. (2 points) Calculate the average life expectancy and GDP per capita for each continent in 2000. (Hint: Select data from year 2000, group by **continent** and compute for each continent: (i) average **life\_expectancy**, and (ii) **gdp** per capita.) Sort the results by average life expectancy.
+
+```{r}
+gapminder |>
+  filter(year == 2000) |>
+  group_by(continent) |>
+  summarise(
+    avg_life_exp = sum(life_expectancy * population) / sum(population),
+    avg_gdp_per_capita = sum(gdp) / sum(population)
+  ) |>
+  arrange(desc(avg_life_exp))
+```
+
+#### b. (2 points) Show the **distribution** of life expectancy for each continent. Use an appropriate plot (**density** or **histogram**).
+
+```{r}
+gapminder |>
+  ggplot(aes(x = life_expectancy, color = continent, fill = continent)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Distribution of Life Expectancy by Continent",
+       x = "Life Expectancy",
+       y = "Density") +
+  theme_minimal()
+```
+
+---
+
+### 6. (7 points) Tropical cyclones with `storms` (from **dplyr**)
+
+```{r, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(lubridate)  # for timestamps
+data("storms")
+```
+
+#### a. (1 point) List the observation with the **largest wind** speed.
+
+```{r}
+largest_wind <- storms |> top_n(1, wind)
+largest_wind
+```
+
+#### b. (2 points) For (1) the whole dataset, (2) by **year**, compute both: (i) the **maximum wind** and (ii) the **minimum pressure** observed. For the per-year stats, sort the results by maximum wind (descending) and show the top 10 rows.
+
+```{r}
+# (1) Whole dataset
+storms |> summarize(max_wind = max(wind), min_pressure = min(pressure))
+```
+```{r}
+# (2) By year
+top_years <- storms |>
+  group_by(year) |>
+  summarize(max_wind = max(wind), min_pressure = min(pressure)) |>
+  arrange(desc(max_wind)) |>
+  head(10)
+top_years
+```
+
+#### c. (1 point) Create a **scatter plot** of **wind** vs **pressure**. Note that the wind speeds are recorded in knots and pressures are recorded in millibars. Add a title and axis labels.
+
+```{r}
+storms |> 
+  ggplot(aes(x = pressure, y = wind)) +
+  geom_point() +
+  labs(title = "Wind vs Pressure",
+       x = "Pressure (millibars)",
+       y = "Wind Speed (knots)") +
+  theme_minimal()
+```
+
+#### d. (3 points) Create a **multi-line plot** for all storms from August, 2005, showing **timestamp** on x-axis and **wind** on y-axis, with color indicating **storm name**. Add a legend, title, and labels. (Hint: use functions from the `lubridate` package to define timestamps)
+
+```{r}
+storms_august_2005 <- storms |>
+  filter((year == 2005) & (month == 8)) |>
+  mutate(timestamp = make_date(year, month, day))
+
+storms_august_2005 |>
+  ggplot(aes(x = timestamp, y = wind, color = name, group = name)) +
+  geom_line() +
+  labs(title = "Wind Speed Over Time for Selected 2005 Storms",
+       x = "Timestamp",
+       y = "Wind Speed (knots)") +
+  theme_minimal()
+```
+
+---
+
+### 7. (23 points)  Explore the tidyverse with the COVID-19 dataset (http://www.bio8.cs.hku.hk/comp2501/covid.csv), and answer the following questions. Noticeably, it is acceptable to analyze the data or generate a plot with negative values of cases and deaths.
+
+```{r, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+```
+
+#### a. (2 points) Read the CSV formatted dataset. Find out how many observations (rows) and variables (columns) are in the dataset. Print the names of all variables.
+
+```{r}
+covid_data <- read.csv("http://www.bio8.cs.hku.hk/comp2501/covid.csv")
+
+num_rows <- nrow(covid_data)
+num_cols <- ncol(covid_data)
+
+cat("Number of observations (rows):", num_rows, "\n")
+cat("Number of variables (columns):", num_cols, "\n")
+
+colnames(covid_data)
+```
+
+#### b. (1 points) List 5 observations that have the most amounts of `deaths` per day.
+
+```{r}
+covid_data |> top_n(5, deaths)
+```
+
+#### c. (2 points) How many unique `countriesAndTerritories` are in the dataset?
+
+```{r}
+covid_data |> count(countriesAndTerritories) |> pull(countriesAndTerritories) |> length()
+```
+
+#### d. (3 points) For 1) the whole dataset, 2) different `countriesAndTerritories`, and 3) different `continentExp`, compute both i) the sum of cases, and ii) the sum of deaths. Sort the results by the sum of deaths descendingly. Use `head` to show the top 3 entries if there are too many rows.
+
+```{r}
+# Whole dataset
+covid_data |>
+  summarise(total_cases = sum(cases, na.rm = TRUE),
+            total_deaths = sum(deaths, na.rm = TRUE))
+```
+
+```{r}
+# By countriesAndTerritories
+cases_deaths_by_country <- covid_data |>
+  group_by(countriesAndTerritories) |>
+  summarise(total_cases = sum(cases, na.rm = TRUE),
+            total_deaths = sum(deaths, na.rm = TRUE)) |>
+  arrange(desc(total_deaths))
+
+cases_deaths_by_country |> head(3)
+```
+
+```{r}
+# By continentExp
+cases_deaths_by_continent <- covid_data |>
+  group_by(continentExp) |>
+  summarise(total_cases = sum(cases, na.rm = TRUE),
+            total_deaths = sum(deaths, na.rm = TRUE)) |>
+  arrange(desc(total_deaths))
+
+cases_deaths_by_continent |> head(3)
+```
+
+#### e. (1 points) Add a new column `date` with the standard date format "YYYY-MM-DD" to the data table according to the `dateRep` column. Be reminded the format of `dateRep` is "DD/MM/YYYY". Please use head() to show the result. (Hint: use functions from the `lubridate` package to read and write timestamps)
+
+```{r}
+covid_data <- covid_data |> mutate(date = dmy(dateRep))
+
+covid_data |> head(3)
+```
+
+#### f. (2 points) Create a scatterplot showing `cases` vs. `deaths`. Set an appropriate plot title and axis titles. Are there any dots that seem abnormal? Exclude those and plot again.
+
+```{r}
+# covid_data |>
+#   ggplot(aes(x = cases, y = deaths)) +
+#   geom_point(color = "blue", alpha = 0.5) +
+#   labs(title = "Scatterplot of Cases vs Deaths",
+#        x = "Number of Cases",
+#        y = "Number of Deaths") +
+#   theme_minimal()
+
+
+covid_data |>
+  filter(deaths >= 0) |>
+  ggplot(aes(x = cases, y = deaths)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  labs(title = "Scatterplot of Cases vs Deaths",
+       x = "Number of Cases",
+       y = "Number of Deaths") +
+  theme_minimal()
+
+
+```
+
+#### g. (2 points) Create a line plot showing cases per day versus date for China. Set an appropriate plot title and axis titles.
+
+```{r}
+china_data <- covid_data |>
+  filter(countriesAndTerritories == "China") |>
+  arrange(date)
+
+china_data |> 
+  ggplot(aes(x = date, y = cases)) +
+  geom_line() +
+  labs(title = "COVID-19 Cases Per Day in China",
+       x = "Date",
+       y = "Cases Per Day") +
+  theme_minimal()
+```
+
+#### h. (2 points) Similar to above, create a line plot using the data of six countries with the most total cases (treat NA as 0s). Use different line colors for each country. Set an appropriate plot title and axis titles.
+
+```{r}
+top_countries <- covid_data |>
+  group_by(countriesAndTerritories) |>
+  summarise(total_cases = sum(cases, na.rm = TRUE)) |>
+  top_n(6, total_cases) |>
+  pull(countriesAndTerritories)
+
+selected_countries <- covid_data |>
+  filter(countriesAndTerritories %in% top_countries) |>
+  arrange(date)
+
+selected_countries |>
+  ggplot(aes(x = date, y = cases, color = countriesAndTerritories)) +
+  geom_line() +
+  labs(title = "COVID-19 Cases Per Day in Selected Countries",
+       x = "Date",
+       y = "Cases Per Day",
+       color = "Country") +
+  theme_minimal()
+
+```
+
+#### i. (4 points) Filter out the data in Germany. Assume the Germany government determined an epidemic situation of national significance on 2020-06-10. A lot of restrictive measurements such as social distancing were implemented to prevent the spread of COVID-19. Find out the 1) average number of cases before the determination, 2) average number of cases after the determination, 3) average number of deaths before the determination, and 4) average number of deaths after the determination. Remove missing values from data if they are coded as NA, if there is any.
+
+```{r}
+germany_data <- covid_data |>
+  filter(countriesAndTerritories == "Germany") |>
+  mutate(before_after = ifelse(date < as.Date("2020-06-10"), "Before", "After"))
+
+# Compute averages
+avg_cases_deaths <- germany_data |>
+  group_by(before_after) |>
+  summarise(avg_cases = mean(cases, na.rm = TRUE),
+            avg_deaths = mean(deaths, na.rm = TRUE))
+
+avg_cases_deaths
+```
+
+#### j. (4 points) In fact, the determination of epidemic situation was on another date. Make a reasonable guess with explanation by the following steps. Create a line plot using data with `countriesAndTerritories=="Germany"`, showing date on the x-axis, cases per day and death per day on the y-axis. Observe the pattern and make a reasonable guess. Find a way to indicate the date of the determination and 1 month after the date of determination. Set an appropriate plot title and axis titles. Marks would be given on answers with reasonable explanations. (Hints: It is expected that the cases confirmed would drop after 1 month of the implementation of determination of epidemic situation, with 14-week incubation period of COVID-19. It is a relatively open question, and reasonable explanations are acceptable. We want you to observe the trend of changes in the cases per day and the deaths per day on the date you have chosen and one month after it according to the line plot you created. No correct date is needed and we will judge your answers according to your thoughts and explanations.)
+
+```{r}
+germany_data |>
+  ggplot(aes(x = date)) +
+  geom_line(aes(y = cases, color = "Cases"), size = 1) +
+  geom_line(aes(y = deaths, color = "Deaths"), size = 1) +
+  geom_vline(xintercept = as.Date("2020-03-25"), linetype = "dashed") +
+  geom_vline(xintercept = as.Date("2020-04-25"), linetype = "dashed") +
+  labs(title = "COVID-19 Cases and Deaths Per Day in Germany",
+       x = "Date",
+       y = "Count") +
+  theme_minimal()
+```
+

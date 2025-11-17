@@ -16,7 +16,7 @@ estimate_pi <- function(n_iter, seed=42){
   pi
 }
 
-n_iters <- c(1e1, 1e2, 1e3, 1e4, 1e5)
+n_iters <- c(1e1, 1e2, 1e3, 1e4, 1e5)#
 seeds <- seq(1:100)
 df <- expand.grid(n_iters, seeds) |> setNames(c("n_iter", "seed"))
 df$pi_estimates <- mapply(estimate_pi, df$n_iter, df$seed)
@@ -115,6 +115,25 @@ is_21 <- function(seed=NA){
 
 set.seed(42)
 mean(replicate(1e5, is_21()))
+
+# 蒙提霍尔问题模拟
+simplified_monty_hall <- function(n = 10000) {
+  # 随机生成汽车位置和初始选择
+  cars <- sample(1:3, n, replace = TRUE)
+  initial_choices <- sample(1:3, n, replace = TRUE)
+  
+  # 换门策略：总是换到另一扇未开的门
+  switch_wins <- mean(initial_choices != cars)  # 初始选错时换门就赢
+  
+  # 不换门策略：坚持初始选择
+  stay_wins <- mean(initial_choices == cars)    # 初始选对时就赢
+  
+  return(list(switch = switch_wins, stay = stay_wins))
+}
+
+results <- simplified_monty_hall(10000)
+cat("换门胜率:", results$switch, "不换门胜率:", results$stay, "\n")
+
 
 # eCDF for student heights
 data(heights)
