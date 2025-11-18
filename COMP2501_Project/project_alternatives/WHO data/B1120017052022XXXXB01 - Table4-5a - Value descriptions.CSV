@@ -1,0 +1,19 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2000,2000
+Sex,Male,男
+Sex,Female,女
+Sex,Both sexes,合計
+COD,Neoplasms,腫瘤
+COD,Diseases of the circulatory system,循環系統疾病
+COD,Diseases of the respiratory system,呼吸系統疾病
+COD,Injury and poisoning,損傷及中毒
+COD,Diseases of the genitourinary system,泌尿生殖系統疾病
+COD,Diseases of the digestive system,消化系統疾病
+COD,"Endocrine, nutritional and metabolic diseases and immunity disorders",內分泌、營養性和代謝性疾病以及免疫疾患
+COD,Infectious and parasitic diseases,傳染病和寄生蟲病
+COD,"Symptoms, signs and ill-defined conditions",症狀、體徵和不明確的情況
+COD,Other causes,其他原因
+COD,Total,總計

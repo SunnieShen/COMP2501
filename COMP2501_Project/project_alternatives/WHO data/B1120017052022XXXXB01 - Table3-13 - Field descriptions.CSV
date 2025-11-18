@@ -1,0 +1,5 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Age_gp,Age group,年齡組別
+Prop_marri_female,Proportion of married females (* Less than 0.5),女性已婚百分比 (* 少於 0.5)

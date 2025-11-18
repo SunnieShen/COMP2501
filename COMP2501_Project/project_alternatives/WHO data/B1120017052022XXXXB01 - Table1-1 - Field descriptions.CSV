@@ -1,0 +1,29 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Domestic_helpers,Foreign domestic helpers,外籍家庭傭工
+Population,Population : Mid-year population,人口 : 年中人口
+Sex_ratio,Population : Sex ratio (males per 1 000 females),人口 : 性別比率（相對每千名女性的男性數目）
+Percentage_of_population_aged_0 _14,Population : Percentage of Population (Aged 0-14),人口 : 人口百分比（0至14歲）
+Percentage_of_population_aged_15 _64,Population : Percentage of Population (Aged 15-64),人口 : 人口百分比（15至64歲）
+Percentage_of_population_aged_65over,Population : Percentage of Population (Aged 65 and over),人口 : 人口百分比（65歲及以上）
+Child_dependency_ratio,Population : Child dependency ratio,人口 : 少年兒童撫養比率
+Elderly_dependency_ratio,Population : Elderly dependency ratio,人口 : 老年撫養比率
+Overall_dependency_ratio,Population : Overall dependency ratio,人口 : 總撫養比率
+Median_age,Population : Median age (years),人口 : 年齡中位數
+Live_births,Fertility : Number of live births,生育 : 活產嬰兒數目
+Crude_birth_rate,Fertility : Crude birth rate (per 1 000 population),生育 : 粗出生率（按每千名人口計算)
+TFR,Fertility : Total fertility rate (number of live births per 1 000 women),生育 : 總和生育率（每千名女性的活產嬰兒數目）
+No_of_death,Mortality : Number of deaths,死亡 : 死亡人數
+Crude_death_rate,Mortality : Crude death rate (per 1 000 population),死亡 : 粗死亡率（按每千名人口計算)
+Infant_mort_rate,Mortality : Infant mortality rate (per 1 000 live births),死亡 : 嬰兒死亡率（按每千名活產嬰兒計算)
+Exp_life_M,Mortality : Male Expectation of life at birth (years),死亡 : 男性出生時平均預期壽命（歲）
+Exp_life_F,Mortality : Female Expectation of life at birth (years),死亡 : 女性出生時平均預期壽命（歲）
+No_of_marri,Marriage and Divorces : Number of marriages registered,結婚與離婚 : 登記結婚數目
+Crude_marri_rate,Marriage and Divorces : Crude marriage rate (per 1 000 population),結婚與離婚 : 粗結婚率（按每千名人口計算)
+Crude_marri_rate_M,Marriage and Divorces : Crude marriage rate (per 1 000 population) - Male,結婚與離婚 : 男性粗結婚率（按每千名人口計算)
+Crude_marri_rate_F,Marriage and Divorces : Crude marriage rate (per 1 000 population) - Female,結婚與離婚 : 女性粗結婚率（按每千名人口計算)
+Med_age_BG,Marriage and Divorces : Median age at first marriage (years) - Bridegrooms,結婚與離婚 : 新郎年齡中位數
+Med_age_B,Marriage and Divorces : Median age at first marriage (years) - Brides,結婚與離婚 : 新娘年齡中位數
+No_of_divorce,Marriage and Divorces : Number of divorce decrees,結婚與離婚 : 離婚令數目
+Crude_divorce_rate,Marriage and Divorces : Crude divorce rate (per 1 000 population),結婚與離婚 : 粗離婚率（按每千名人口計算）

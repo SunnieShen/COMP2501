@@ -1,0 +1,397 @@
+﻿Yr,Sex,Economy,Stat_var,Exp_of_life_birth
+1991,Male,Hong Kong,,75.2
+1991,Male,Japan,,76.1
+1991,Male,Singapore,,73.5
+1991,Male,Australia,,74.4
+1991,Male,Denmark,,72.2
+1991,Male,France,,72.9
+1991,Male,Germany,,72.9
+1991,Male,Netherlands,,74.1
+1991,Male,Norway,,74
+1991,Male,Sweden,,74.9
+1991,Male,U.K.,,72.9
+1991,Male,U.S.A.,,72
+1991,Female,Hong Kong,,80.7
+1991,Female,Japan,,82.1
+1991,Female,Singapore,,77.9
+1991,Female,Australia,,80.3
+1991,Female,Denmark,,77.8
+1991,Female,France,,81.2
+1991,Female,Germany,,79.3
+1991,Female,Netherlands,,80.2
+1991,Female,Norway,,80.1
+1991,Female,Sweden,,80.5
+1991,Female,U.K.,,78.4
+1991,Female,U.S.A.,,78.9
+1991,Difference (Female – Male),Hong Kong,,5.5
+1991,Difference (Female – Male),Japan,,6
+1991,Difference (Female – Male),Singapore,,4.4
+1991,Difference (Female – Male),Australia,,5.9
+1991,Difference (Female – Male),Denmark,,5.6
+1991,Difference (Female – Male),France,,8.3
+1991,Difference (Female – Male),Germany,,6.4
+1991,Difference (Female – Male),Netherlands,,6.1
+1991,Difference (Female – Male),Norway,,6.1
+1991,Difference (Female – Male),Sweden,,5.6
+1991,Difference (Female – Male),U.K.,,5.5
+1991,Difference (Female – Male),U.S.A.,,6.9
+1996,Male,Hong Kong,,76.7
+1996,Male,Japan,,77
+1996,Male,Singapore,,74.4
+1996,Male,Australia,,75.2
+1996,Male,Denmark,,72.9
+1996,Male,France,,74.1
+1996,Male,Germany,,73.6
+1996,Male,Netherlands,,74.7
+1996,Male,Norway,,75.4
+1996,Male,Sweden,,76.5
+1996,Male,U.K.,,74.1
+1996,Male,U.S.A.,,73.1
+1996,Female,Hong Kong,,82.7
+1996,Female,Japan,,83.6
+1996,Female,Singapore,,78.9
+1996,Female,Australia,,81.1
+1996,Female,Denmark,,78
+1996,Female,France,,82
+1996,Female,Germany,,80
+1996,Female,Netherlands,,80.4
+1996,Female,Norway,,81.1
+1996,Female,Sweden,,81.5
+1996,Female,U.K.,,79.3
+1996,Female,U.S.A.,,79.1
+1996,Difference (Female – Male),Hong Kong,,5.9
+1996,Difference (Female – Male),Japan,,6.6
+1996,Difference (Female – Male),Singapore,,4.5
+1996,Difference (Female – Male),Australia,,5.9
+1996,Difference (Female – Male),Denmark,,5.1
+1996,Difference (Female – Male),France,,7.9
+1996,Difference (Female – Male),Germany,,6.4
+1996,Difference (Female – Male),Netherlands,,5.7
+1996,Difference (Female – Male),Norway,,5.7
+1996,Difference (Female – Male),Sweden,,5
+1996,Difference (Female – Male),U.K.,,5.2
+1996,Difference (Female – Male),U.S.A.,,6
+2001,Male,Hong Kong,,78.4
+2001,Male,Japan,,78.1
+2001,Male,Singapore,,76.3
+2001,Male,Australia,,77
+2001,Male,Denmark,,74.5
+2001,Male,France,,75.4
+2001,Male,Germany,,75.4
+2001,Male,Netherlands,,75.8
+2001,Male,Norway,,76.2
+2001,Male,Sweden,,77.5
+2001,Male,U.K.,,75.3
+2001,Male,U.S.A.,,74.3
+2001,Female,Hong Kong,,84.6
+2001,Female,Japan,,84.9
+2001,Female,Singapore,,80.3
+2001,Female,Australia,,82.4
+2001,Female,Denmark,,79.2
+2001,Female,France,,82.9
+2001,Female,Germany,,81.2
+2001,Female,Netherlands,,80.7
+2001,Female,Norway,,81.5
+2001,Female,Sweden,,82.1
+2001,Female,U.K.,,80.1
+2001,Female,U.S.A.,,79.5
+2001,Difference (Female – Male),Hong Kong,,6.2
+2001,Difference (Female – Male),Japan,,6.8
+2001,Difference (Female – Male),Singapore,,4
+2001,Difference (Female – Male),Australia,,5.4
+2001,Difference (Female – Male),Denmark,,4.7
+2001,Difference (Female – Male),France,,7.5
+2001,Difference (Female – Male),Germany,,5.8
+2001,Difference (Female – Male),Netherlands,,4.9
+2001,Difference (Female – Male),Norway,,5.3
+2001,Difference (Female – Male),Sweden,,4.6
+2001,Difference (Female – Male),U.K.,,4.8
+2001,Difference (Female – Male),U.S.A.,,5.2
+2006,Male,Hong Kong,,79.4
+2006,Male,Japan,,79
+2006,Male,Singapore,,77.8
+2006,Male,Australia,,78.7
+2006,Male,Denmark,,75.9
+2006,Male,France,,77.1
+2006,Male,Germany,,76.9
+2006,Male,Netherlands,,77.6
+2006,Male,Norway,,78.1
+2006,Male,Sweden,,78.7
+2006,Male,U.K.,,76.9
+2006,Male,U.S.A.,,75.2
+2006,Female,Hong Kong,,85.5
+2006,Female,Japan,,85.8
+2006,Female,Singapore,,82.6
+2006,Female,Australia,,83.5
+2006,Female,Denmark,,80.4
+2006,Female,France,,84.2
+2006,Female,Germany,,82.3
+2006,Female,Netherlands,,81.9
+2006,Female,Norway,,82.7
+2006,Female,Sweden,,82.9
+2006,Female,U.K.,,81.2
+2006,Female,U.S.A.,,80.3
+2006,Difference (Female – Male),Hong Kong,,6.2
+2006,Difference (Female – Male),Japan,,6.8
+2006,Difference (Female – Male),Singapore,,4.8
+2006,Difference (Female – Male),Australia,,4.8
+2006,Difference (Female – Male),Denmark,,4.5
+2006,Difference (Female – Male),France,,7.1
+2006,Difference (Female – Male),Germany,,5.4
+2006,Difference (Female – Male),Netherlands,,4.3
+2006,Difference (Female – Male),Norway,,4.6
+2006,Difference (Female – Male),Sweden,,4.2
+2006,Difference (Female – Male),U.K.,,4.3
+2006,Difference (Female – Male),U.S.A.,,5.1
+2011,Male,Hong Kong,,80.3
+2011,Male,Japan,,79.4
+2011,Male,Singapore,,79.5
+2011,Male,Australia,,79.7
+2011,Male,Denmark,,77.3
+2011,Male,France,,78.4
+2011,Male,Germany,,77.7
+2011,Male,Netherlands,,79.2
+2011,Male,Norway,,79
+2011,Male,Sweden,,79.8
+2011,Male,U.K.,,78.4
+2011,Male,U.S.A.,,76.3
+2011,Female,Hong Kong,,86.7
+2011,Female,Japan,,85.9
+2011,Female,Singapore,,84.1
+2011,Female,Australia,,84.2
+2011,Female,Denmark,,81.6
+2011,Female,France,,85
+2011,Female,Germany,,82.8
+2011,Female,Netherlands,,82.9
+2011,Female,Norway,,83.5
+2011,Female,Sweden,,83.7
+2011,Female,U.K.,,82.4
+2011,Female,U.S.A.,,81.1
+2011,Difference (Female – Male),Hong Kong,,6.4
+2011,Difference (Female – Male),Japan,,6.5
+2011,Difference (Female – Male),Singapore,,4.6
+2011,Difference (Female – Male),Australia,,4.5
+2011,Difference (Female – Male),Denmark,,4.3
+2011,Difference (Female – Male),France,,6.6
+2011,Difference (Female – Male),Germany,,5.1
+2011,Difference (Female – Male),Netherlands,,3.7
+2011,Difference (Female – Male),Norway,,4.5
+2011,Difference (Female – Male),Sweden,,3.9
+2011,Difference (Female – Male),U.K.,,4
+2011,Difference (Female – Male),U.S.A.,,4.8
+2016,Male,Hong Kong,,81.3
+2016,Male,Japan,,81
+2016,Male,Singapore,,80.7
+2016,Male,Australia,,80.4
+2016,Male,Denmark,,78.8
+2016,Male,France,,79.3
+2016,Male,Germany,,78.4
+2016,Male,Netherlands,,79.9
+2016,Male,Norway,,80.6
+2016,Male,Sweden,,80.6
+2016,Male,U.K.,,79.2
+2016,Male,U.S.A.,,76.2
+2016,Female,Hong Kong,,87.3
+2016,Female,Japan,,87.1
+2016,Female,Singapore,,85.1
+2016,Female,Australia,,84.6
+2016,Female,Denmark,,82.8
+2016,Female,France,,85.3
+2016,Female,Germany,,83.2
+2016,Female,Netherlands,,83.1
+2016,Female,Norway,,84.2
+2016,Female,Sweden,,84.1
+2016,Female,U.K.,,82.9
+2016,Female,U.S.A.,,81.1
+2016,Difference (Female – Male),Hong Kong,,6
+2016,Difference (Female – Male),Japan,,6.1
+2016,Difference (Female – Male),Singapore,,4.4
+2016,Difference (Female – Male),Australia,,4.2
+2016,Difference (Female – Male),Denmark,,4
+2016,Difference (Female – Male),France,,6
+2016,Difference (Female – Male),Germany,,4.8
+2016,Difference (Female – Male),Netherlands,,3.2
+2016,Difference (Female – Male),Norway,,3.6
+2016,Difference (Female – Male),Sweden,,3.5
+2016,Difference (Female – Male),U.K.,,3.7
+2016,Difference (Female – Male),U.S.A.,,4.9
+2017,Male,Hong Kong,,81.9
+2017,Male,Japan,,81.1
+2017,Male,Singapore,,80.9
+2017,Male,Australia,,80.5
+2017,Male,Denmark,,79
+2017,Male,France,,79.4
+2017,Male,Germany,,78.5
+2017,Male,Netherlands,,80.1
+2017,Male,Norway,,80.9
+2017,Male,Sweden,,80.7
+2017,Male,U.K.,,79.2
+2017,Male,U.S.A.,,76.1
+2017,Female,Hong Kong,,87.6
+2017,Female,Japan,,87.3
+2017,Female,Singapore,,85.4
+2017,Female,Australia,,84.6
+2017,Female,Denmark,,82.9
+2017,Female,France,,85.3
+2017,Female,Germany,,83.3
+2017,Female,Netherlands,,83.3
+2017,Female,Norway,,84.3
+2017,Female,Sweden,,84.1
+2017,Female,U.K.,,82.9
+2017,Female,U.S.A.,,81.1
+2017,Difference (Female – Male),Hong Kong,,5.7
+2017,Difference (Female – Male),Japan,,6.2
+2017,Difference (Female – Male),Singapore,,4.5
+2017,Difference (Female – Male),Australia,,4.1
+2017,Difference (Female – Male),Denmark,,3.9
+2017,Difference (Female – Male),France,,5.9
+2017,Difference (Female – Male),Germany,,4.8
+2017,Difference (Female – Male),Netherlands,,3.2
+2017,Difference (Female – Male),Norway,,3.4
+2017,Difference (Female – Male),Sweden,,3.4
+2017,Difference (Female – Male),U.K.,,3.7
+2017,Difference (Female – Male),U.S.A.,,5
+2018,Male,Hong Kong,,82.3
+2018,Male,Japan,,81.3
+2018,Male,Singapore,,81.2
+2018,Male,Australia,,80.7
+2018,Male,Denmark,,79
+2018,Male,France,,79.5
+2018,Male,Germany,,78.6
+2018,Male,Netherlands,,80.2
+2018,Male,Norway,,81
+2018,Male,Sweden,,80.8
+2018,Male,U.K.,,79.2
+2018,Male,U.S.A.,,76.2
+2018,Female,Hong Kong,,87.6
+2018,Female,Japan,,87.3
+2018,Female,Singapore,,85.5
+2018,Female,Australia,,84.9
+2018,Female,Denmark,,82.9
+2018,Female,France,,85.4
+2018,Female,Germany,,83.4
+2018,Female,Netherlands,,83.3
+2018,Female,Norway,,84.5
+2018,Female,Sweden,,84.3
+2018,Female,U.K.,,82.9
+2018,Female,U.S.A.,,81.2
+2018,Difference (Female – Male),Hong Kong,,5.3
+2018,Difference (Female – Male),Japan,,6
+2018,Difference (Female – Male),Singapore,,4.3
+2018,Difference (Female – Male),Australia,,4.2
+2018,Difference (Female – Male),Denmark,,3.9
+2018,Difference (Female – Male),France,,5.9
+2018,Difference (Female – Male),Germany,,4.8
+2018,Difference (Female – Male),Netherlands,,3.1
+2018,Difference (Female – Male),Norway,,3.5
+2018,Difference (Female – Male),Sweden,,3.5
+2018,Difference (Female – Male),U.K.,,3.7
+2018,Difference (Female – Male),U.S.A.,,5
+2019,Male,Hong Kong,,82.4
+2019,Male,Japan,,81.4
+2019,Male,Singapore,,81.4
+2019,Male,Australia,,80.9
+2019,Male,Denmark,,79.3
+2019,Male,France,Provisional figures,79.7
+2019,Male,Germany,,78.6
+2019,Male,Netherlands,,80.5
+2019,Male,Norway,,81.2
+2019,Male,Sweden,,81.3
+2019,Male,U.K.,,79.4
+2019,Male,U.S.A.,,76.3
+2019,Female,Hong Kong,,88.1
+2019,Female,Japan,,87.5
+2019,Female,Singapore,,85.9
+2019,Female,Australia,,85
+2019,Female,Denmark,,83.2
+2019,Female,France,Provisional figures,85.6
+2019,Female,Germany,,83.4
+2019,Female,Netherlands,,83.6
+2019,Female,Norway,,84.7
+2019,Female,Sweden,,84.7
+2019,Female,U.K.,,83.1
+2019,Female,U.S.A.,,81.4
+2019,Difference (Female – Male),Hong Kong,,5.7
+2019,Difference (Female – Male),Japan,,6.1
+2019,Difference (Female – Male),Singapore,,4.5
+2019,Difference (Female – Male),Australia,,4.1
+2019,Difference (Female – Male),Denmark,,3.9
+2019,Difference (Female – Male),France,Provisional figures,5.9
+2019,Difference (Female – Male),Germany,,4.8
+2019,Difference (Female – Male),Netherlands,,3.1
+2019,Difference (Female – Male),Norway,,3.5
+2019,Difference (Female – Male),Sweden,,3.4
+2019,Difference (Female – Male),U.K.,,3.7
+2019,Difference (Female – Male),U.S.A.,,5.1
+2020,Male,Hong Kong,,83.4
+2020,Male,Japan,,81.6
+2020,Male,Singapore,,81.3
+2020,Male,Australia,,81.2
+2020,Male,Denmark,,79.5
+2020,Male,France,Provisional figures,79.1
+2020,Male,Germany,,78.5
+2020,Male,Netherlands,,79.7
+2020,Male,Norway,,81.5
+2020,Male,Sweden,,80.6
+2020,Male,U.K.,,79
+2020,Male,U.S.A.,,74.2
+2020,Female,Hong Kong,,87.7
+2020,Female,Japan,,87.7
+2020,Female,Singapore,,85.9
+2020,Female,Australia,,85.3
+2020,Female,Denmark,,83.6
+2020,Female,France,Provisional figures,85.1
+2020,Female,Germany,,83.4
+2020,Female,Netherlands,,83.1
+2020,Female,Norway,,84.9
+2020,Female,Sweden,,84.3
+2020,Female,U.K.,,82.9
+2020,Female,U.S.A.,,79.9
+2020,Difference (Female – Male),Hong Kong,,4.4
+2020,Difference (Female – Male),Japan,,6.1
+2020,Difference (Female – Male),Singapore,,4.6
+2020,Difference (Female – Male),Australia,,4.1
+2020,Difference (Female – Male),Denmark,,4.1
+2020,Difference (Female – Male),France,Provisional figures,6
+2020,Difference (Female – Male),Germany,,4.9
+2020,Difference (Female – Male),Netherlands,,3.4
+2020,Difference (Female – Male),Norway,,3.4
+2020,Difference (Female – Male),Sweden,,3.7
+2020,Difference (Female – Male),U.K.,,3.9
+2020,Difference (Female – Male),U.S.A.,,5.7
+2021,Male,Hong Kong,,83.2
+2021,Male,Japan,,81.5
+2021,Male,Singapore,,81.1
+2021,Male,Australia,,N.A.
+2021,Male,Denmark,,79.6
+2021,Male,France,Provisional figures,79.3
+2021,Male,Germany,,N.A.
+2021,Male,Netherlands,,79.7
+2021,Male,Norway,,81.6
+2021,Male,Sweden,,81.2
+2021,Male,U.K.,,N.A.
+2021,Male,U.S.A.,Provisional figures,73.2
+2021,Female,Hong Kong,,87.9
+2021,Female,Japan,,87.6
+2021,Female,Singapore,,85.9
+2021,Female,Australia,,N.A.
+2021,Female,Denmark,,83.4
+2021,Female,France,Provisional figures,85.4
+2021,Female,Germany,,N.A.
+2021,Female,Netherlands,,83
+2021,Female,Norway,,84.7
+2021,Female,Sweden,,84.8
+2021,Female,U.K.,,N.A.
+2021,Female,U.S.A.,Provisional figures,79.1
+2021,Difference (Female – Male),Hong Kong,,4.7
+2021,Difference (Female – Male),Japan,,6.1
+2021,Difference (Female – Male),Singapore,,4.8
+2021,Difference (Female – Male),Australia,,N.A.
+2021,Difference (Female – Male),Denmark,,3.8
+2021,Difference (Female – Male),France,Provisional figures,6.1
+2021,Difference (Female – Male),Germany,,N.A.
+2021,Difference (Female – Male),Netherlands,,3.3
+2021,Difference (Female – Male),Norway,,3.1
+2021,Difference (Female – Male),Sweden,,3.6
+2021,Difference (Female – Male),U.K.,,N.A.
+2021,Difference (Female – Male),U.S.A.,Provisional figures,5.9

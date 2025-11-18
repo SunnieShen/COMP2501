@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Month,Month,月
+No_of_deaths,Number of deaths,死亡人數
+Seasonal_ind,Seasonal index,季節性指數

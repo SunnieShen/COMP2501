@@ -1,0 +1,7 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Age_gp,Age group,年齡組別
+COD,Cause of death,死亡原因
+Sex,Sex,性別
+Mor_rate,Mortality rate(Number of deaths per 100 000 population),死亡率(每十萬名人口的死亡數目)

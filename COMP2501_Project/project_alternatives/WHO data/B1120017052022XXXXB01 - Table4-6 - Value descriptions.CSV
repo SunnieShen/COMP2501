@@ -1,0 +1,17 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2001,2001
+Yr,2006,2006
+Yr,2011,2011
+Yr,2016,2016
+Yr,2021,2021
+Sex,Male,男
+Sex,Female,女
+Sex,Overall,合計
+Infant_mortality,Infant mortality rate,嬰兒死亡率
+Infant_mortality,Neo-natal mortality rate,新生兒死亡率
+Infant_mortality,Early neo-natal mortality rate,早期新生兒死亡率
+Infant_mortality,Late neo-natal mortality rate,晚期新生兒死亡率
+Infant_mortality,Post neo-natal mortality rate,新生兒後期死亡率

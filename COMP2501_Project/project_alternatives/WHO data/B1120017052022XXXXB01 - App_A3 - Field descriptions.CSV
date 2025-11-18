@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Order_live_births,Order of live births,活產次數
+Age_mother,Age of mother,母親年齡
+No_of_live_births,Number of live births,活產嬰兒數目

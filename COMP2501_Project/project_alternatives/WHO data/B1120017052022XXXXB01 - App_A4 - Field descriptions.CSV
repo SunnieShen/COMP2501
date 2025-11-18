@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Order_live_births,Order of live births,活產次數
+Age_mother,Age of mother,母親年齡
+Fertility_rates,"Fertility rates (Number of live births per 1 000 women, § Less than 0.05)","生育率（每千名女性的活產嬰兒數目, §少於0.05）"

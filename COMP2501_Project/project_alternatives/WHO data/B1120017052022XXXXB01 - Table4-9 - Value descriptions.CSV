@@ -1,0 +1,29 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2001,2001
+Yr,2006,2006
+Yr,2011,2011
+Yr,2016,2016
+Yr,2017,2017
+Yr,2018,2018
+Yr,2019,2019
+Yr,2020,2020
+Yr,2021,2021
+Sex,Male,男
+Sex,Female,女
+Sex,Difference (Female – Male),差距（女 – 男）
+Economy,Hong Kong,香港
+Economy,Japan,日本
+Economy,Singapore,新加坡
+Economy,Australia,澳洲
+Economy,Denmark,丹麥
+Economy,France,法國
+Economy,Germany,德國
+Economy,Netherlands,荷蘭
+Economy,Norway,挪威
+Economy,Sweden,瑞典
+Economy,U.K.,英國
+Economy,U.S.A.,美國
+Stat_var,Provisional figures,臨時數字

@@ -1,0 +1,7 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+G_B_HKR,Bridegrooms/brides are Hong Kong residents and brides/bridegrooms are from the Mainland,新郎/新娘為香港人而新娘/新郎為內地人
+Age_diff,Age difference ,年齡差異
+Per_marri_age_diff,Percentage of Mainland-Hong Kong cross-boundary marriages by age difference ,年齡差異劃分的內地與香港跨境婚姻數目的百分比
+Median_age_diff,Median of age difference between bridegrooms and brides (year) (The age difference refers to the age of the bridegroom minus the age of the bride.  A figure larger than zero means that the age of the bridegroom is higher.),新郎與新娘的年齡差異中位數（年）(年齡差異是指新郎的年齡減去新娘的年齡，大於零的數字表示新郎的年齡較大。)

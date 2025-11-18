@@ -1,0 +1,5 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Sex_r_deaths,Sex ratio of deaths (Number of males per 1 000 females),死亡性別比率（每千名女性的男性數目）
+Sex_r_stand_deaths,Sex ratio of standardised deaths (Number of males per 1 000 females),標準化死亡性別比率（每千名女性的男性數目）

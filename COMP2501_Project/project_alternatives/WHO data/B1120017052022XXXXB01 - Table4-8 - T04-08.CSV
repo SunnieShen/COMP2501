@@ -1,0 +1,121 @@
+﻿Yr,Sex,Age,Exp_of_life,Increase
+1991,Male,0,75.2,-
+1991,Male,20,56,-
+1991,Male,40,36.7,-
+1991,Male,60,19.3,-
+1991,Male,80,7,-
+1991,Female,0,80.7,-
+1991,Female,20,61.5,-
+1991,Female,40,41.9,-
+1991,Female,60,23.4,-
+1991,Female,80,8.9,-
+1991,Difference (Female – Male),0,5.5,-
+1991,Difference (Female – Male),20,5.5,-
+1991,Difference (Female – Male),40,5.2,-
+1991,Difference (Female – Male),60,4.2,-
+1991,Difference (Female – Male),80,1.9,-
+1996,Male,0,76.7,-
+1996,Male,20,57.4,-
+1996,Male,40,38.2,-
+1996,Male,60,20.4,-
+1996,Male,80,7.6,-
+1996,Female,0,82.7,-
+1996,Female,20,63.2,-
+1996,Female,40,43.7,-
+1996,Female,60,24.9,-
+1996,Female,80,9.8,-
+1996,Difference (Female – Male),0,5.9,-
+1996,Difference (Female – Male),20,5.8,-
+1996,Difference (Female – Male),40,5.5,-
+1996,Difference (Female – Male),60,4.5,-
+1996,Difference (Female – Male),80,2.2,-
+2001,Male,0,78.4,-
+2001,Male,20,58.8,-
+2001,Male,40,39.6,-
+2001,Male,60,21.7,-
+2001,Male,80,8.4,-
+2001,Female,0,84.6,-
+2001,Female,20,65,-
+2001,Female,40,45.4,-
+2001,Female,60,26.6,-
+2001,Female,80,11,-
+2001,Difference (Female – Male),0,6.2,-
+2001,Difference (Female – Male),20,6.2,-
+2001,Difference (Female – Male),40,5.8,-
+2001,Difference (Female – Male),60,4.9,-
+2001,Difference (Female – Male),80,2.6,-
+2006,Male,0,79.4,-
+2006,Male,20,59.8,-
+2006,Male,40,40.4,-
+2006,Male,60,22.2,-
+2006,Male,80,8.3,-
+2006,Female,0,85.5,-
+2006,Female,20,65.9,-
+2006,Female,40,46.2,-
+2006,Female,60,27.3,-
+2006,Female,80,11.2,-
+2006,Difference (Female – Male),0,6.2,-
+2006,Difference (Female – Male),20,6.1,-
+2006,Difference (Female – Male),40,5.8,-
+2006,Difference (Female – Male),60,5.1,-
+2006,Difference (Female – Male),80,2.9,-
+2011,Male,0,80.3,-
+2011,Male,20,60.6,-
+2011,Male,40,41.2,-
+2011,Male,60,23,-
+2011,Male,80,8.7,-
+2011,Female,0,86.7,-
+2011,Female,20,67,-
+2011,Female,40,47.3,-
+2011,Female,60,28.4,-
+2011,Female,80,11.9,-
+2011,Difference (Female – Male),0,6.4,-
+2011,Difference (Female – Male),20,6.4,-
+2011,Difference (Female – Male),40,6.1,-
+2011,Difference (Female – Male),60,5.4,-
+2011,Difference (Female – Male),80,3.3,-
+2016,Male,0,81.3,-
+2016,Male,20,61.6,-
+2016,Male,40,42.2,-
+2016,Male,60,23.9,-
+2016,Male,80,9.4,-
+2016,Female,0,87.3,-
+2016,Female,20,67.6,-
+2016,Female,40,47.9,-
+2016,Female,60,29,-
+2016,Female,80,12.3,-
+2016,Difference (Female – Male),0,6,-
+2016,Difference (Female – Male),20,6,-
+2016,Difference (Female – Male),40,5.7,-
+2016,Difference (Female – Male),60,5.1,-
+2016,Difference (Female – Male),80,2.9,-
+2021,Male,0,83.2,-
+2021,Male,20,63.5,-
+2021,Male,40,44,-
+2021,Male,60,25.8,-
+2021,Male,80,11.5,-
+2021,Female,0,87.9,-
+2021,Female,20,68.2,-
+2021,Female,40,48.5,-
+2021,Female,60,29.5,-
+2021,Female,80,12.6,-
+2021,Difference (Female – Male),0,4.7,-
+2021,Difference (Female – Male),20,4.7,-
+2021,Difference (Female – Male),40,4.4,-
+2021,Difference (Female – Male),60,3.7,-
+2021,Difference (Female – Male),80,1.1,-
+1991 – 2016,Male,0,-,8
+1991 – 2016,Male,20,-,7.6
+1991 – 2016,Male,40,-,7.3
+1991 – 2016,Male,60,-,6.5
+1991 – 2016,Male,80,-,4.5
+1991 – 2016,Female,0,-,7.3
+1991 – 2016,Female,20,-,6.7
+1991 – 2016,Female,40,-,6.5
+1991 – 2016,Female,60,-,6.1
+1991 – 2016,Female,80,-,3.7
+1991 – 2016,Difference (Female – Male),0,-,-
+1991 – 2016,Difference (Female – Male),20,-,-
+1991 – 2016,Difference (Female – Male),40,-,-
+1991 – 2016,Difference (Female – Male),60,-,-
+1991 – 2016,Difference (Female – Male),80,-,-

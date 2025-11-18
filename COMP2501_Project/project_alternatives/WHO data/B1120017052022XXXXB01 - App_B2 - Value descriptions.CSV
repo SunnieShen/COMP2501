@@ -1,0 +1,29 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2000,2000
+Age_gp,0,0
+Age_gp,1 – 44,1 – 44
+Age_gp,45 – 49,45 – 49
+Age_gp,50 – 54,50 – 54
+Age_gp,55 – 59,55 – 59
+Age_gp,60 – 64,60 – 64
+Age_gp,65 – 69,65 – 69
+Age_gp,70 – 74,70 – 74
+Age_gp,75 – 79,75 – 79
+Age_gp,80 – 84,80 – 84
+Age_gp,85+,85+
+Age_gp,All ages,所有年齡
+COD,All causes,所有死因
+COD,Certain conditions originating in the perinatal period,嬰兒在出生初期出現的某些情況
+COD,Congenital anomalies,先天畸形
+COD,Diseases of the circulatory system,循環系統疾病
+COD,Diseases of the respiratory system,呼吸系統疾病
+COD,Injury and poisoning,受傷及中毒
+COD,Neoplasms,腫瘤
+COD,Others,其他
+COD,"Symptoms, signs and ill-defined conditions",症狀、體徵和不明確的情況
+Sex,Male,男
+Sex,Female,女
+Sex,Both sexes,合計

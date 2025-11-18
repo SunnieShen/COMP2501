@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Age_diff_bach_spin,Age difference between bachelors and spinsters when married,從未結婚男性與從未結婚女性結婚時的年齡差異
+Per_marri_age_diff,Percentage of marriages by age difference,年齡差異劃分的百分比
+Median_age_diff,Median of age difference between bachelors and spinsters when married (year),從未結婚男性與從未結婚女性結婚時的年齡差異中位數(年)

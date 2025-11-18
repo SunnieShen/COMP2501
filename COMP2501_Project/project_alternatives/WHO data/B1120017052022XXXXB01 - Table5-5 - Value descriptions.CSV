@@ -1,0 +1,15 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,2021,2021
+Sex,Male,男
+Sex,Female,女
+Sex,Difference,相差
+Age_gp,30 – 34,30 – 34
+Age_gp,35 – 39,35 – 39
+Age_gp,40 – 44,40 – 44
+Age_gp,45 – 49,45 – 49
+Edu_attainment,Post-secondary,專上教育
+Edu_attainment,Secondary,中學
+Edu_attainment,Primary or below,小學或以下
+Edu_attainment,Overall,合計

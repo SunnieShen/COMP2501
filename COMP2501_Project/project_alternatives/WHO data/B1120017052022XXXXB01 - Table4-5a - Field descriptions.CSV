@@ -1,0 +1,7 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Sex,Sex,性別
+COD,Cause of death,死亡原因
+Per_deaths,Percentage distribution of deaths,死亡人數百分比分布
+No_reg_deaths,Number of registered deaths,登記死亡人數

@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Age_gp,Age group,年齡組別
+Prop_marri_female,Proportion of married females (* Less than 0.5),女性已婚百分比 (* 少於 0.5)
+Martial_fert_r,Marital fertility rate,已婚女性生育率
+Total,Total (Decomposition of the change in the total fertility rate between 1986 and 2016),總計 (分解總和生育率在1986年至2016年間的轉變)

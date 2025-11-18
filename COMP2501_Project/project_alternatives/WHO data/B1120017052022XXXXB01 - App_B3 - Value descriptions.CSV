@@ -1,0 +1,29 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,2011,2011
+Yr,2016,2016
+Yr,2021,2021
+Age_gp,0,0
+Age_gp,1 – 44,1 – 44
+Age_gp,45 – 49,45 – 49
+Age_gp,50 – 54,50 – 54
+Age_gp,55 – 59,55 – 59
+Age_gp,60 – 64,60 – 64
+Age_gp,65 – 69,65 – 69
+Age_gp,70 – 74,70 – 74
+Age_gp,75 – 79,75 – 79
+Age_gp,80 – 84,80 – 84
+Age_gp,85+,85+
+Age_gp,All ages,所有年齡
+COD,All causes,所有死因
+COD,Certain conditions originating in the perinatal period,起源於圍生期的某些情況
+COD,"Congenital malformations, deformations and chromosomal abnormalities",先天性畸形、變形和染色體異常
+COD,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",症狀、體徵和臨床與實驗室異常所見，不可歸類在他處者
+COD,Diseases of the circulatory system,循環系統疾病
+COD,Diseases of the respiratory system,呼吸系統疾病
+COD,External causes of morbidity and mortality,疾病和死亡的外因
+COD,Neoplasms,腫瘤
+COD,Others,其他
+Sex,Male,男
+Sex,Female,女
+Sex,Both sexes,合計

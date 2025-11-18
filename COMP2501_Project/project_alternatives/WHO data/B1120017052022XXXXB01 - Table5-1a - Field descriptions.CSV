@@ -1,0 +1,8 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Sex,Sex,性別
+Marital_status,Marital status,婚姻狀況
+Number,Number,數目
+Percentage_excl_fdh,Percentage (excluding foreign domestic helpers),百分比（不包括外籍家庭傭工）
+Percentage_21stand_excl_fdh,Percentage (using the structure of the 2021 Population Census as standard and excluding foreign domestic helpers),百分比（根據2021年人口普查分布情況作為標準及不包括外籍家庭傭工）

@@ -1,0 +1,25 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,2011,2011
+Yr,2016,2016
+Yr,2021,2021
+Sex,Male,男
+Sex,Female,女
+Sex,Both sexes,合計
+COD,Neoplasms,腫瘤
+COD,Diseases of the respiratory system,呼吸系統疾病
+COD,Diseases of the circulatory system,循環系統疾病
+COD,Diseases of the genitourinary system,泌尿生殖系統疾病
+COD,External causes of morbidity and mortality,疾病和死亡的外因
+COD,Diseases of the digestive system,消化系統疾病
+COD,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",症狀、體徵和臨床與實驗室異常所見，不可歸類在他處者
+COD,Mental and behavioural disorders,精神和行為障礙
+COD,Certain infectious and parasitic diseases,某些傳染病和寄生蟲病
+COD,"Endocrine, nutritional and metabolic diseases",內分泌、營養和代謝疾病
+COD,Diseases of the nervous system,神經系統疾病
+COD,Diseases of the musculoskeletal system and connective tissue,肌肉骨骼系統和結締組織疾病
+COD,Diseases of the skin and subcutaneous tissue,皮膚和皮下組織疾病
+COD,Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism,血液及造血器官疾病和某些涉及免疫機制的疾患
+COD,"Congenital malformations, deformations and chromosomal abnormalities",先天性畸形、變形和染色體異常
+COD,Other causes,其他原因
+COD,Total,總計

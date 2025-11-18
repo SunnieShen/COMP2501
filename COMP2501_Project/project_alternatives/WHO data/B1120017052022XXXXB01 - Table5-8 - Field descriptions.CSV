@@ -1,0 +1,8 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Sex,Sex,性別
+Crude_marri_rate,Crude marriage rate (per 1 000 population),粗結婚率（按每千名人口計算）
+Standardised_marri_rate,Standardised marriage rate (per 1 000 population),標準化結婚率（按每千名人口計算）
+Crude_divorce_rate,Crude divorce rate (per 1 000 population),粗離婚率（按每千名人口計算）
+General_divorce_rate,General divorce rate (per 1 000 population),一般離婚率（按每千名人口計算）

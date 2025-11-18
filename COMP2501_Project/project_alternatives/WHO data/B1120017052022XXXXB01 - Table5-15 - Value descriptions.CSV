@@ -1,0 +1,21 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2001,2001
+Yr,2006,2006
+Yr,2011,2011
+Yr,2016,2016
+Yr,2017,2017
+Yr,2018,2018
+Yr,2019,2019
+Yr,2020,2020
+Yr,2021,2021
+G_B_HKR,Bridegrooms are Hong Kong residents and brides are from the Mainland,新郎為香港人而新娘為內地人
+G_B_HKR,Brides are Hong Kong residents and bridegrooms are from the Mainland,新娘為香港人而新郎為內地人
+Age_diff,Bridegrooms older than brides: 5+,新郎較新娘年長: 5+
+Age_diff,Bridegrooms older than brides: 1-4,新郎較新娘年長: 1-4
+Age_diff,Bridegrooms and brides of same age,新郎與新娘年齡相同
+Age_diff,Bridegrooms younger than brides: 1-4,新郎較新娘年輕: 1-4
+Age_diff,Bridegrooms younger than brides: 5+,新郎較新娘年輕: 5+
+Age_diff,Median of age difference between bridegrooms and brides (year),新郎與新娘的年齡差異中位數（年）

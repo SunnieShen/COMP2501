@@ -1,0 +1,16 @@
+﻿Value descriptions,,
+Variable,Value_eng,Value_chi
+Yr,1991,1991
+Yr,1996,1996
+Yr,2001,2001
+Yr,2006,2006
+Yr,2011,2011
+Yr,2016,2016
+Yr,2021,2021
+Sex,Male,男
+Sex,Female,女
+Marital_status,Never married,從未結婚
+Marital_status,Married,已婚
+Marital_status,Widowed,喪偶
+Marital_status,Divorced/ separated,離婚／分居
+Marital_status,Total,總計

@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+No_of_deaths,Number of deaths,死亡人數
+Crude_death_r,Crude death rate (per 1 000 population),粗死亡率（按每千名人口計算）
+Stand_death_r,Standardised death rate (per 1 000 population),標準化死亡率（按每千名人口計算）

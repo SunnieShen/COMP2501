@@ -1,0 +1,541 @@
+﻿Yr,Age_gp,COD,Sex,Mor_rate
+2011,0,Certain conditions originating in the perinatal period,Male,102
+2011,0,"Congenital malformations, deformations and chromosomal abnormalities",Male,76
+2011,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Male,29
+2011,0,Others,Male,91
+2011,0,All causes,Male,298
+2011,1 – 44,External causes of morbidity and mortality,Male,18
+2011,1 – 44,Neoplasms,Male,15
+2011,1 – 44,Diseases of the circulatory system,Male,9
+2011,1 – 44,Others,Male,11
+2011,1 – 44,All causes,Male,54
+2011,45 – 49,Neoplasms,Male,90
+2011,45 – 49,Diseases of the circulatory system,Male,48
+2011,45 – 49,External causes of morbidity and mortality,Male,30
+2011,45 – 49,Others,Male,43
+2011,45 – 49,All causes,Male,212
+2011,50 – 54,Neoplasms,Male,169
+2011,50 – 54,Diseases of the circulatory system,Male,76
+2011,50 – 54,External causes of morbidity and mortality,Male,27
+2011,50 – 54,Others,Male,75
+2011,50 – 54,All causes,Male,347
+2011,55 – 59,Neoplasms,Male,279
+2011,55 – 59,Diseases of the circulatory system,Male,117
+2011,55 – 59,Diseases of the respiratory system,Male,41
+2011,55 – 59,Others,Male,102
+2011,55 – 59,All causes,Male,538
+2011,60 – 64,Neoplasms,Male,449
+2011,60 – 64,Diseases of the circulatory system,Male,175
+2011,60 – 64,Diseases of the respiratory system,Male,83
+2011,60 – 64,Others,Male,153
+2011,60 – 64,All causes,Male,860
+2011,65 – 69,Neoplasms,Male,709
+2011,65 – 69,Diseases of the circulatory system,Male,303
+2011,65 – 69,Diseases of the respiratory system,Male,229
+2011,65 – 69,Others,Male,243
+2011,65 – 69,All causes,Male,1484
+2011,70 – 74,Neoplasms,Male,866
+2011,70 – 74,Diseases of the circulatory system,Male,506
+2011,70 – 74,Diseases of the respiratory system,Male,438
+2011,70 – 74,Others,Male,412
+2011,70 – 74,All causes,Male,2223
+2011,75 – 79,Neoplasms,Male,1366
+2011,75 – 79,Diseases of the circulatory system,Male,914
+2011,75 – 79,Diseases of the respiratory system,Male,928
+2011,75 – 79,Others,Male,672
+2011,75 – 79,All causes,Male,3880
+2011,80 – 84,Neoplasms,Male,1902
+2011,80 – 84,Diseases of the respiratory system,Male,1997
+2011,80 – 84,Diseases of the circulatory system,Male,1735
+2011,80 – 84,Others,Male,1262
+2011,80 – 84,All causes,Male,6896
+2011,85+,Diseases of the respiratory system,Male,4464
+2011,85+,Diseases of the circulatory system,Male,3170
+2011,85+,Neoplasms,Male,2464
+2011,85+,Others,Male,2818
+2011,85+,All causes,Male,12916
+2011,All ages,Neoplasms,Male,245
+2011,All ages,Diseases of the respiratory system,Male,157
+2011,All ages,Diseases of the circulatory system,Male,164
+2011,All ages,Others,Male,149
+2011,All ages,All causes,Male,715
+2011,0,Certain conditions originating in the perinatal period,Female,51
+2011,0,"Congenital malformations, deformations and chromosomal abnormalities",Female,71
+2011,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Female,16
+2011,0,Others,Female,55
+2011,0,All causes,Female,194
+2011,1 – 44,Neoplasms,Female,13
+2011,1 – 44,External causes of morbidity and mortality,Female,8
+2011,1 – 44,Diseases of the circulatory system,Female,2
+2011,1 – 44,Others,Female,7
+2011,1 – 44,All causes,Female,31
+2011,45 – 49,Neoplasms,Female,72
+2011,45 – 49,Diseases of the circulatory system,Female,12
+2011,45 – 49,External causes of morbidity and mortality,Female,11
+2011,45 – 49,Others,Female,20
+2011,45 – 49,All causes,Female,116
+2011,50 – 54,Neoplasms,Female,124
+2011,50 – 54,Diseases of the circulatory system,Female,20
+2011,50 – 54,External causes of morbidity and mortality,Female,14
+2011,50 – 54,Others,Female,27
+2011,50 – 54,All causes,Female,185
+2011,55 – 59,Neoplasms,Female,169
+2011,55 – 59,Diseases of the circulatory system,Female,34
+2011,55 – 59,Diseases of the respiratory system,Female,12
+2011,55 – 59,Others,Female,42
+2011,55 – 59,All causes,Female,258
+2011,60 – 64,Neoplasms,Female,249
+2011,60 – 64,Diseases of the circulatory system,Female,62
+2011,60 – 64,Diseases of the respiratory system,Female,25
+2011,60 – 64,Others,Female,71
+2011,60 – 64,All causes,Female,406
+2011,65 – 69,Neoplasms,Female,323
+2011,65 – 69,Diseases of the circulatory system,Female,127
+2011,65 – 69,Diseases of the respiratory system,Female,46
+2011,65 – 69,Others,Female,112
+2011,65 – 69,All causes,Female,607
+2011,70 – 74,Neoplasms,Female,445
+2011,70 – 74,Diseases of the circulatory system,Female,269
+2011,70 – 74,Diseases of the respiratory system,Female,117
+2011,70 – 74,Others,Female,220
+2011,70 – 74,All causes,Female,1051
+2011,75 – 79,Neoplasms,Female,678
+2011,75 – 79,Diseases of the circulatory system,Female,596
+2011,75 – 79,Diseases of the respiratory system,Female,291
+2011,75 – 79,Others,Female,473
+2011,75 – 79,All causes,Female,2039
+2011,80 – 84,Neoplasms,Female,937
+2011,80 – 84,Diseases of the respiratory system,Female,736
+2011,80 – 84,Diseases of the circulatory system,Female,1180
+2011,80 – 84,Others,Female,971
+2011,80 – 84,All causes,Female,3825
+2011,85+,Diseases of the respiratory system,Female,2774
+2011,85+,Diseases of the circulatory system,Female,2928
+2011,85+,Neoplasms,Female,1364
+2011,85+,Others,Female,2470
+2011,85+,All causes,Female,9536
+2011,All ages,Neoplasms,Female,144
+2011,All ages,Diseases of the respiratory system,Female,97
+2011,All ages,Diseases of the circulatory system,Female,131
+2011,All ages,Others,Female,121
+2011,All ages,All causes,Female,493
+2011,0,Certain conditions originating in the perinatal period,Both sexes,78
+2011,0,"Congenital malformations, deformations and chromosomal abnormalities",Both sexes,74
+2011,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Both sexes,23
+2011,0,Others,Both sexes,74
+2011,0,All causes,Both sexes,248
+2011,1 – 44,Neoplasms,Both sexes,14
+2011,1 – 44,External causes of morbidity and mortality,Both sexes,13
+2011,1 – 44,Diseases of the circulatory system,Both sexes,5
+2011,1 – 44,Others,Both sexes,9
+2011,1 – 44,All causes,Both sexes,41
+2011,45 – 49,Neoplasms,Both sexes,80
+2011,45 – 49,Diseases of the circulatory system,Both sexes,28
+2011,45 – 49,External causes of morbidity and mortality,Both sexes,20
+2011,45 – 49,Others,Both sexes,31
+2011,45 – 49,All causes,Both sexes,159
+2011,50 – 54,Neoplasms,Both sexes,146
+2011,50 – 54,Diseases of the circulatory system,Both sexes,48
+2011,50 – 54,External causes of morbidity and mortality,Both sexes,20
+2011,50 – 54,Others,Both sexes,51
+2011,50 – 54,All causes,Both sexes,264
+2011,55 – 59,Neoplasms,Both sexes,223
+2011,55 – 59,Diseases of the circulatory system,Both sexes,75
+2011,55 – 59,Diseases of the respiratory system,Both sexes,26
+2011,55 – 59,Others,Both sexes,72
+2011,55 – 59,All causes,Both sexes,397
+2011,60 – 64,Neoplasms,Both sexes,349
+2011,60 – 64,Diseases of the circulatory system,Both sexes,118
+2011,60 – 64,Diseases of the respiratory system,Both sexes,54
+2011,60 – 64,Others,Both sexes,112
+2011,60 – 64,All causes,Both sexes,633
+2011,65 – 69,Neoplasms,Both sexes,523
+2011,65 – 69,Diseases of the circulatory system,Both sexes,218
+2011,65 – 69,Diseases of the respiratory system,Both sexes,141
+2011,65 – 69,Others,Both sexes,180
+2011,65 – 69,All causes,Both sexes,1062
+2011,70 – 74,Neoplasms,Both sexes,658
+2011,70 – 74,Diseases of the circulatory system,Both sexes,389
+2011,70 – 74,Diseases of the respiratory system,Both sexes,280
+2011,70 – 74,Others,Both sexes,317
+2011,70 – 74,All causes,Both sexes,1645
+2011,75 – 79,Neoplasms,Both sexes,1003
+2011,75 – 79,Diseases of the circulatory system,Both sexes,747
+2011,75 – 79,Diseases of the respiratory system,Both sexes,592
+2011,75 – 79,Others,Both sexes,567
+2011,75 – 79,All causes,Both sexes,2909
+2011,80 – 84,Neoplasms,Both sexes,1348
+2011,80 – 84,Diseases of the respiratory system,Both sexes,1274
+2011,80 – 84,Diseases of the circulatory system,Both sexes,1417
+2011,80 – 84,Others,Both sexes,1095
+2011,80 – 84,All causes,Both sexes,5134
+2011,85+,Diseases of the respiratory system,Both sexes,3323
+2011,85+,Diseases of the circulatory system,Both sexes,3006
+2011,85+,Neoplasms,Both sexes,1721
+2011,85+,Others,Both sexes,2583
+2011,85+,All causes,Both sexes,10633
+2011,All ages,Neoplasms,Both sexes,191
+2011,All ages,Diseases of the respiratory system,Both sexes,125
+2011,All ages,Diseases of the circulatory system,Both sexes,146
+2011,All ages,Others,Both sexes,134
+2011,All ages,All causes,Both sexes,597
+2016,0,Certain conditions originating in the perinatal period,Male,69
+2016,0,"Congenital malformations, deformations and chromosomal abnormalities",Male,47
+2016,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Male,11
+2016,0,Others,Male,58
+2016,0,All causes,Male,184
+2016,1 – 44,Neoplasms,Male,14
+2016,1 – 44,External causes of morbidity and mortality,Male,18
+2016,1 – 44,Diseases of the circulatory system,Male,8
+2016,1 – 44,Others,Male,11
+2016,1 – 44,All causes,Male,51
+2016,45 – 49,Neoplasms,Male,81
+2016,45 – 49,Diseases of the circulatory system,Male,53
+2016,45 – 49,External causes of morbidity and mortality,Male,27
+2016,45 – 49,Others,Male,45
+2016,45 – 49,All causes,Male,206
+2016,50 – 54,Neoplasms,Male,135
+2016,50 – 54,Diseases of the circulatory system,Male,76
+2016,50 – 54,External causes of morbidity and mortality,Male,29
+2016,50 – 54,Others,Male,66
+2016,50 – 54,All causes,Male,306
+2016,55 – 59,Neoplasms,Male,261
+2016,55 – 59,Diseases of the circulatory system,Male,113
+2016,55 – 59,Diseases of the respiratory system,Male,45
+2016,55 – 59,Others,Male,113
+2016,55 – 59,All causes,Male,533
+2016,60 – 64,Neoplasms,Male,421
+2016,60 – 64,Diseases of the circulatory system,Male,166
+2016,60 – 64,Diseases of the respiratory system,Male,86
+2016,60 – 64,Others,Male,166
+2016,60 – 64,All causes,Male,839
+2016,65 – 69,Neoplasms,Male,603
+2016,65 – 69,Diseases of the circulatory system,Male,239
+2016,65 – 69,Diseases of the respiratory system,Male,177
+2016,65 – 69,Others,Male,245
+2016,65 – 69,All causes,Male,1264
+2016,70 – 74,Neoplasms,Male,907
+2016,70 – 74,Diseases of the circulatory system,Male,421
+2016,70 – 74,Diseases of the respiratory system,Male,410
+2016,70 – 74,Others,Male,395
+2016,70 – 74,All causes,Male,2133
+2016,75 – 79,Neoplasms,Male,1220
+2016,75 – 79,Diseases of the circulatory system,Male,721
+2016,75 – 79,Diseases of the respiratory system,Male,863
+2016,75 – 79,Others,Male,645
+2016,75 – 79,All causes,Male,3450
+2016,80 – 84,Neoplasms,Male,1628
+2016,80 – 84,Diseases of the respiratory system,Male,1757
+2016,80 – 84,Diseases of the circulatory system,Male,1362
+2016,80 – 84,Others,Male,1251
+2016,80 – 84,All causes,Male,5997
+2016,85+,Diseases of the respiratory system,Male,4424
+2016,85+,Diseases of the circulatory system,Male,2497
+2016,85+,Neoplasms,Male,2261
+2016,85+,Others,Male,2975
+2016,85+,All causes,Male,12156
+2016,All ages,Neoplasms,Male,256
+2016,All ages,Diseases of the respiratory system,Male,180
+2016,All ages,Diseases of the circulatory system,Male,160
+2016,All ages,Others,Male,174
+2016,All ages,All causes,Male,770
+2016,0,Certain conditions originating in the perinatal period,Female,78
+2016,0,"Congenital malformations, deformations and chromosomal abnormalities",Female,31
+2016,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Female,8
+2016,0,Others,Female,78
+2016,0,All causes,Female,195
+2016,1 – 44,Neoplasms,Female,13
+2016,1 – 44,External causes of morbidity and mortality,Female,7
+2016,1 – 44,Diseases of the circulatory system,Female,3
+2016,1 – 44,Others,Female,6
+2016,1 – 44,All causes,Female,29
+2016,45 – 49,Neoplasms,Female,65
+2016,45 – 49,Diseases of the circulatory system,Female,13
+2016,45 – 49,External causes of morbidity and mortality,Female,9
+2016,45 – 49,Others,Female,17
+2016,45 – 49,All causes,Female,104
+2016,50 – 54,Neoplasms,Female,119
+2016,50 – 54,Diseases of the circulatory system,Female,21
+2016,50 – 54,External causes of morbidity and mortality,Female,13
+2016,50 – 54,Others,Female,24
+2016,50 – 54,All causes,Female,176
+2016,55 – 59,Neoplasms,Female,166
+2016,55 – 59,Diseases of the circulatory system,Female,29
+2016,55 – 59,Diseases of the respiratory system,Female,19
+2016,55 – 59,Others,Female,45
+2016,55 – 59,All causes,Female,259
+2016,60 – 64,Neoplasms,Female,250
+2016,60 – 64,Diseases of the circulatory system,Female,57
+2016,60 – 64,Diseases of the respiratory system,Female,28
+2016,60 – 64,Others,Female,64
+2016,60 – 64,All causes,Female,399
+2016,65 – 69,Neoplasms,Female,318
+2016,65 – 69,Diseases of the circulatory system,Female,102
+2016,65 – 69,Diseases of the respiratory system,Female,56
+2016,65 – 69,Others,Female,107
+2016,65 – 69,All causes,Female,583
+2016,70 – 74,Neoplasms,Female,427
+2016,70 – 74,Diseases of the circulatory system,Female,215
+2016,70 – 74,Diseases of the respiratory system,Female,113
+2016,70 – 74,Others,Female,206
+2016,70 – 74,All causes,Female,962
+2016,75 – 79,Neoplasms,Female,565
+2016,75 – 79,Diseases of the circulatory system,Female,434
+2016,75 – 79,Diseases of the respiratory system,Female,286
+2016,75 – 79,Others,Female,438
+2016,75 – 79,All causes,Female,1723
+2016,80 – 84,Neoplasms,Female,855
+2016,80 – 84,Diseases of the respiratory system,Female,687
+2016,80 – 84,Diseases of the circulatory system,Female,885
+2016,80 – 84,Others,Female,891
+2016,80 – 84,All causes,Female,3318
+2016,85+,Diseases of the respiratory system,Female,2794
+2016,85+,Diseases of the circulatory system,Female,2192
+2016,85+,Neoplasms,Female,1212
+2016,85+,Others,Female,2658
+2016,85+,All causes,Female,8857
+2016,All ages,Neoplasms,Female,150
+2016,All ages,Diseases of the respiratory system,Female,115
+2016,All ages,Diseases of the circulatory system,Female,117
+2016,All ages,Others,Female,139
+2016,All ages,All causes,Female,522
+2016,0,Certain conditions originating in the perinatal period,Both sexes,73
+2016,0,"Congenital malformations, deformations and chromosomal abnormalities",Both sexes,39
+2016,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Both sexes,9
+2016,0,Others,Both sexes,68
+2016,0,All causes,Both sexes,189
+2016,1 – 44,Neoplasms,Both sexes,13
+2016,1 – 44,External causes of morbidity and mortality,Both sexes,12
+2016,1 – 44,Diseases of the circulatory system,Both sexes,6
+2016,1 – 44,Others,Both sexes,8
+2016,1 – 44,All causes,Both sexes,39
+2016,45 – 49,Neoplasms,Both sexes,71
+2016,45 – 49,Diseases of the circulatory system,Both sexes,30
+2016,45 – 49,External causes of morbidity and mortality,Both sexes,17
+2016,45 – 49,Others,Both sexes,29
+2016,45 – 49,All causes,Both sexes,147
+2016,50 – 54,Neoplasms,Both sexes,126
+2016,50 – 54,Diseases of the circulatory system,Both sexes,46
+2016,50 – 54,External causes of morbidity and mortality,Both sexes,21
+2016,50 – 54,Others,Both sexes,43
+2016,50 – 54,All causes,Both sexes,235
+2016,55 – 59,Neoplasms,Both sexes,213
+2016,55 – 59,Diseases of the circulatory system,Both sexes,70
+2016,55 – 59,Diseases of the respiratory system,Both sexes,32
+2016,55 – 59,Others,Both sexes,79
+2016,55 – 59,All causes,Both sexes,394
+2016,60 – 64,Neoplasms,Both sexes,334
+2016,60 – 64,Diseases of the circulatory system,Both sexes,111
+2016,60 – 64,Diseases of the respiratory system,Both sexes,57
+2016,60 – 64,Others,Both sexes,114
+2016,60 – 64,All causes,Both sexes,616
+2016,65 – 69,Neoplasms,Both sexes,459
+2016,65 – 69,Diseases of the circulatory system,Both sexes,170
+2016,65 – 69,Diseases of the respiratory system,Both sexes,116
+2016,65 – 69,Others,Both sexes,176
+2016,65 – 69,All causes,Both sexes,921
+2016,70 – 74,Neoplasms,Both sexes,671
+2016,70 – 74,Diseases of the circulatory system,Both sexes,320
+2016,70 – 74,Diseases of the respiratory system,Both sexes,264
+2016,70 – 74,Others,Both sexes,302
+2016,70 – 74,All causes,Both sexes,1557
+2016,75 – 79,Neoplasms,Both sexes,886
+2016,75 – 79,Diseases of the circulatory system,Both sexes,575
+2016,75 – 79,Diseases of the respiratory system,Both sexes,569
+2016,75 – 79,Others,Both sexes,540
+2016,75 – 79,All causes,Both sexes,2570
+2016,80 – 84,Neoplasms,Both sexes,1198
+2016,80 – 84,Diseases of the respiratory system,Both sexes,1162
+2016,80 – 84,Diseases of the circulatory system,Both sexes,1096
+2016,80 – 84,Others,Both sexes,1051
+2016,80 – 84,All causes,Both sexes,4507
+2016,85+,Diseases of the respiratory system,Both sexes,3349
+2016,85+,Diseases of the circulatory system,Both sexes,2296
+2016,85+,Neoplasms,Both sexes,1569
+2016,85+,Others,Both sexes,2766
+2016,85+,All causes,Both sexes,9980
+2016,All ages,Neoplasms,Both sexes,198
+2016,All ages,Diseases of the respiratory system,Both sexes,145
+2016,All ages,Diseases of the circulatory system,Both sexes,137
+2016,All ages,Others,Both sexes,155
+2016,All ages,All causes,Both sexes,636
+2021,0,Certain conditions originating in the perinatal period,Male,110
+2021,0,"Congenital malformations, deformations and chromosomal abnormalities",Male,42
+2021,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Male,16
+2021,0,Others,Male,16
+2021,0,All causes,Male,183
+2021,1 – 44,Neoplasms,Male,10
+2021,1 – 44,External causes of morbidity and mortality,Male,20
+2021,1 – 44,Diseases of the circulatory system,Male,7
+2021,1 – 44,Others,Male,12
+2021,1 – 44,All causes,Male,49
+2021,45 – 49,Neoplasms,Male,76
+2021,45 – 49,Diseases of the circulatory system,Male,50
+2021,45 – 49,External causes of morbidity and mortality,Male,35
+2021,45 – 49,Others,Male,43
+2021,45 – 49,All causes,Male,204
+2021,50 – 54,Neoplasms,Male,120
+2021,50 – 54,Diseases of the circulatory system,Male,82
+2021,50 – 54,External causes of morbidity and mortality,Male,29
+2021,50 – 54,Others,Male,71
+2021,50 – 54,All causes,Male,303
+2021,55 – 59,Neoplasms,Male,211
+2021,55 – 59,Diseases of the circulatory system,Male,126
+2021,55 – 59,Diseases of the respiratory system,Male,37
+2021,55 – 59,Others,Male,117
+2021,55 – 59,All causes,Male,491
+2021,60 – 64,Neoplasms,Male,348
+2021,60 – 64,Diseases of the circulatory system,Male,150
+2021,60 – 64,Diseases of the respiratory system,Male,67
+2021,60 – 64,Others,Male,162
+2021,60 – 64,All causes,Male,727
+2021,65 – 69,Neoplasms,Male,559
+2021,65 – 69,Diseases of the circulatory system,Male,222
+2021,65 – 69,Diseases of the respiratory system,Male,163
+2021,65 – 69,Others,Male,223
+2021,65 – 69,All causes,Male,1167
+2021,70 – 74,Neoplasms,Male,747
+2021,70 – 74,Diseases of the circulatory system,Male,385
+2021,70 – 74,Diseases of the respiratory system,Male,351
+2021,70 – 74,Others,Male,353
+2021,70 – 74,All causes,Male,1836
+2021,75 – 79,Neoplasms,Male,1198
+2021,75 – 79,Diseases of the circulatory system,Male,638
+2021,75 – 79,Diseases of the respiratory system,Male,762
+2021,75 – 79,Others,Male,670
+2021,75 – 79,All causes,Male,3267
+2021,80 – 84,Neoplasms,Male,1414
+2021,80 – 84,Diseases of the respiratory system,Male,1561
+2021,80 – 84,Diseases of the circulatory system,Male,1049
+2021,80 – 84,Others,Male,1242
+2021,80 – 84,All causes,Male,5266
+2021,85+,Diseases of the respiratory system,Male,3991
+2021,85+,Diseases of the circulatory system,Male,2120
+2021,85+,Neoplasms,Male,1974
+2021,85+,Others,Male,2825
+2021,85+,All causes,Male,10909
+2021,All ages,Neoplasms,Male,264
+2021,All ages,Diseases of the respiratory system,Male,201
+2021,All ages,Diseases of the circulatory system,Male,169
+2021,All ages,Others,Male,204
+2021,All ages,All causes,Male,839
+2021,0,Certain conditions originating in the perinatal period,Female,77
+2021,0,"Congenital malformations, deformations and chromosomal abnormalities",Female,27
+2021,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Female,11
+2021,0,Others,Female,49
+2021,0,All causes,Female,165
+2021,1 – 44,Neoplasms,Female,11
+2021,1 – 44,External causes of morbidity and mortality,Female,7
+2021,1 – 44,Diseases of the circulatory system,Female,3
+2021,1 – 44,Others,Female,6
+2021,1 – 44,All causes,Female,28
+2021,45 – 49,Neoplasms,Female,64
+2021,45 – 49,Diseases of the circulatory system,Female,17
+2021,45 – 49,External causes of morbidity and mortality,Female,12
+2021,45 – 49,Others,Female,15
+2021,45 – 49,All causes,Female,108
+2021,50 – 54,Neoplasms,Female,103
+2021,50 – 54,Diseases of the circulatory system,Female,20
+2021,50 – 54,External causes of morbidity and mortality,Female,11
+2021,50 – 54,Others,Female,33
+2021,50 – 54,All causes,Female,167
+2021,55 – 59,Neoplasms,Female,169
+2021,55 – 59,Diseases of the circulatory system,Female,29
+2021,55 – 59,Diseases of the respiratory system,Female,12
+2021,55 – 59,Others,Female,40
+2021,55 – 59,All causes,Female,251
+2021,60 – 64,Neoplasms,Female,221
+2021,60 – 64,Diseases of the circulatory system,Female,45
+2021,60 – 64,Diseases of the respiratory system,Female,28
+2021,60 – 64,Others,Female,65
+2021,60 – 64,All causes,Female,359
+2021,65 – 69,Neoplasms,Female,282
+2021,65 – 69,Diseases of the circulatory system,Female,92
+2021,65 – 69,Diseases of the respiratory system,Female,48
+2021,65 – 69,Others,Female,116
+2021,65 – 69,All causes,Female,539
+2021,70 – 74,Neoplasms,Female,396
+2021,70 – 74,Diseases of the circulatory system,Female,157
+2021,70 – 74,Diseases of the respiratory system,Female,97
+2021,70 – 74,Others,Female,193
+2021,70 – 74,All causes,Female,843
+2021,75 – 79,Neoplasms,Female,593
+2021,75 – 79,Diseases of the circulatory system,Female,386
+2021,75 – 79,Diseases of the respiratory system,Female,247
+2021,75 – 79,Others,Female,444
+2021,75 – 79,All causes,Female,1670
+2021,80 – 84,Neoplasms,Female,924
+2021,80 – 84,Diseases of the respiratory system,Female,699
+2021,80 – 84,Diseases of the circulatory system,Female,780
+2021,80 – 84,Others,Female,968
+2021,80 – 84,All causes,Female,3372
+2021,85+,Diseases of the respiratory system,Female,2580
+2021,85+,Diseases of the circulatory system,Female,1907
+2021,85+,Neoplasms,Female,1167
+2021,85+,Others,Female,2946
+2021,85+,All causes,Female,8600
+2021,All ages,Neoplasms,Female,163
+2021,All ages,Diseases of the respiratory system,Female,124
+2021,All ages,Diseases of the circulatory system,Female,117
+2021,All ages,Others,Female,171
+2021,All ages,All causes,Female,575
+2021,0,Certain conditions originating in the perinatal period,Both sexes,94
+2021,0,"Congenital malformations, deformations and chromosomal abnormalities",Both sexes,35
+2021,0,"Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified",Both sexes,13
+2021,0,Others,Both sexes,32
+2021,0,All causes,Both sexes,174
+2021,1 – 44,Neoplasms,Both sexes,11
+2021,1 – 44,External causes of morbidity and mortality,Both sexes,13
+2021,1 – 44,Diseases of the circulatory system,Both sexes,5
+2021,1 – 44,Others,Both sexes,9
+2021,1 – 44,All causes,Both sexes,37
+2021,45 – 49,Neoplasms,Both sexes,69
+2021,45 – 49,Diseases of the circulatory system,Both sexes,31
+2021,45 – 49,External causes of morbidity and mortality,Both sexes,21
+2021,45 – 49,Others,Both sexes,27
+2021,45 – 49,All causes,Both sexes,148
+2021,50 – 54,Neoplasms,Both sexes,111
+2021,50 – 54,Diseases of the circulatory system,Both sexes,47
+2021,50 – 54,External causes of morbidity and mortality,Both sexes,18
+2021,50 – 54,Others,Both sexes,49
+2021,50 – 54,All causes,Both sexes,225
+2021,55 – 59,Neoplasms,Both sexes,188
+2021,55 – 59,Diseases of the circulatory system,Both sexes,73
+2021,55 – 59,Diseases of the respiratory system,Both sexes,23
+2021,55 – 59,Others,Both sexes,75
+2021,55 – 59,All causes,Both sexes,359
+2021,60 – 64,Neoplasms,Both sexes,283
+2021,60 – 64,Diseases of the circulatory system,Both sexes,96
+2021,60 – 64,Diseases of the respiratory system,Both sexes,47
+2021,60 – 64,Others,Both sexes,113
+2021,60 – 64,All causes,Both sexes,539
+2021,65 – 69,Neoplasms,Both sexes,417
+2021,65 – 69,Diseases of the circulatory system,Both sexes,155
+2021,65 – 69,Diseases of the respiratory system,Both sexes,104
+2021,65 – 69,Others,Both sexes,168
+2021,65 – 69,All causes,Both sexes,844
+2021,70 – 74,Neoplasms,Both sexes,568
+2021,70 – 74,Diseases of the circulatory system,Both sexes,269
+2021,70 – 74,Diseases of the respiratory system,Both sexes,222
+2021,70 – 74,Others,Both sexes,271
+2021,70 – 74,All causes,Both sexes,1330
+2021,75 – 79,Neoplasms,Both sexes,889
+2021,75 – 79,Diseases of the circulatory system,Both sexes,509
+2021,75 – 79,Diseases of the respiratory system,Both sexes,499
+2021,75 – 79,Others,Both sexes,555
+2021,75 – 79,All causes,Both sexes,2453
+2021,80 – 84,Neoplasms,Both sexes,1160
+2021,80 – 84,Diseases of the respiratory system,Both sexes,1115
+2021,80 – 84,Diseases of the circulatory system,Both sexes,910
+2021,80 – 84,Others,Both sexes,1100
+2021,80 – 84,All causes,Both sexes,4286
+2021,85+,Diseases of the respiratory system,Both sexes,3107
+2021,85+,Diseases of the circulatory system,Both sexes,1986
+2021,85+,Neoplasms,Both sexes,1468
+2021,85+,Others,Both sexes,2901
+2021,85+,All causes,Both sexes,9462
+2021,All ages,Neoplasms,Both sexes,209
+2021,All ages,Diseases of the respiratory system,Both sexes,159
+2021,All ages,Diseases of the circulatory system,Both sexes,141
+2021,All ages,Others,Both sexes,186
+2021,All ages,All causes,Both sexes,695

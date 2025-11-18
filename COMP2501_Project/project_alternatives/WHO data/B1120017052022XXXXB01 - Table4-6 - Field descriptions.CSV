@@ -1,0 +1,6 @@
+﻿Field descriptions,,
+Variable,Description_eng,Description_chi
+Yr,Year,年
+Sex,Sex,性別
+Infant_mortality,Infant mortality,嬰兒死亡
+Infant_mortality_r,Infant mortality rates (Number of deaths per 1 000 live births),嬰兒死亡率（每千名活產嬰兒的死亡數目）
