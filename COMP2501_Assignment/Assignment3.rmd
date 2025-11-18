@@ -1,0 +1,135 @@
+---
+title: "COMP2501 Assignment 3"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Requirements
+
+**Submission deadline: Nov 27th, 2025 at 23:59 (HKT).**
+
+**Full mark of assignment 3: 50.**
+
+For the following questions, please:
+
+1.  Replace all [Input here] places with your information or your answer.
+2.  Complete the code block by adding your own code to fulfill the requirements in each question. Please use the existing code block and do not add your own code block.
+3.  **Important**, some simulation problems will take longer to run. Add the code block argument of `cache=TRUE` to avoid re-running such blocks when knitting.
+
+Please make sure your Rmd file is a valid Markdown document and can be successfully knitted.
+
+For assignment submission, please knit your final Rmd file into a Word document, and submit both your **Rmd** file and the knitted **Microsoft Word** document file to Moodle. You get 0 score if 1) the Rmd file you submitted cannot be knitted, and 2) you have not submitted a Word document. For each visualization question, please make sure that the generated plot is shown in-place with the question and after the code block.
+
+------------------------------------------------------------------------
+
+## Name and UID
+
+Name: Shen Hongshan
+
+UID: 3036290936
+
+------------------------------------------------------------------------
+
+### Environmental setup
+
+You need to have the `dplyr`, `ggplot2`, and `HistData` packages installed. If not yet, please run `install.packages(c("dplyr", "ggplot2", "HistData"))` in your R environment.
+
+```{r, warning=FALSE}
+# Load the package.
+library(dplyr)
+library(ggplot2)
+library(HistData)
+```
+
+### 1. (3 points) Suppose you have a biased coin where the probability of heads is p=0.75. Use Monte Carlo simulation with 10,000 repetitions to estimate the probability of getting exactly 6 heads out of 10 tosses.
+
+```{r}
+
+```
+
+### 2. (15 points) Gambler's ruin
+
+#### a. (3 points) Consider a game where a player starts with \$5 and plays a gambling game involving tossing a coin. For each flip: If it is head, the player gains \$1. If it is tail, the player loses \$1. The game ends when the player either reaches \$10 or goes bankrupt (reaches \$0). Denote the chance of getting a head from the coin toss as `p`. With a fair coin (`p` = 0.5), simulate this game using Monte Carlo simulations with 10,000 repetitions to compute: the probability of the player going bankrupt, and the average number of flips it takes for the game to end.
+
+```{r}
+
+```
+
+#### b. (2 points) For a fair coin, plot the distribution of number of flips it takes for the game to end. You can reuse results from part a.
+
+```{r}
+
+```
+
+#### c. (5 points) If the coin is not fair (`p` != 0.5), how will the chance of bankruptcy change? Use Monte Carlo simulation (with appropriate number of repetitions) to plot a smooth curve of bankruptcy chance (as vertical axis) against `p` (as horizontal axis). You only need to consider the scenario of 0.3 \<= `p` \<= 0.7.
+
+```{r, cache=TRUE}
+
+```
+
+#### d. (5 points) Now let's assume that the player is very greedy, he will only exit the game after he reaches \$50 (or bankrupted). Assuming all other settings being identical, in scenarios with 0.3 \<= `p` \<= 0.7, simulate this game using Monte Carlo simulations to compute the curve of bankruptcy chance against `p`.
+
+```{r}
+
+```
+
+### 3. (5 points) Bayesian inference: we will re-visit the calculation of a professional baseball player's batting average using Bayes theorem. Historically, professional baseball players have had a batting average (AVG), representing the probability of success when batting, with a mean of 0.275 and a standard deviation of 0.027. You can assume it to be a normal distribution. During his first month in Major League Baseball (MLB), José Iglesias displayed exceptional performance, successfully batting 9 times out of 20 attempts. Based on this observation, calculate and plot the posterior PDF of José's batting average (AVG). Think of the batting average (AVG) as the probability of getting head in a coin toss game, where each "coin toss" corresponds to a batting attempt. The posterior PDF should be a curve defined over the range of (0, 1) and its integral being 1.
+
+```{r}
+
+```
+
+### 4. (12 points) Using the GaltonFamilies dataset, analyze which parent's height has a stronger association with children's height.
+
+#### a. (5 points) We will work on daughter (female) heights. Calculate the slope coefficients for the two linear regression scenarios: daughter \~ father, and daughter \~ mother.
+
+```{r}
+data("GaltonFamilies")
+
+```
+
+#### b. (5 points) To estimate the uncertainty of model parameters, we can utilize a technique called bootstrapping. In this method, for a dataset of `n` data points, we can randomly subsample `n/2` data points WITH replacement and calculate the parameters of interest. This procedure can be repeated many times to derive distributions for the parameters of interest. Perform bootstrapping on the two slope coefficients we derived from part a and plot their distributions.
+
+```{r}
+
+```
+
+#### c. (2 points) From the distributions above, do you think that one parent has a significantly stronger effect on child's height than the other parent? If yes, use statistical test to prove your point. If not, explain why you think so.
+
+```{r}
+
+```
+
+### 5. (15 points) Pólya’s random walk problem
+
+> "A drunk man will find his way home, but a drunk bird may get lost forever." — *Shizuo Kakutani*
+
+#### a. (3 points) A drunk man starts at the origin (x = 0) of an 1D axis. At each step, he moves one unit in a random direction: left (+1) or right (-1). He can keep walking forever — but we’re interested in whether he ever returns to the origin (i.e., home). We will use Monte Carlo simulation to estimate that. With 1000 repetitions, calculate the probability of whether the drunk man can come home within 1 million steps.
+
+```{r, cache=TRUE}
+
+```
+
+#### b. (6 points) Now consider a two-dimensional scenario: the drunk man starts at the origin (x=0, y=0) of an infinite lattice grid on a 2D plane. At each step, he moves one unit in a random cardinal direction: North (y axis +1), South (y axis -1), East (x axis +1), or West (x axis -1). Use Monte Carlo simulation with 1000 repetitions to visualize the empirical cumulative probability function (eCDF) curve for: number of steps it takes for the drunk man to return to the origin (x=0, y=0) for the first time after simulation started. Plot the eCDF up to 1 million steps. If the simulation takes too long, you can plot up to 100 thousand steps.
+
+```{r, cache=TRUE}
+
+```
+
+#### c. (3 points) If the number of steps extends to infinity, will the drunk man be guaranteed to return to the origin? Extract eCDF values from part b after 10,000 steps (or after 1,000 steps if your simulation only goes up to 1e5 steps) to analyze this. Plot the [probability of returning to the origin within `n` steps] against [`1/log(n)`]. Perform a linear regression on the data and make an educated guess: will the probability approach 1 as `n` approaches infinity?
+
+```{r}
+
+```
+
+#### d. (3 points) Now consider a three-dimensional scenario: a drunk bird starts at the origin (x=0, y=0, z=0) of an infinite lattice grid in 3D space. At each step, it moves one unit in a random direction: North (y axis +1), South (y axis -1), East (x axis +1), West (x axis -1), Up (z axis +1), or Down (z axis -1). Use Monte Carlo simulation with 1000 repetitions to visualize the empirical cumulative probability function (eCDF) curve for: number of steps it takes for the drunk bird to return to the origin (x=0, y=0, z=0) for the first time after simulation started. Plot the eCDF up to 100,000 steps. Based on the plot, is the drunk bird guaranteed to return to the origin?
+
+```{r, cache=TRUE}
+
+```
