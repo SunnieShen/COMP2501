@@ -1,0 +1,362 @@
+---
+title: "2501report_ShenHongshan"
+author: "Shen Hongshan"
+date: "2025-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
+```
+
+# Predicting Mental Health Treatment Needs Based on Workplace Factors and Demographic Characteristics
+
+### Author: Shen Hongshan (3036290936)
+
+### Data source: [Kaggle Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data)
+
+------------------------------------------------------------------------
+
+## **Project Overview**
+
+### **Proposal**
+
+> **Research Questions:** 1. Which workplace factors and demographic characteristics are most predictive of needing mental health treatment? 2. How can we build a machine learning model to identify individuals who would benefit from mental health intervention based on their survey responses?
+
+**Importance:**\
+Mental health issues in the workplace have deep economic and social consequences. Early identification of at-risk individuals enables timely intervention, improved well-being, and productivity.
+
+**Challenges:**\
+- Handling class imbalance in responses (many may not report needing treatment). - Missing data and survey noise (subjectivity in self-reporting). - Potential bias in responses.
+
+**Existing Work:**\
+Previous studies and open-source projects have shown that factors such as *work interference*, *family history*, and *employer support* strongly impact mental health needs.
+
+**Methodology:**\
+1. Data loading and exploration 2. Data cleaning: remove irrelevant columns, handle missingness & outliers 3. Variable standardisation 4. Visualisation of key factors 5. Statistical modelling: logistic regression for predictor analysis + subgroup analyses 6. Summary of findings and implications for workplace mental health policy
+
+------------------------------------------------------------------------
+
+## **1. Data Loading & Exploration**
+
+```{r}
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(caret)
+library(knitr)
+library(broom)
+library(car)  # for VIF
+library(pROC)
+
+# Read the dataset (make sure 'survey.csv' is in the same folder)
+survey_data <- read_csv("survey.csv")
+
+# Overview: dimensions and column names
+cat("Dataset dimensions:", paste(dim(survey_data), collapse=" x "), "\n")
+cat("Column names:\n")
+names(survey_data)
+```
+
+------------------------------------------------------------------------
+
+## **2. Data Preparation & Cleaning**
+
+### 2.1 Handle Missing Values, Drop Irrelevant Columns
+
+```{r}
+# Missing value summary
+missing_summary <- sort(colSums(is.na(survey_data)), decreasing = TRUE)
+cat("Missing values per column:\n")
+kable(data.frame(Feature=names(missing_summary), Missing=missing_summary))
+
+# Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)
+survey_clean <- survey_data %>%
+  select(-Timestamp, -comments, -state)
+
+cat("Columns left after removal:", paste(names(survey_clean), collapse=", "))
+```
+
+### 2.2 Standardize Variables: Gender, Age, Conversion
+
+```{r}
+# Standardise Gender
+survey_clean <- survey_clean %>%
+  mutate(
+    Gender = case_when(
+      str_detect(tolower(Gender), "^m|male|man|guy|cis man|msle|mail|malr") ~ "Male",
+      str_detect(tolower(Gender), "^f|female|woman|femake|cis female|femail") ~ "Female",
+      str_detect(tolower(Gender), "trans") ~ "Transgender",
+      str_detect(tolower(Gender), "queer|non-binary|fluid|enby|agender|androg") ~ "Non-binary/Other",
+      TRUE ~ "Other/Prefer not to say"
+    ),
+    # Remove unrealistic ages
+    Age = ifelse(Age < 18 | Age > 100, NA, Age)
+  ) %>%
+  filter(!is.na(Age))
+
+# Convert characters to factor for relevant variables
+survey_clean <- survey_clean %>%
+  mutate(across(where(is.character), as.factor))
+```
+
+### 2.3 Target Variable Check
+
+```{r}
+cat("Distribution of treatment status:\n")
+kable(as.data.frame(table(survey_clean$treatment)))
+cat("Proportion table:\n")
+kable(as.data.frame(prop.table(table(survey_clean$treatment))))
+```
+
+------------------------------------------------------------------------
+
+## **3. Exploratory Data Analysis & Visualisation**
+
+### 3.1 Demographic Overview
+
+```{r}
+demographic_summary <- survey_clean %>%
+  summarise(
+    n = n(),
+    avg_age = mean(Age, na.rm = TRUE),
+    male_pct = round(mean(Gender == "Male")*100,1),
+    female_pct = round(mean(Gender == "Female")*100,1),
+    treatment_rate = round(mean(treatment == "Yes")*100,1)
+  )
+kable(demographic_summary, caption="Sample Demographic Summary")
+```
+
+### 3.2 Key Visualisations
+
+-   Treatment rate by gender
+
+```{r}
+ggplot(survey_clean, aes(x=Gender, fill=treatment)) +
+  geom_bar(position="fill") +
+  labs(y="Proportion", title="Treatment Rate by Gender") +
+  scale_y_continuous(labels=scales::percent) +
+  theme_minimal()
+```
+
+-   Treatment rate by family history
+
+```{r}
+ggplot(survey_clean, aes(x=family_history, fill=treatment)) +
+  geom_bar(position="fill") +
+  labs(title="Treatment by Family History", y="Proportion") +
+  scale_y_continuous(labels=scales::percent) +
+  theme_minimal()
+```
+
+-   Treatment rate by work interference
+
+```{r}
+ggplot(survey_clean, aes(x=work_interfere, fill=treatment)) +
+  geom_bar(position="fill") +
+  labs(title="Treatment by Work Interference", y="Proportion") +
+  scale_y_continuous(labels=scales::percent) +
+  theme_minimal()
+```
+
+#### **Insight:**
+
+*Individuals with family history of mental illness and those reporting frequent work interference are much more likely to seek treatment.*
+
+------------------------------------------------------------------------
+
+## **4. Modelling & Statistical Analysis**
+
+### 4.1 Prepare Data for Modelling
+
+```{r}
+# Create binary target variable
+survey_model <- survey_clean %>%
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )
+
+# Select key predictors as per project proposal
+predictors <- c(
+  "Age", "Gender", "family_history",
+  "work_interfere", "no_employees", "remote_work", "tech_company",
+  "benefits", "care_options", "wellness_program", "seek_help",
+  "anonymity", "leave",
+  "mental_health_consequence", "phys_health_consequence",
+  "coworkers", "supervisor", "mental_health_interview",
+  "mental_vs_physical", "obs_consequence"
+)
+
+model_data <- survey_model %>% select(all_of(c("treatment_binary", predictors))) %>% na.omit()
+cat("Final modelling data shape:", dim(model_data), "\n")
+```
+
+### 4.2 Split Data: Train/Test
+
+```{r}
+set.seed(123)
+train_idx <- createDataPartition(model_data$treatment_binary, p=0.7, list=FALSE)
+train_data <- model_data[train_idx, ]
+test_data <- model_data[-train_idx, ]
+
+cat("Training set size:", nrow(train_data), "\n")
+cat("Test set size:", nrow(test_data), "\n")
+```
+
+------------------------------------------------------------------------
+
+### 4.3 Logistic Regression Model
+
+```{r}
+logit_model <- glm(treatment_binary ~ ., data=train_data, family="binomial")
+
+cat("Model summary (logistic regression):\n")
+summary(logit_model)
+```
+
+#### Multicollinearity check
+
+```{r}
+cat("VIF values (multicollinearity diagnosis):\n")
+print(vif(logit_model))
+```
+
+#### Significant predictors (p \< .05)
+
+```{r}
+significant_predictors <- broom::tidy(logit_model) %>%
+  filter(p.value < 0.05 & term != "(Intercept)")
+kable(significant_predictors, caption="Significant Predictors")
+```
+
+------------------------------------------------------------------------
+
+### 4.4 Model Evaluation
+
+#### Prediction (training set)
+
+```{r}
+train_data$predicted_prob <- predict(logit_model, type="response")
+train_data$predicted_class <- ifelse(train_data$predicted_prob > 0.5, 1, 0)
+train_conf <- confusionMatrix(as.factor(train_data$predicted_class), as.factor(train_data$treatment_binary))
+print(train_conf)
+```
+
+#### Prediction (test set) and ROC Curve
+
+```{r}
+test_data$predicted_prob <- predict(logit_model, newdata=test_data, type="response")
+test_data$predicted_class <- ifelse(test_data$predicted_prob > 0.5, 1, 0)
+
+test_conf <- confusionMatrix(as.factor(test_data$predicted_class), as.factor(test_data$treatment_binary))
+print(test_conf)
+
+roc_curve <- roc(test_data$treatment_binary, test_data$predicted_prob)
+cat("AUC on test:", auc(roc_curve), "\n")
+plot(roc_curve, main="ROC Curve for Mental Health Treatment Prediction", col="#2c3e50", lwd=3)
+abline(a=0, b=1, col="grey", lty=2)
+```
+
+#### Feature Importance Plot
+
+```{r}
+feature_importance <- broom::tidy(logit_model) %>%
+  filter(term != "(Intercept)") %>%
+  mutate(odds_ratio=exp(estimate),
+         direction=ifelse(estimate>0,"Increased","Decreased")) %>%
+  arrange(desc(abs(estimate)))
+top_features <- feature_importance %>% head(15)
+
+ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction)) +
+  geom_col() +
+  coord_flip() +
+  labs(title="Top 15 Most Important Predictors of Mental Health Treatment Need",
+       x="Predictor", y="Estimate (log-odds)", fill="Direction") +
+  theme_minimal()
+```
+
+------------------------------------------------------------------------
+
+## **5. Subgroup Analysis**
+
+### By Gender
+
+```{r}
+model_data %>%
+  group_by(Gender) %>%
+  summarise(
+    n = n(),
+    treatment_rate = mean(treatment_binary)*100
+  ) %>%
+  kable(caption="Treatment Rate by Gender")
+```
+
+### By Company Size
+
+```{r}
+model_data %>%
+  group_by(no_employees) %>%
+  summarise(
+    n = n(),
+    treatment_rate = mean(treatment_binary)*100
+  ) %>%
+  kable(caption="Treatment Rate by Company Size")
+```
+
+------------------------------------------------------------------------
+
+## **6. Business Insights & Interpretation**
+
+```{r}
+# Simplified risk scoring suggestion for workplace HR
+risk_factors <- feature_importance %>%
+  select(term, odds_ratio, p.value) %>%
+  filter(p.value < 0.05) %>%
+  arrange(desc(abs(log(odds_ratio))))
+
+cat("Key variables increasing risk of needing treatment:\n")
+kable(risk_factors)
+
+cat("Insights:\n")
+cat("- Employees with a family history, frequent work interference, and lack of benefits are more likely to need treatment.\n")
+cat("- Organizational support, especially in benefits and anonymity, may reduce barriers to help-seeking.\n")
+cat("- Companies should focus on improving support structures for employees showing risk factors.\n")
+```
+
+------------------------------------------------------------------------
+
+## **7. Prediction Example: New Employees**
+
+```{r}
+example_employees <- data.frame(
+  Age = c(30, 45),
+  Gender = factor(c("Male", "Female"), levels=levels(model_data$Gender)),
+  family_history = factor(c("Yes", "No"), levels=levels(model_data$family_history)),
+  work_interfere = factor(c("Often", "Never"), levels=levels(model_data$work_interfere))
+)
+for(col in predictors) {
+  if(!col %in% colnames(example_employees)) {
+    mode_val <- names(sort(table(model_data[[col]]), decreasing = TRUE))[1]
+    example_employees[[col]] <- factor(rep(mode_val, nrow(example_employees)), levels=levels(model_data[[col]]))
+  }
+}
+example_employees$predicted_prob <- predict(logit_model, newdata = example_employees, type = "response")
+example_employees$predicted_class <- ifelse(example_employees$predicted_prob > 0.5, "High Risk", "Low Risk")
+kable(example_employees[,c("Age", "Gender", "family_history", "work_interfere", "predicted_prob", "predicted_class")],
+      caption="Example Employee Predictions")
+```
+
+------------------------------------------------------------------------
+
+# **8. Conclusion**
+
+-   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need.
+-   A logistic model can reasonably predict employees at higher risk and support HR in targeted interventions.
+-   **Visualisations** in this report highlight key risk factors and their relationship with treatment-seeking.
+-   **Limitations:** Subjective survey responses, possible response bias, and missingness may affect generalizability.
+-   Future work could include more advanced ML (random forest, boosting), longitudinal data, and testing interventions.
+
+------------------------------------------------------------------------
+
+> **References** - OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [R for Data Science](https://r4ds.had.co.nz/) - [Tidyverse Documentation](https://www.tidyverse.org/) - [Introduction to Statistical Learning](https://www.statlearning.com/)

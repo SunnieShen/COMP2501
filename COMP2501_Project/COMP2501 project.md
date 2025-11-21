@@ -92,8 +92,8 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 • Include the data files used in your analysis in t he submission, i.e., zip them together; 
 	• Or add a note if the data is private or too large to be uploaded (>100M, in which case attach a link to the data); 
 • Ensure your R Markdown file is fully runnable and reproducible. 
-• Include graphics (preferably), data visualization, description, and analysis to explain what you are doing and what data insights you have gained from the results/plots. **The report should NOT contain only codes.** 
-• Add in-line comments in code blocks to explain your codes wherever necessary. 
+• Include **graphics (preferably), data visualization, description,** and **analysis to explain what you are doing and what data insights you have gained from the results/plots**. **The report should NOT contain only codes.** 
+• Add **in-line comments** in code blocks to explain your codes wherever necessary. 
 • Note that your project report may be shared with future students of this course.
 # presentation
 Presentation video (5-10 min), share the following: 

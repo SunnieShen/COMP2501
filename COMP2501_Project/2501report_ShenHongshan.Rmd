@@ -1,0 +1,387 @@
+---
+title: "2501report_ShenHongshan"
+author: "Shen Hongshan"
+date: "2025-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Topic: Predicting Mental Health Treatment Needs Based on Workplace Factors and Demographic Characteristics
+
+### Shen Hongshan (3036290936)
+
+### Data source: <https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data>
+
+### Environment setup
+
+```{r}
+# Load required libraries
+library(tidyverse)
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+### 1. Data loading
+
+```{r}
+# Read the dataset
+survey_data <- read_csv("survey.csv")
+
+# Display basic information about the dataset
+cat("Dataset dimensions:", dim(survey_data), "\n")
+cat("Column names:\n")
+names(survey_data)
+cat("\nData structure:\n")
+str(survey_data)
+```
+
+### 2. Data preparation
+
+#### Handling missing value
+
+-   Remove columns with mostly missing values or irrelevant for analysis
+
+```{r}
+# Handle missing values
+cat("\nMissing values by column:\n")
+print(colSums(is.na(survey_data)))
+
+# Comments column has very few responses, so we'll remove it
+# Timestamp and state column are irrelevant for analysis, also remove them
+survey_clean <- survey_data |> 
+  select(-c(Timestamp, comments, state))
+```
+
+#### Standardize variables
+
+-   Standardize Gender column
+
+-   Convert character columns to factors
+
+-   Handle Age outliers
+
+```{r}
+survey_clean <- survey_clean |>
+  mutate(
+    # Gender standardization
+    Gender = case_when(
+      str_detect(tolower(Gender), "^m|^male|^man|^maile|^make|^mal$|^male-ish|^guy") ~ "Male",
+      str_detect(tolower(Gender), "^f|^female|^woman|^femaile|^femake|^fem") ~ "Female",
+      str_detect(tolower(Gender), "trans") ~ "Transgender",
+      str_detect(tolower(Gender), "queer|androg|non-binary|fluid|enby|agender") ~ "Non-binary/Other",
+      TRUE ~ "Other/Prefer not to say"
+    ),
+    # Convert character columns to factors
+    across(where(is.character), as.factor)
+  )
+
+# Handle age outliers
+survey_clean <- survey_clean |>
+  mutate(
+    Age = case_when(
+      Age < 18 ~ NA,    # Remove unrealistic ages
+      Age > 100 ~ NA,
+      TRUE ~ Age
+    )
+  ) |>
+  filter(!is.na(Age))  # Remove rows with invalid ages
+```
+
+#### Check cleaned dataset, Check the target variable distribution
+
+```{r}
+# Check cleaned dataset
+cat("\nCleaned dataset dimensions:", dim(survey_clean), "\n")
+cat("\nSummary of cleaned data:\n")
+print(summary(survey_clean))
+
+#Check the target variable distribution
+cat("\nTreatment status distribution:\n")
+print(table(survey_clean$treatment))
+print(prop.table(table(survey_clean$treatment)))
+```
+
+### 3. Data visualization
+
+```{r}
+
+# 1. Demographic overview
+demographic_summary <- survey_clean %>%
+  summarise(
+    n = n(),
+    avg_age = mean(Age, na.rm = TRUE),
+    male_pct = sum(Gender == "Male") / n() * 100,
+    female_pct = sum(Gender == "Female") / n() * 100,
+    treatment_rate = sum(treatment == "Yes") / n() * 100
+  )
+print(demographic_summary)
+
+# 2. Treatment rates by key factors
+cat("\nTreatment rates by gender:\n")
+survey_clean %>%
+  group_by(Gender) %>%
+  summarise(
+    n = n(),
+    treatment_rate = sum(treatment == "Yes") / n() * 100
+  ) %>%
+  arrange(desc(treatment_rate))
+
+cat("\nTreatment rates by family history:\n")
+survey_clean %>%
+  group_by(family_history) %>%
+  summarise(
+    n = n(),
+    treatment_rate = sum(treatment == "Yes") / n() * 100
+  )
+
+cat("\nTreatment rates by work interference:\n")
+survey_clean %>%
+  group_by(work_interfere) %>%
+  summarise(
+    n = n(),
+    treatment_rate = sum(treatment == "Yes") / n() * 100
+  )
+```
+
+```{r}
+# Load required libraries for modeling
+library(caret)
+library(pROC)
+library(broom)
+library(car)  # For VIF analysis
+
+# 1. PREPARE DATA FOR MODELING
+model_data <- survey_final %>%
+  select(
+    # Target variable
+    treatment_binary,
+    
+    # Demographic predictors
+    Age, Gender, family_history,
+    
+    # Workplace factors
+    work_interfere, company_size, remote_work, tech_company,
+    benefits, care_options, wellness_program, seek_help,
+    anonymity, leave,
+    
+    # Organizational culture factors
+    mental_health_consequence, phys_health_consequence,
+    coworkers, supervisor, mental_health_interview,
+    mental_vs_physical, obs_consequence
+  ) %>%
+  # Remove rows with missing target
+  filter(!is.na(treatment_binary)) %>%
+  # Convert to factors
+  mutate(across(where(is.character), as.factor))
+
+# Check final dataset for modeling
+cat("Final modeling dataset dimensions:", dim(model_data), "\n")
+cat("Target variable distribution:\n")
+print(table(model_data$treatment_binary))
+
+# 2. DATA SPLITTING FOR MODEL VALIDATION
+set.seed(123)  # For reproducibility
+train_index <- createDataPartition(model_data$treatment_binary, 
+                                  p = 0.7, 
+                                  list = FALSE)
+train_data <- model_data[train_index, ]
+test_data <- model_data[-train_index, ]
+
+cat("Training set size:", nrow(train_data), "\n")
+cat("Test set size:", nrow(test_data), "\n")
+cat("Treatment rate in training:", mean(train_data$treatment_binary), "\n")
+cat("Treatment rate in test:", mean(test_data$treatment_binary), "\n")
+
+# 3. BUILD LOGISTIC REGRESSION MODEL (as specified in your proposal)
+logit_model <- glm(treatment_binary ~ .,
+                  data = train_data,
+                  family = binomial(link = "logit"))
+
+# Model summary
+cat("=== LOGISTIC REGRESSION MODEL SUMMARY ===\n")
+summary(logit_model)
+
+# 4. MODEL DIAGNOSTICS AND ASSUMPTION CHECKS
+# Check for multicollinearity
+cat("\n=== MULTICOLLINEARITY CHECK (VIF) ===\n")
+vif_values <- vif(logit_model)
+print(vif_values)
+
+# Identify significant predictors
+significant_predictors <- tidy(logit_model) %>%
+  filter(p.value < 0.05 & term != "(Intercept)") %>%
+  arrange(p.value)
+
+cat("\n=== SIGNIFICANT PREDICTORS (p < 0.05) ===\n")
+print(significant_predictors)
+
+# 5. MODEL PERFORMANCE ON TRAINING DATA
+# Predict probabilities
+train_data$predicted_prob <- predict(logit_model, type = "response")
+train_data$predicted_class <- ifelse(train_data$predicted_prob > 0.5, 1, 0)
+
+# Training performance
+train_confusion <- confusionMatrix(
+  factor(train_data$predicted_class),
+  factor(train_data$treatment_binary)
+)
+
+cat("\n=== TRAINING SET PERFORMANCE ===\n")
+print(train_confusion)
+
+# 6. MODEL VALIDATION ON TEST DATA
+# Predict on test set
+test_data$predicted_prob <- predict(logit_model, newdata = test_data, type = "response")
+test_data$predicted_class <- ifelse(test_data$predicted_prob > 0.5, 1, 0)
+
+# Test performance
+test_confusion <- confusionMatrix(
+  factor(test_data$predicted_class),
+  factor(test_data$treatment_binary)
+)
+
+cat("\n=== TEST SET PERFORMANCE ===\n")
+print(test_confusion)
+
+# 7. ROC CURVE AND AUC
+roc_curve <- roc(test_data$treatment_binary, test_data$predicted_prob)
+auc_value <- auc(roc_curve)
+
+cat("\n=== MODEL DISCRIMINATION PERFORMANCE ===\n")
+cat("AUC (Area Under ROC Curve):", round(auc_value, 3), "\n")
+
+# Plot ROC curve
+plot(roc_curve, main = "ROC Curve for Treatment Prediction Model")
+legend("bottomright", legend = paste("AUC =", round(auc_value, 3)))
+
+# 8. FEATURE IMPORTANCE VISUALIZATION
+# Extract coefficients and create feature importance plot
+feature_importance <- tidy(logit_model) %>%
+  filter(term != "(Intercept)") %>%
+  mutate(
+    term = str_remove(term, "`"),
+    term = str_remove(term, "`"),
+    odds_ratio = exp(estimate),
+    direction = ifelse(estimate > 0, "Positive", "Negative")
+  ) %>%
+  arrange(desc(abs(estimate)))
+
+# Plot top 15 most important features
+top_features <- feature_importance %>%
+  head(15) %>%
+  ggplot(aes(x = reorder(term, estimate), y = estimate, fill = direction)) +
+  geom_col() +
+  coord_flip() +
+  labs(title = "Top 15 Most Important Predictors of Treatment Seeking",
+       x = "Predictor Variables",
+       y = "Coefficient Estimate",
+       fill = "Effect Direction") +
+  theme_minimal()
+
+print(top_features)
+
+# 9. ODDS RATIOS FOR KEY PREDICTORS
+cat("\n=== ODDS RATIOS FOR KEY PREDICTORS ===\n")
+odds_ratios <- feature_importance %>%
+  select(term, estimate, odds_ratio, p.value) %>%
+  filter(p.value < 0.05) %>%
+  arrange(desc(abs(estimate)))
+
+print(odds_ratios)
+
+# 10. SUBGROUP ANALYSES (as mentioned in your proposal)
+cat("\n=== SUBGROUP ANALYSES ===\n")
+
+# By Gender
+subgroup_gender <- model_data %>%
+  group_by(Gender) %>%
+  summarise(
+    n = n(),
+    treatment_rate = mean(treatment_binary) * 100,
+    .groups = 'drop'
+  )
+
+cat("Treatment rates by gender:\n")
+print(subgroup_gender)
+
+# By Company Size
+subgroup_company <- model_data %>%
+  group_by(company_size) %>%
+  summarise(
+    n = n(),
+    treatment_rate = mean(treatment_binary) * 100,
+    .groups = 'drop'
+  )
+
+cat("\nTreatment rates by company size:\n")
+print(subgroup_company)
+
+# 11. INTERPRETABLE PREDICTIONS - Create a simplified scoring system
+# Based on the most significant predictors, create a simple risk score
+cat("\n=== SIMPLIFIED RISK SCORING SYSTEM ===\n")
+
+# Example based on top predictors
+risk_factors <- list(
+  family_history_yes = 2,
+  work_interfere_often = 2,
+  work_interfere_sometimes = 1,
+  benefits_yes = -1,  # Negative because having benefits might reduce barriers
+  anonymity_yes = -1
+)
+
+cat("Example risk factors and scores:\n")
+print(risk_factors)
+
+# 12. MODEL INTERPRETATION AND BUSINESS INSIGHTS
+cat("\n=== KEY BUSINESS INSIGHTS ===\n")
+
+# Identify actionable insights
+actionable_insights <- odds_ratios %>%
+  filter(abs(estimate) > 0.5) %>%
+  mutate(
+    interpretation = case_when(
+      estimate > 0 ~ paste("Increased likelihood of treatment seeking"),
+      estimate < 0 ~ paste("Decreased likelihood of treatment seeking"),
+      TRUE ~ "No significant effect"
+    )
+  )
+
+print(actionable_insights)
+
+# 13. PREDICTION ON NEW DATA (example)
+# Create example employees for prediction
+example_employees <- data.frame(
+  Age = c(30, 45, 28),
+  Gender = factor(c("Male", "Female", "Male"), levels = levels(model_data$Gender)),
+  family_history = factor(c("Yes", "No", "Yes"), levels = levels(model_data$family_history)),
+  work_interfere = factor(c("Often", "Never", "Sometimes"), levels = levels(model_data$work_interfere)),
+  company_size = factor(c("26-100", "More than 1000", "6-25"), levels = levels(model_data$company_size)),
+  benefits = factor(c("Yes", "Yes", "No"), levels = levels(model_data$benefits)),
+  anonymity = factor(c("Yes", "No", "Yes"), levels = levels(model_data$anonymity))
+  # Add other variables with default values...
+)
+
+# Fill missing columns with most common value
+for(col in names(model_data)) {
+  if(!col %in% names(example_employees) && col != "treatment_binary") {
+    example_employees[[col]] <- names(sort(table(model_data[[col]]), decreasing = TRUE))[1]
+  }
+}
+
+# Make predictions
+example_employees$predicted_prob <- predict(logit_model, newdata = example_employees, type = "response")
+example_employees$predicted_risk <- ifelse(example_employees$predicted_prob > 0.5, "High Risk", "Low Risk")
+
+cat("\n=== EXAMPLE PREDICTIONS ===\n")
+print(example_employees %>% select(Age, Gender, family_history, work_interfere, predicted_prob, predicted_risk))
+```
+
+### Statistical analysis
+
+table with counts & percentage to show
+
+### Machine learning model (to indicating potential Mental Health Treatment Needs)

@@ -1,0 +1,395 @@
+---
+title: "COMP2501 practice"
+output: html_notebook
+author: Sunnie Shen
+---
+
+```{r}
+library(tidyverse)
+library(dslabs)
+library(gtools)
+library(ggridges) 
+#for"geom_density_ridges(bindwidth=...)" plotting packed density function
+library(ggplot2)
+```
+
+# Lec13-Probability
+
+## 13.1.probability and random numbers
+
+#### Monte Carlo method to estimate pi in R
+
+uniformly sample points, use number of points fall in circle to estimate circle area, thus calculating pi
+
+-   runif(n_iteration, min, max): uniform sampling
+
+```{r}
+estimate_pi <- function(n_iter, seed= 42){
+  set.seed(seed)
+  x<-runif(n_iter,min=-0.5,max=0.5)#sample x axes
+  y<-runif(n_iter,min=-0.5,max=0.5)#sample y axes
+  dist<-sqrt(x**2+y**2)
+  area = mean(dist<=0.5) # within target circle
+  pi <- 4*area
+  pi
+}
+n_iters <- c(1e1, 1e2, 1e3, 1e4, 1e5)#不同数量级的取样
+seeds <- seq(1:100)
+df <- expand.grid(n_iters, seeds) |> setNames(c("n_iter", "seed")) #单列,扩展出两列,形成表格
+df$pi_estimates <- mapply(estimate_pi, df$n_iter, df$seed)
+```
+
+visualize the estimation for different **n_iter**, **prepare for LLN**
+
+```{r}
+df |> 
+  ggplot(aes(x=n_iter, y=pi_estimates, group = n_iter)) +
+  geom_hline(yintercept = pi, linetype = "dashed")+
+  geom_boxplot()+ 
+  scale_x_log10()
+```
+
+#### RNG(random number generaator)
+
+-   pseudo RNG (e.g. linear congruential generator): one seed =\> deterministic result
+
+-   True RNG : depend on physical process
+
+## 13.2.independence and conditional probability
+
+$P(A|B) = \frac{P(AB)}{P(B)}$ $P(AB) = {P(A)}{P(B)}$
+
+#### Permutation: getting flush
+
+```{r}
+# Simulations for pokers
+suits <- c("Diamonds", "Clubs", "Hearts", "Spades")
+numbers <- c(
+  "Ace", "Deuce", "Three", "Four", "Five", "Six", "Seven", 
+  "Eight", "Nine", "Ten", "Jack", "Queen", "King")
+deck <- expand.grid(number=numbers, suit=suits)
+deck <- paste(deck$number, deck$suit)
+sample(deck, 5, replace=FALSE)
+```
+
+$P(A) = P(B|A) = P(C|A) = 0.25 \Rightarrow ABC, independent$
+
+```{r}
+# Three-card scenarios
+three_card_combinations <- permutations(52, 3, v=deck)
+
+heart_cards <- paste(numbers, "Hearts")
+p_first_is_heart <- mean(three_card_combinations[,1] %in% heart_cards)
+p_second_is_heart <- mean(three_card_combinations[,2] %in% heart_cards)
+p_third_is_heart <- mean(three_card_combinations[,3] %in% heart_cards)
+
+p_all_are_heart <- mean(
+  three_card_combinations[,1] %in% heart_cards &
+  three_card_combinations[,2] %in% heart_cards &
+  three_card_combinations[,3] %in% heart_cards)
+
+print(p_first_is_heart * p_second_is_heart * p_third_is_heart)
+print(p_all_are_heart)
+
+# Event A: first card is heart
+# Event B: second card is heart
+# Event C: third card is heart
+# P(A)
+three_card_combinations |>
+  as.data.frame() |>
+  summarize(first_is_heart = mean(V1 %in% heart_cards))
+
+# P(B|A)
+three_card_combinations |>
+  as.data.frame() |>
+  filter(V1 %in% heart_cards) |>
+  summarize(second_is_heart = mean(V2 %in% heart_cards))
+
+# P(C|A,B)
+three_card_combinations |>
+  as.data.frame() |>
+  filter(V1 %in% heart_cards & V2 %in% heart_cards) |>
+  summarize(second_is_heart = mean(V3 %in% heart_cards))
+```
+
+```{R}
+is_flush <- function(seed = NA){
+  if(!is.na(seed)){
+    set.seed(seed) #for setting random seed
+  }
+  hand <- sample(deck, 5, replace=FALSE) ## without replacement
+  suit_in_hand <- str_split(hand, "\\s", simplify = TRUE) 
+  # simplify: 回归矩阵形式, "<number> <suit(type)>"
+  length(unique(suit_in_hand[,2]))==1 #same suit => flush
+}
+set.seed(32)
+mean(replicate(1e5, is_flush()))
+```
+
+#### Combination: getting a natural 21
+
+```{r}
+# Natural 21 : getting aces and facecard in the first draw
+aces <- paste("Ace", suits)
+facecard <- paste(c("King", "Queen", "Jack", "Ten"), suits)
+
+# MC simulation of getting natural 21
+is_21 <- function(seed=NA){
+  if (!is.na(seed)){
+    set.seed(seed)
+  }
+  hand <- sample(deck, 2, replace=FALSE)
+  flag1 <- hand[[1]] %in% aces & hand[[2]] %in% facecard
+  flag2 <- hand[[2]] %in% aces & hand[[1]] %in% facecard
+  flag1 | flag2
+}
+set.seed(42)
+mean(replicate(1e5, is_21())) # probablity to get natural 21
+```
+
+## 13.3.continuous probability: expectation & variance
+
+#### empirical CDF
+
+```{r}
+# eCDF for student heights
+data(heights)
+height_cdf <- function(threshold){## ecdf
+  heights |> summarize(value = mean(height <= threshold)) |> pull(value)
+}
+height_cdf(170 / 2.53)
+
+df <- data.frame(val = seq(120, 220, 1))
+df <- df |>
+  mutate(val_in_inch = val / 2.53,
+         ecdf = sapply(val_in_inch, height_cdf)) ## ecdf
+df |> ggplot(aes(val, ecdf)) + 
+  geom_line() + 
+  xlab("Height (cm)") +
+  ylab("empirical CDF of student height") 
+```
+
+#### CDF of Gaussian: pnorm(抽样点序列, mean, variance)
+
+```{r}
+# Plot CDF
+df <- data.frame(
+  val = seq(-5, 5, 0.01), #抽样点序列
+  cdf = pnorm(seq(-5, 5, 0.01), 0, 1)
+)
+df |> ggplot(aes(val, cdf)) +
+  geom_line() + 
+  ylab("CDF of a standard normal\n(mean=0, sd=1)")
+```
+
+#### PDF of normal: dnorm(抽样点序列, mean, variance)
+
+```{r}
+df <- data.frame(
+  val = seq(-5, 5, 0.01),#抽样点序列
+  pdf = dnorm(seq(-5, 5, 0.01), 0, 1)
+)
+df |> ggplot(aes(val, pdf)) + 
+  geom_line() + 
+  ylab("PDF of a standard normal\n(mean=0, sd=1)") 
+```
+
+#### empirical PDF: histogram, ggplot(aes()) + geom_density()
+
+```{r}
+# Histogram/density estimate of heights
+height_summary <- heights |>
+  filter(sex == "Male") |>
+  summarize(mean=mean(height), sd=sd(height))
+
+heights |>
+  filter(sex == "Male") |>
+  ggplot(aes(height)) +
+  geom_density(fill="blue", alpha=0.2) +
+  stat_function(
+    # plot a normal distribution curve using sample mean and variance
+    fun=dnorm,
+    args=list(mean=height_summary$mean, sd=height_summary$sd),
+    color="red") +
+  ylab("Density") 
+```
+
+#### Monte Carlo simulation for continuous variable: rnorm(从normal中取样的数量, mean , variance)
+
+```{r}
+sampled_heights <- data.frame(
+  height = rnorm(500, mean=height_summary$mean, sd=height_summary$sd))
+sampled_heights |> ggplot(aes(height)) + geom_histogram() + theme_minimal()
+```
+
+dnorm(), dt(), dchisq(), dexp()
+
+#### expectation & variance
+
+$E(X)=\Sigma {x_i}{P(X_i)} ;\;Var(X)=E(X2)-E(X)2;\; SD(X)=\sqrt{Var(X)}$
+
+## 13.4.LLN, CLT
+
+$$
+E(X)\approx \overline{X};\;
+SD(X)\approx \frac{1}{n}\Sigma({X_i}P(X_i))^2;\;
+$$
+
+$$
+E(\overline{X})=E(X_i);\;
+SD(\overline{X})=\frac{SD(X_i)}{\sqrt{n}};\;
+$$
+
+## 13.5.Case study: Bank loan
+
+default_rate: fail to pay back
+
+interest_rate: target variable, too small not enough to make up bad debt, too large will result in losing existing customers
+
+```{r}
+# Case study: loan
+principal_per_loan <- 180000
+operational_loss <- 20000
+loss_per_foreclosure <- -(principal_per_loan + operational_loss)
+```
+
+### main simulator function
+
+```{r}
+sim_average_return <- function(interest_rate=0.02, default_rate=0.02, loans=1000){
+  defaults <- sample( #seq indicating default or not
+      c(0,1), loans, prob=c(1-default_rate, default_rate), replace = TRUE)
+  balance <- #return = revenue - cost(loss)
+    sum(defaults * loss_per_foreclosure) +
+      sum((1 - defaults) * principal_per_loan * interest_rate)
+  balance / loans 
+  #average revenue(balance)
+}
+```
+
+### Case1: fixed 2% interest rate
+
+```{r}
+return_sampled_0 <- data.frame(
+  return=replicate(1e5, sim_average_return(0.02))
+)
+#...ggplot for visulization
+```
+
+### Case2: multiple interest rate comparison
+
+-   mutate( return = **sapply**(interest_rate, sim_average_return) )
+
+```{r}
+return_sampled_pre <- data.frame(
+  interest_rate = rep(seq(0.02, 0.04, 0.001),1e5) 
+  #repeating this seq 1e5 times
+  #rep := repeating the first argument
+)
+return_sampled <- return_sampled_pre |> 
+  mutate(
+    return = sapply(interest_rate, sim_average_return) 
+  )
+```
+
+```{r}
+#错误做法
+return_sample_alternative <- return_sampled_pre |>
+  mutate(
+    return = sim_average_return(interest_rate))|> 
+  #根据sim_average_return 定义, 该函数不支持向量化输入, 必须改用sapply
+  group_by(interest_rate)|>
+  summarise(return = mean(return))
+```
+
+#### visualization
+
+```{r}
+# packed visualization for return-interest_rate
+return_sampled |>
+  mutate(interest_rate=as.factor(interest_rate)) |>
+  ggplot(aes(return, interest_rate)) + 
+    geom_density_ridges(bandwidth=300, fill="blue", alpha=0.2) +
+    geom_vline(xintercept=0., lty="dashed") +
+    theme_minimal()
+#eCDF for interest_rate = 2.3%
+return_sampled |>
+  filter(interest_rate==0.023) |>
+  ggplot(aes(return)) +
+    stat_ecdf(geom = "step", color = "black") +
+    geom_vline(xintercept=0., lty="dashed") +
+    theme_minimal() +
+    xlab("return (interest rate = 2.3%)") +
+    ylab("eCDF")
+# loss prob(return<0) regarding to different interest rate
+return_sampled |>
+  group_by(interest_rate) |>
+  summarize(loss_prob = mean(return < 0)) |>
+  ggplot(aes(interest_rate, loss_prob)) +
+    geom_point() +
+    geom_line() +
+    geom_hline(yintercept=0.01, lty="dashed") +
+    theme_minimal()
+```
+
+### Case4: AIM CHNAGE to — increase size of loans
+
+$$
+n\; larger \Rightarrow \; SD(average\,return)\; smaller \Rightarrow \;thinner\;tail \Rightarrow \; smaller\; Prob(return<0)
+$$
+
+```{r}
+# MC at interest rate = 0.03, altering size
+return_sampled <- data.frame(
+  loans=rep(seq(1000, 5000, 500), 1e4))
+
+f <- function(loans){
+  sim_average_return(interest_rate=0.03, default_rate=0.02, loans=loans)
+}
+
+return_sampled <- return_sampled |>
+  mutate(return=sapply(loans, f))
+
+return_sampled |>
+  group_by(loans) |>
+  summarize(loss_prob = mean(return < 0)) |>
+  ggplot(aes(loans, loss_prob)) +
+  geom_point() +
+  geom_line() +
+  geom_hline(yintercept = 0.01, lty = "dashed") +
+  theme_minimal()
+```
+
+## 13.6.debate between Markov and Nekrosov
+
+-   i.i.d: independent and identical distribution
+
+-   without i.i.d., can we get convergence(LLN) and normality(CLT)?
+
+#### Markov chain
+
+# Lec14-Statistical inference
+
+## 14.1.Basics
+
+## 14.2.SD,SE,CI
+
+## 14.3.Power
+
+## 14.4.p-value
+
+# Lec15-Bayes theorem
+
+## 15.1.Basics
+
+## 15.2.Case study: lung cancer and pulmonary nodules
+
+## 15.3.Bayesian VS frequentist
+
+# Lec16-Regression
+
+## 16.1.Correlation
+
+## 16.2.Regression
+
+## 16.3.Association
