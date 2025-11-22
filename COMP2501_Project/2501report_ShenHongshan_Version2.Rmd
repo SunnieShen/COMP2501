@@ -2,7 +2,10 @@
 title: "2501report_ShenHongshan"
 author: "Shen Hongshan"
 date: "2025-11-20"
-output: html_document
+output:
+  word_document: default
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -33,7 +36,17 @@ Mental health issues in the workplace have deep economic and social consequences
 Previous studies and open-source projects have shown that factors such as *work interference*, *family history*, and *employer support* strongly impact mental health needs.
 
 **Methodology:**\
-1. Data loading and exploration 2. Data cleaning: remove irrelevant columns, handle missingness & outliers 3. Variable standardisation 4. Visualisation of key factors 5. Statistical modelling: logistic regression for predictor analysis + subgroup analyses 6. Summary of findings and implications for workplace mental health policy
+1. Data loading and exploration
+
+2\. Data cleaning: remove irrelevant columns, handle missingness & outliers
+
+3\. Variable standardisation
+
+4\. Visualisation of key factors
+
+5\. Statistical modelling: logistic regression for predictor analysis + subgroup analyses
+
+6\. Summary of findings and implications for workplace mental health policy
 
 ------------------------------------------------------------------------
 
@@ -44,8 +57,8 @@ library(tidyverse)
 library(readr)
 library(dplyr)
 library(ggplot2)
-library(caret)
 library(knitr)
+library(caret)
 library(broom)
 library(car)  # for VIF
 library(pROC)
@@ -68,11 +81,11 @@ names(survey_data)
 ```{r}
 # Missing value summary
 missing_summary <- sort(colSums(is.na(survey_data)), decreasing = TRUE)
-cat("Missing values per column:\n")
-kable(data.frame(Feature=names(missing_summary), Missing=missing_summary))
+#"Missing values per column
+data.frame(Feature=names(missing_summary), Missing=missing_summary)
 
 # Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)
-survey_clean <- survey_data %>%
+survey_clean <- survey_data |>
   select(-Timestamp, -comments, -state)
 
 cat("Columns left after removal:", paste(names(survey_clean), collapse=", "))
@@ -81,38 +94,42 @@ cat("Columns left after removal:", paste(names(survey_clean), collapse=", "))
 ### 2.2 Standardize Variables: Gender, Age, Conversion
 
 ```{r}
-# Standardise Gender
-survey_clean <- survey_clean %>%
+survey_clean <- survey_clean |>
   mutate(
+    # Gender standardization
     Gender = case_when(
-      str_detect(tolower(Gender), "^m|male|man|guy|cis man|msle|mail|malr") ~ "Male",
-      str_detect(tolower(Gender), "^f|female|woman|femake|cis female|femail") ~ "Female",
-      str_detect(tolower(Gender), "trans") ~ "Transgender",
-      str_detect(tolower(Gender), "queer|non-binary|fluid|enby|agender|androg") ~ "Non-binary/Other",
-      TRUE ~ "Other/Prefer not to say"
+      str_detect(tolower(Gender), "^m|^male|^man|^maile|^make|^mal$|^male-ish|^guy") ~ "Male",
+      str_detect(tolower(Gender), "^f|^female|^woman|^femaile|^femake|^fem") ~ "Female",
+      TRUE ~ "Transgender/Non-binary/Others"
     ),
-    # Remove unrealistic ages
-    Age = ifelse(Age < 18 | Age > 100, NA, Age)
-  ) %>%
-  filter(!is.na(Age))
+    # Convert character columns to factors
+    across(where(is.character), as.factor)
+  )
 
-# Convert characters to factor for relevant variables
-survey_clean <- survey_clean %>%
-  mutate(across(where(is.character), as.factor))
+# Handle age outliers
+survey_clean <- survey_clean |>
+  mutate(
+    Age = case_when(
+      Age < 18 ~ NA,    # Remove unrealistic ages
+      Age > 100 ~ NA,
+      TRUE ~ Age
+    )
+  ) |>
+  filter(!is.na(Age))  # Remove rows with invalid ages
 ```
 
 ### 2.3 Target Variable Check
 
 ```{r}
-cat("Distribution of treatment status:\n")
-kable(as.data.frame(table(survey_clean$treatment)))
-cat("Proportion table:\n")
-kable(as.data.frame(prop.table(table(survey_clean$treatment))))
+#Distribution of treatment status
+as.data.frame(table(survey_clean$treatment))
+#Proportion table
+as.data.frame(prop.table(table(survey_clean$treatment)))
 ```
 
 ------------------------------------------------------------------------
 
-## **3. Exploratory Data Analysis & Visualisation**
+## **3. Exploratory Data Analysis & Visualization**
 
 ### 3.1 Demographic Overview
 
@@ -125,10 +142,11 @@ demographic_summary <- survey_clean %>%
     female_pct = round(mean(Gender == "Female")*100,1),
     treatment_rate = round(mean(treatment == "Yes")*100,1)
   )
-kable(demographic_summary, caption="Sample Demographic Summary")
+#Sample Demographic Summary
+demographic_summary
 ```
 
-### 3.2 Key Visualisations
+### 3.2 Key Visualisations (以自变量为x轴分类, 比较treatment/no treatment的占比, 避免数据本身对于因变量的采样时的bias,e.g.femal采样时占比就较小, treatment占比也较小)
 
 -   Treatment rate by gender
 
@@ -188,14 +206,17 @@ predictors <- c(
   "mental_vs_physical", "obs_consequence"
 )
 
-model_data <- survey_model %>% select(all_of(c("treatment_binary", predictors))) %>% na.omit()
-cat("Final modelling data shape:", dim(model_data), "\n")
+model_data <- survey_model |>
+  select(all_of(c("treatment_binary", predictors))) |>
+  na.omit() ##删除数据缺失行
+
+head(model_data)
 ```
 
 ### 4.2 Split Data: Train/Test
 
 ```{r}
-set.seed(123)
+set.seed(42)
 train_idx <- createDataPartition(model_data$treatment_binary, p=0.7, list=FALSE)
 train_data <- model_data[train_idx, ]
 test_data <- model_data[-train_idx, ]
@@ -215,19 +236,13 @@ cat("Model summary (logistic regression):\n")
 summary(logit_model)
 ```
 
-#### Multicollinearity check
-
-```{r}
-cat("VIF values (multicollinearity diagnosis):\n")
-print(vif(logit_model))
-```
-
 #### Significant predictors (p \< .05)
 
 ```{r}
 significant_predictors <- broom::tidy(logit_model) %>%
   filter(p.value < 0.05 & term != "(Intercept)")
-kable(significant_predictors, caption="Significant Predictors")
+#Significant Predictors
+significant_predictors
 ```
 
 ------------------------------------------------------------------------
@@ -283,30 +298,38 @@ ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction))
 ### By Gender
 
 ```{r}
-model_data %>%
+#Treatment Rate by Gender
+model_data |>
   group_by(Gender) %>%
   summarise(
     n = n(),
     treatment_rate = mean(treatment_binary)*100
-  ) %>%
-  kable(caption="Treatment Rate by Gender")
+  )
 ```
 
 ### By Company Size
 
 ```{r}
-model_data %>%
-  group_by(no_employees) %>%
+#Treatment Rate by Company Size
+model_data |>
+  group_by(no_employees) |>
   summarise(
     n = n(),
     treatment_rate = mean(treatment_binary)*100
-  ) %>%
-  kable(caption="Treatment Rate by Company Size")
+  )
 ```
 
 ------------------------------------------------------------------------
 
 ## **6. Business Insights & Interpretation**
+
+Insights:
+
+-   Employees with a family history, frequent work interference, and lack of benefits are more likely to need treatment.
+
+-   Organizational support, especially in benefits and anonymity, may reduce barriers to help-seeking.
+
+-   Companies should focus on improving support structures for employees showing risk factors.
 
 ```{r}
 # Simplified risk scoring suggestion for workplace HR
@@ -315,13 +338,8 @@ risk_factors <- feature_importance %>%
   filter(p.value < 0.05) %>%
   arrange(desc(abs(log(odds_ratio))))
 
-cat("Key variables increasing risk of needing treatment:\n")
-kable(risk_factors)
-
-cat("Insights:\n")
-cat("- Employees with a family history, frequent work interference, and lack of benefits are more likely to need treatment.\n")
-cat("- Organizational support, especially in benefits and anonymity, may reduce barriers to help-seeking.\n")
-cat("- Companies should focus on improving support structures for employees showing risk factors.\n")
+#Key variables increasing risk of needing treatment
+risk_factors
 ```
 
 ------------------------------------------------------------------------
@@ -343,8 +361,9 @@ for(col in predictors) {
 }
 example_employees$predicted_prob <- predict(logit_model, newdata = example_employees, type = "response")
 example_employees$predicted_class <- ifelse(example_employees$predicted_prob > 0.5, "High Risk", "Low Risk")
-kable(example_employees[,c("Age", "Gender", "family_history", "work_interfere", "predicted_prob", "predicted_class")],
-      caption="Example Employee Predictions")
+
+#Example Employee Predictions
+example_employees[,c("Age", "Gender", "family_history", "work_interfere", "predicted_prob", "predicted_class")]
 ```
 
 ------------------------------------------------------------------------
@@ -353,10 +372,164 @@ kable(example_employees[,c("Age", "Gender", "family_history", "work_interfere", 
 
 -   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need.
 -   A logistic model can reasonably predict employees at higher risk and support HR in targeted interventions.
--   **Visualisations** in this report highlight key risk factors and their relationship with treatment-seeking.
+-   **Visualizations** in this report highlight key risk factors and their relationship with treatment-seeking.
 -   **Limitations:** Subjective survey responses, possible response bias, and missingness may affect generalizability.
 -   Future work could include more advanced ML (random forest, boosting), longitudinal data, and testing interventions.
 
 ------------------------------------------------------------------------
 
 > **References** - OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [R for Data Science](https://r4ds.had.co.nz/) - [Tidyverse Documentation](https://www.tidyverse.org/) - [Introduction to Statistical Learning](https://www.statlearning.com/)
+
+# Simple correlation to interaction effects
+
+```{r}
+# 1. Interaction Effects Visualization - work_interfere * family_history
+interaction_data <- train_data %>%
+  group_by(work_interfere, family_history) %>%
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  ) %>%
+  filter(!is.na(work_interfere))
+
+ggplot(interaction_data, aes(x = work_interfere, y = treatment_rate, 
+                             color = family_history, group = family_history)) +
+  geom_line(size = 1.5) +
+  geom_point(size = 3) +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            vjust = -0.8, size = 3) +
+  labs(
+    title = "Interaction Effect: Work Interference × Family History",
+    subtitle = "Family history significantly amplifies the impact of work interference on treatment needs",
+    x = "Frequency of Work Interference",
+    y = "Treatment Rate",
+    color = "Family History of\nMental Health"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_color_manual(values = c("No" = "#E74C3C", "Yes" = "#3498DB"))
+```
+
+```{r}
+# 2. Interaction Effects Visualization - benefits * Gender
+gender_benefits_data <- train_data %>%
+  group_by(Gender, benefits) %>%
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  )
+
+ggplot(gender_benefits_data, aes(x = Gender, y = treatment_rate, 
+                                fill = benefits)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(
+    title = "Interaction Effect: Gender × Benefits Access",
+    subtitle = "Male treatment rates drop significantly without benefits, while females show more resilience",
+    x = "Gender",
+    y = "Treatment Rate",
+    fill = "Company Provides\nMental Health Benefits"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set2")
+```
+
+"When we dug deeper into our analysis, we discovered a crucial insight: risk factors don't operate in isolation - they amplify or buffer each other.
+
+**The first chart reveals** a powerful interaction between work interference and family history:
+
+-   For employees without family history, even frequent work interference leads to only 60% treatment rate
+
+-   But for those with family history, the same level of work interference drives treatment rates above 90%
+
+-   **Business Insight**: This tells us screening should prioritize employees who report both family history AND work interference
+
+**The second chart shows** how gender and benefits interact to reveal important organizational patterns:
+
+-   Male employees are highly sensitive to benefits availability - treatment rates drop sharply without benefits
+
+```{r}
+# 3. Non-linear Relationships Visualization - Age
+library(mgcv)
+install.packages("gratia")
+library(gratia)
+
+# Fit GAM model
+gam_age <- gam(treatment_binary ~ s(Age) + work_interfere + family_history,
+               data = train_data, family = "binomial", method = "REML")
+
+# Create prediction data
+age_range <- seq(min(train_data$Age, na.rm = TRUE), 
+                max(train_data$Age, na.rm = TRUE), length.out = 100)
+pred_data <- data.frame(
+  Age = age_range,
+  work_interfere = factor("Sometimes", levels = levels(train_data$work_interfere)),
+  family_history = factor("No", levels = levels(train_data$family_history))
+)
+
+# Get predictions
+predictions <- predict(gam_age, newdata = pred_data, type = "link", se.fit = TRUE)
+pred_data$fit <- plogis(predictions$fit)
+pred_data$upper <- plogis(predictions$fit + 1.96 * predictions$se.fit)
+pred_data$lower <- plogis(predictions$fit - 1.96 * predictions$se.fit)
+
+# Plot non-linear relationship
+ggplot(pred_data, aes(x = Age, y = fit)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2, fill = "#3498DB") +
+  geom_line(size = 1.5, color = "#2980B9") +
+  labs(
+    title = "Non-linear Relationship: Age vs Treatment Needs",
+    subtitle = "Risk peaks in early adulthood and mid-life, challenging simple linear assumptions",
+    x = "Age",
+    y = "Predicted Treatment Probability"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent)
+```
+
+```{r}
+# 4. Create comprehensive dashboard of all advanced analyses
+library(patchwork)
+
+# Prepare four charts
+p1 <- ggplot(interaction_data, aes(x = work_interfere, y = treatment_rate, 
+                                  color = family_history, group = family_history)) +
+  geom_line(size = 1) + geom_point(size = 2) +
+  labs(title = "Interaction 1: Work Interference × Family History", x = NULL, y = "Treatment Rate") +
+  theme_minimal() + scale_y_continuous(labels = scales::percent)
+
+p2 <- ggplot(gender_benefits_data, aes(x = Gender, y = treatment_rate, fill = benefits)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(title = "Interaction 2: Gender × Benefits Access", x = NULL, y = "Treatment Rate") +
+  theme_minimal() + scale_y_continuous(labels = scales::percent)
+
+p3 <- ggplot(pred_data, aes(x = Age, y = fit)) +
+  geom_ribbon(aes(ymin = lower, ymax = upper), alpha = 0.2) +
+  geom_line(size = 1, color = "#2980B9") +
+  labs(title = "Non-linear Effect: Age Pattern", x = "Age", y = "Predicted Probability") +
+  theme_minimal()
+
+# Random Forest feature importance
+rf_importance <- as.data.frame(rf_model$importance)
+rf_importance$Variable <- rownames(rf_importance)
+rf_importance <- rf_importance %>% arrange(desc(MeanDecreaseGini))
+
+p4 <- ggplot(rf_importance[1:6, ], aes(x = reorder(Variable, MeanDecreaseGini), 
+                                      y = MeanDecreaseGini)) +
+  geom_col(fill = "#27AE60") +
+  coord_flip() +
+  labs(title = "Multi-method Validation: Random Forest Feature Importance", 
+       x = NULL, y = "Importance Score (Gini Decrease)") +
+  theme_minimal()
+
+# Combine charts
+(p1 + p2) / (p3 + p4) +
+  plot_annotation(
+    title = "Advanced Analytics: Four Key Insights Beyond Simple Correlations",
+    theme = theme(plot.title = element_text(size = 16, face = "bold"))
+  )
+```

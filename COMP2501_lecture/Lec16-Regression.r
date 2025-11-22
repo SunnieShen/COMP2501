@@ -1,5 +1,6 @@
 library(MASS)
 library(tidyverse)
+install.packages("HistData")
 library(HistData)
 
 # Plotting of two variables
@@ -249,4 +250,5 @@ admissions |>
              col = gender, size = applicants)) +
   geom_point() +
   theme_minimal()
+
 
