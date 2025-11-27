@@ -186,40 +186,48 @@ cat("slope coefficients, daughter ~ mother:", slope_m)
 
 ```{r}
 n_bootstrap <- 1000 
-sample_size <- nrow(galton_heights)/2
+n_original <- nrow(galton_heights)
+sample_size <- n_original/2
 
-set.seed(123)
-bootstrap_sample <- galton_heights[sample(1:n_original, sample_size, replace = TRUE), ]
-
-
-
+set.seed(42)
 for(i in 1:n_bootstrap) {
-  # Sample with replacement
   bootstrap_sample <- galton_heights[sample(1:n_original, sample_size, replace = TRUE), ]
-  
-  # Calculate statistics for this bootstrap sample
+  # Calculate statistics of bootstrap sample
   s_d_boot <- sd(bootstrap_sample$daughter)
   s_f_boot <- sd(bootstrap_sample$father)
   s_m_boot <- sd(bootstrap_sample$mother)
   rho_f_boot <- cor(bootstrap_sample$father, bootstrap_sample$daughter)
   rho_m_boot <- cor(bootstrap_sample$mother, bootstrap_sample$daughter)
-  
-  # Calculate slopes using the same formula
   bootstrap_slopes_father[i] <- rho_f_boot * s_d_boot / s_f_boot
   bootstrap_slopes_mother[i] <- rho_m_boot * s_d_boot / s_m_boot
 }
-
-# Create data frame for results
 bootstrap_results <- data.frame(
   father_slope = bootstrap_slopes_father,
   mother_slope = bootstrap_slopes_mother
 )
+bootstrap_results|>
+  pivot_longer(cols = everything(), names_to = "parent", values_to = "slope") |>
+  mutate(
+    parent = ifelse(parent == "father_slope", "Father", "Mother")) |>
+  ggplot(aes(x = slope, fill = parent)) +
+  geom_density(alpha = 0.6) +
+  labs(
+    title = "Bootstrap distributions of slope coefficients",
+    x = "Slope Coefficient"
+  )
 ```
 
 #### c. (2 points) From the distributions above, do you think that one parent has a significantly stronger effect on child's height than the other parent? If yes, use statistical test to prove your point. If not, explain why you think so.
 
-```{r}
+NO, because 0 in CI(95%), effect has no significant difference
 
+```{r}
+slope_diff <- bootstrap_results$father_slope - bootstrap_results$mother_slope
+#check whether 0 is in CI(95%)
+CI_lower <- quantile(slope_diff, 0.025)
+CI_upper <- quantile(slope_diff, 0.975)
+CI_lower
+CI_upper
 ```
 
 ### 5. (15 points) Pólya’s random walk problem
@@ -229,13 +237,69 @@ bootstrap_results <- data.frame(
 #### a. (3 points) A drunk man starts at the origin (x = 0) of an 1D axis. At each step, he moves one unit in a random direction: left (+1) or right (-1). He can keep walking forever — but we’re interested in whether he ever returns to the origin (i.e., home). We will use Monte Carlo simulation to estimate that. With 1000 repetitions, calculate the probability of whether the drunk man can come home within 1 million steps.
 
 ```{r, cache=TRUE}
+n_simulation<-1000
+simulate_random_walk<-function(max_steps=1e6){ #N:n_steps
+  position<-0
+  n_step<-0
+  while(n_step<max_steps){
+    position<-position + sample(c(-1,1),1,prob=c(0.5,0.5))
+    n_step<-n_step + 1
+    
+    if(position==0){
+      return(n_step)
+    }
+  }
+  return(NA)
+}
+set.seed(42)
 
+return_times<-replicate(n_simulation,simulate_random_walk())
+returned_home<-!is.na(return_times)
+prob_return<-mean(returned_home)
+prob_return
 ```
 
 #### b. (6 points) Now consider a two-dimensional scenario: the drunk man starts at the origin (x=0, y=0) of an infinite lattice grid on a 2D plane. At each step, he moves one unit in a random cardinal direction: North (y axis +1), South (y axis -1), East (x axis +1), or West (x axis -1). Use Monte Carlo simulation with 1000 repetitions to visualize the empirical cumulative probability function (eCDF) curve for: number of steps it takes for the drunk man to return to the origin (x=0, y=0) for the first time after simulation started. Plot the eCDF up to 1 million steps. If the simulation takes too long, you can plot up to 100 thousand steps.
 
 ```{r, cache=TRUE}
+n_simulation<-1000
+simulate_random_walk_2D<-function(max_steps=1e6){
+  x<-0
+  y<-0
+  n_step<-0
+  while(n_step<max_steps){
+    move<-sample(c("x+1","x-1","y+1","y-1"),1,
+      prob=c(0.25,0.25,0.25,0.25)
+    )
+    if(move=="x+1"){x<-x+1}
+    else if(move=="x-1"){x<-x-1}
+    else if(move=="y+1"){y<-y+1}
+    else{y<-y-1}
+  
+    n_step<-n_step + 1
+    if(x==0 && y==0){return(n_step)}
+  }
+  return(NA)
+}
 
+set.seed(42)
+return_times<-
+  replicate(n_simulation,simulate_random_walk_2D())
+returned_home<-!is.na(return_times)
+prob_return<-mean(returned_home)
+
+results_df <- data.frame(return_time = return_times) |>
+  mutate(returned_home = !is.na(return_time))
+
+ecdf_function <- function(threshold) {
+  successful_returns <- results_df |> 
+    filter(returned_home) |> 
+    pull(return_time)
+  if (length(successful_returns) == 0){return(0)}
+  mean(successful_returns <= threshold)
+}
+
+return_times|>ggplot(aes(return_time))
 ```
 
 #### c. (3 points) If the number of steps extends to infinity, will the drunk man be guaranteed to return to the origin? Extract eCDF values from part b after 10,000 steps (or after 1,000 steps if your simulation only goes up to 1e5 steps) to analyze this. Plot the [probability of returning to the origin within `n` steps] against [`1/log(n)`]. Perform a linear regression on the data and make an educated guess: will the probability approach 1 as `n` approaches infinity?
