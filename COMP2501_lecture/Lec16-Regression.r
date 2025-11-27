@@ -81,7 +81,7 @@ x <- galton_heights$father
 y <- galton_heights$son
 n <- length(x)
 mean(scale(x) * scale(y))
-mean((scale(x) * scale(y)) * n / (n-1))
+mean((scale(x) * scale(y)) * n / (n-1)) #???
 cor(x, y)
 cor(y, x)
 

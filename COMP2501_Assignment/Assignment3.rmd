@@ -133,7 +133,23 @@ df_50|>ggplot(aes(prob,prob_bankrupt))+
 ### 3. (5 points) Bayesian inference: we will re-visit the calculation of a professional baseball player's batting average using Bayes theorem. Historically, professional baseball players have had a batting average (AVG), representing the probability of success when batting, with a mean of 0.275 and a standard deviation of 0.027. You can assume it to be a normal distribution. During his first month in Major League Baseball (MLB), José Iglesias displayed exceptional performance, successfully batting 9 times out of 20 attempts. Based on this observation, calculate and plot the posterior PDF of José's batting average (AVG). Think of the batting average (AVG) as the probability of getting head in a coin toss game, where each "coin toss" corresponds to a batting attempt. The posterior PDF should be a curve defined over the range of (0, 1) and its integral being 1.
 
 ```{r}
+prior <- dnorm(df$p, mean = 0.275, sd = 0.027)
+prior <- prior / sum(prior * 0.001)#normalize prior
+cons<-length(combinations(20,9))
+posterior <- prior*cons*((1-p)**11)*p**9
 
+df<-data.frame(p=seq(0,1,0.01))
+df<-df|>mutate(posterior=posterior)
+
+#approximate the area under the curve
+total_area<-sum(df$posterior*0.01)
+#normalization, s.t. area under curve is 1
+df$posterior <- df$posterior/total_area
+
+df|>ggplot(aes(p,posterior))+
+  geom_line()+
+  labs(x="p", y="probability density (posterior)")+
+  theme_minimal()
 ```
 
 ### 4. (12 points) Using the GaltonFamilies dataset, analyze which parent's height has a stronger association with children's height.
@@ -141,14 +157,63 @@ df_50|>ggplot(aes(prob,prob_bankrupt))+
 #### a. (5 points) We will work on daughter (female) heights. Calculate the slope coefficients for the two linear regression scenarios: daughter \~ father, and daughter \~ mother.
 
 ```{r}
+install.packages("GaltonFamilies")
 data("GaltonFamilies")
+galton_heights <- GaltonFamilies|>
+  filter(gender=="female")|>
+  group_by(family) |>
+  sample_n(1) |>  # Sample one child per family
+  ungroup() |>
+  dplyr::select(father,mother, childHeight) |>
+  rename(daughter = childHeight)
 
+mu_d<-galton_heights$daughter
+mu_f<-galton_heights$father
+mu_m<-galton_heights$mother
+s_d<-sd(galton_heights$daughter)
+s_f<-sd(galton_heights$father)
+s_m<-sd(galton_heights$mother)
+rho_f<-cor(galton_heights$father, galton_heights$daughter)
+rho_m<-cor(galton_heights$mother, galton_heights$daughter)
+
+slope_f<-rho_f* s_d/s_f
+slope_m<-rho_m* s_d/s_m
+cat("slope coefficients, daughter ~ father:", slope_f,"\n")
+cat("slope coefficients, daughter ~ mother:", slope_m)
 ```
 
 #### b. (5 points) To estimate the uncertainty of model parameters, we can utilize a technique called bootstrapping. In this method, for a dataset of `n` data points, we can randomly subsample `n/2` data points WITH replacement and calculate the parameters of interest. This procedure can be repeated many times to derive distributions for the parameters of interest. Perform bootstrapping on the two slope coefficients we derived from part a and plot their distributions.
 
 ```{r}
+n_bootstrap <- 1000 
+sample_size <- nrow(galton_heights)/2
 
+set.seed(123)
+bootstrap_sample <- galton_heights[sample(1:n_original, sample_size, replace = TRUE), ]
+
+
+
+for(i in 1:n_bootstrap) {
+  # Sample with replacement
+  bootstrap_sample <- galton_heights[sample(1:n_original, sample_size, replace = TRUE), ]
+  
+  # Calculate statistics for this bootstrap sample
+  s_d_boot <- sd(bootstrap_sample$daughter)
+  s_f_boot <- sd(bootstrap_sample$father)
+  s_m_boot <- sd(bootstrap_sample$mother)
+  rho_f_boot <- cor(bootstrap_sample$father, bootstrap_sample$daughter)
+  rho_m_boot <- cor(bootstrap_sample$mother, bootstrap_sample$daughter)
+  
+  # Calculate slopes using the same formula
+  bootstrap_slopes_father[i] <- rho_f_boot * s_d_boot / s_f_boot
+  bootstrap_slopes_mother[i] <- rho_m_boot * s_d_boot / s_m_boot
+}
+
+# Create data frame for results
+bootstrap_results <- data.frame(
+  father_slope = bootstrap_slopes_father,
+  mother_slope = bootstrap_slopes_mother
+)
 ```
 
 #### c. (2 points) From the distributions above, do you think that one parent has a significantly stronger effect on child's height than the other parent? If yes, use statistical test to prove your point. If not, explain why you think so.
