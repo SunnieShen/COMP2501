@@ -515,9 +515,7 @@ potential bias: $P(A),P(B)$ not from same population $\Leftarrow$ condition on t
 -   Bayesian modeling of coin toss: observed two heads\
     **no pre-assumption on p (different from frequentist)**
 
-    $
-    P(p|2H)=\frac{P(2H|p)P(p)}{P(2H)}\,,for\,p\in [0,1]\\
-    $
+    \$ P(p\|2H)=\frac{P(2H|p)P(p)}{P(2H)},,for,p\in [0,1]\\ \$
 
 ```{r}
 # Bayesian modeling of coin toss: observed two heads
@@ -535,7 +533,7 @@ df |> ggplot(aes(p, posterior)) +
 ```
 
 -   10H/14 tosses, estimate 2H in the next 2 toss\
-    **no pre-assumption about p, \
+    **no pre-assumption about p,\
     assume uniform, if prior distribution is not given**
 
     ```{r}
