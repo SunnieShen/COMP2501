@@ -515,7 +515,9 @@ potential bias: $P(A),P(B)$ not from same population $\Leftarrow$ condition on t
 -   Bayesian modeling of coin toss: observed two heads\
     **no pre-assumption on p (different from frequentist)**
 
-    \$ P(p\|2H)=\frac{P(2H|p)P(p)}{P(2H)},,for,p\in [0,1]\\ \$
+    $$
+    P(p|2H)=\frac{P(2H|p)P(p)}{P(2H)},\,for\,p\in [0,1]\
+    $$
 
 ```{r}
 # Bayesian modeling of coin toss: observed two heads
@@ -527,7 +529,7 @@ total_area <- sum(df$posterior * step_size)
 df <- df |> mutate(posterior = posterior / total_area)  # Normalize
 
 df |> ggplot(aes(p, posterior)) +
-  geom_line() +
+  geom_line() +2
   ylab("Probability density (posterior)") +
   theme_minimal()
 ```
@@ -591,12 +593,39 @@ samples |> ggplot(aes(x, y)) +
 
 ## 16.2.Regression
 
+using one variable to indicate another one
+
 $$begin{align}
 correlation\,coefficient:\rho=\frac{1}{n}\Sigma^{n}_{i=1}(\frac{x_i-\mu_x}{\sigma_x})(\frac{y_i-\mu_y}{\sigma_y})\\
 regression\,line: y=b+mx\\
 slope\,coefficient:m=\rho\frac{\sigma_x}{\sigma_y}=\frac{\Sigma(X_i-\overline{X})(Y_i-\overline{Y})}{\Sigma(X_i-\overline{X})^2}\\
 intersection:b=\mu_y-\mu_x\\
 $$
+
+```{r}
+data("GaltonFamilies")
+
+galton_heights <- GaltonFamilies |>
+  filter(gender == "male") |>
+  group_by(family) |>
+  sample_n(1) |>  # Sample one child per family
+  ungroup() |>
+  dplyr::select(father, childHeight) |>
+  rename(son = childHeight)
+
+galton_heights |>
+  ggplot(aes(father, son)) +
+  geom_point(alpha=0.5) +
+  theme_minimal()
+
+x <- galton_heights$father
+y <- galton_heights$son
+n <- length(x)
+mean(scale(x) * scale(y))
+mean((scale(x) * scale(y)) * n / (n-1)) #???
+cor(x, y)
+cor(y, x)
+```
 
 -   adding regression line
 
@@ -634,4 +663,14 @@ $$
       theme_minimal()
     ```
 
-## 16.3.Association
+## 16.3.Association vs Causation
+
+# Lec17-Machine learning
+
+## 17.1.Basics
+
+## 17.2.Evaluations
+
+## 17.3.Decision boundary
+
+## 17.4.in practice

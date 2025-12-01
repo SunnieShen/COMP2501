@@ -24,13 +24,13 @@ knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 
 ### **Proposal**
 
-> **Research Questions:** 1. Which workplace factors and demographic characteristics are most predictive of needing mental health treatment? 2. How can we build a machine learning model to identify individuals who would benefit from mental health intervention based on their survey responses?
+> **Research Questions:** 1. Which **workplace factors** and **demographic characteristics** are most predictive of needing mental health treatment? 2. How can we build a **regression model** to identify individuals who would **benefit from mental health intervention** based on their survey responses?
 
 **Importance:**\
-Mental health issues in the workplace have deep economic and social consequences. Early identification of at-risk individuals enables timely intervention, improved well-being, and productivity.
+Mental health issues in the workplace have deep economic and social consequences. E**arly identification of at-risk individuals** enables timely intervention, improved well-being, and productivity.
 
 **Challenges:**\
-- Handling class imbalance in responses (many may not report needing treatment). - Missing data and survey noise (subjectivity in self-reporting). - Potential bias in responses.
+Handling class imbalance in responses (many may not report needing treatment). - Missing data and survey noise (subjectivity in self-reporting). - Potential bias in responses.
 
 **Existing Work:**\
 Previous studies and open-source projects have shown that factors such as *work interference*, *family history*, and *employer support* strongly impact mental health needs.
@@ -58,16 +58,16 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(knitr)
-library(caret)
-library(broom)
-library(car)  # for VIF
-library(pROC)
+#library(caret) 
+#library(broom) 
+#library(car)  # for VIF
+#library(pROC) 
 
 # Read the dataset (make sure 'survey.csv' is in the same folder)
 survey_data <- read_csv("survey.csv")
 
 # Overview: dimensions and column names
-cat("Dataset dimensions:", paste(dim(survey_data), collapse=" x "), "\n")
+cat("Dataset dimensions:", dim(survey_data), "\n")
 cat("Column names:\n")
 names(survey_data)
 ```
@@ -80,15 +80,13 @@ names(survey_data)
 
 ```{r}
 # Missing value summary
-missing_summary <- sort(colSums(is.na(survey_data)), decreasing = TRUE)
-#"Missing values per column
-data.frame(Feature=names(missing_summary), Missing=missing_summary)
+data.frame(Missing_data=sort(colSums(is.na(survey_data)),decreasing=TRUE))
 
 # Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)
 survey_clean <- survey_data |>
   select(-Timestamp, -comments, -state)
 
-cat("Columns left after removal:", paste(names(survey_clean), collapse=", "))
+cat("Columns left after removal:", names(survey_clean))
 ```
 
 ### 2.2 Standardize Variables: Gender, Age, Conversion
