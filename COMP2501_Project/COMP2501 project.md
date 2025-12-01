@@ -106,7 +106,7 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 ![[2501report_ShenHongshan_Version2.Rmd]]
 ![[2501report_ShenHongshan_Version2.html]]
 ![[2501report_ShenHongshan_Version2.docx]]
-- [ ]  tech company vs non-tech
+- [x]  tech company vs non-tech
 # 3.
 # presentation
 Presentation video (5-10 min), share the following: 

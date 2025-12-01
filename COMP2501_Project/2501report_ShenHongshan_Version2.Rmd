@@ -58,10 +58,10 @@ library(readr)
 library(dplyr)
 library(ggplot2)
 library(knitr)
-#library(caret) 
-#library(broom) 
-#library(car)  # for VIF
-#library(pROC) 
+library(caret) 
+library(broom) 
+library(car)  # for VIF
+library(pROC) 
 
 # Read the dataset (make sure 'survey.csv' is in the same folder)
 survey_data <- read_csv("survey.csv")
@@ -89,7 +89,11 @@ survey_clean <- survey_data |>
 cat("Columns left after removal:", names(survey_clean))
 ```
 
-### 2.2 Standardize Variables: Gender, Age, Conversion
+### 2.2 Standardize Variables
+
+-   Convert gender variable into standard level: Male/ Female/ Transgender/Non-binary/Others
+
+-   remove unrealistic age input, only maintain age within 18\~100 years old
 
 ```{r}
 survey_clean <- survey_clean |>
@@ -114,6 +118,18 @@ survey_clean <- survey_clean |>
     )
   ) |>
   filter(!is.na(Age))  # Remove rows with invalid ages
+```
+
+### 2.3 Combine variables with similar meaning
+
+-   Notice: "benefits", "care_options", "wellness_program", "seek_help" are all related to one perspectives regarding whether the employer has provided mental_care resources with different approach. We can combine them into one single variable "mental_care" (Yes/ No).
+
+```{r}
+survey_clean <- survey_clean|>
+  mutate(mental_care=if_any(c(benefits, care_options, wellness_program, seek_help), ~ . == "Yes"))
+
+survey_clean<- survey_clean|> 
+  select(-benefits, -care_options, -wellness_program, -seek_help)
 ```
 
 ### 2.3 Target Variable Check
@@ -144,36 +160,42 @@ demographic_summary <- survey_clean %>%
 demographic_summary
 ```
 
-### 3.2 Key Visualisations (以自变量为x轴分类, 比较treatment/no treatment的占比, 避免数据本身对于因变量的采样时的bias,e.g.femal采样时占比就较小, treatment占比也较小)
+### 3.2 Key Visualisations 
 
--   Treatment rate by gender
+-   Treatment rate by Age, Gender, family history, work_interference, mental_care, tech_company
 
-```{r}
-ggplot(survey_clean, aes(x=Gender, fill=treatment)) +
+```{r, cache=TRUE}
+Age_summary<-survey_clean|> 
+  group_by(Age)|>
+  summarise(
+    n_total = n(),
+    n_treatment = sum(treatment == "Yes", na.rm = TRUE),
+    prop_treatment = n_treatment / n_total,
+    .groups = "drop"
+  )|>
+  filter(n_total>=5)
+
+Age_visualization<-ggplot(Age_summary , aes(x = Age, y = prop_treatment, size = n_total)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(alpha = 0.2)+
+  theme_minimal()+
+  theme(legend.position = "none")
+
+
+Exploratory_visualization<-function(feature,feature_name){
+  ggplot(survey_clean, aes(x=feature, fill=treatment)) +
   geom_bar(position="fill") +
-  labs(y="Proportion", title="Treatment Rate by Gender") +
+  labs(y="Proportion",x=feature_name) +
   scale_y_continuous(labels=scales::percent) +
   theme_minimal()
-```
+}
 
--   Treatment rate by family history
-
-```{r}
-ggplot(survey_clean, aes(x=family_history, fill=treatment)) +
-  geom_bar(position="fill") +
-  labs(title="Treatment by Family History", y="Proportion") +
-  scale_y_continuous(labels=scales::percent) +
-  theme_minimal()
-```
-
--   Treatment rate by work interference
-
-```{r}
-ggplot(survey_clean, aes(x=work_interfere, fill=treatment)) +
-  geom_bar(position="fill") +
-  labs(title="Treatment by Work Interference", y="Proportion") +
-  scale_y_continuous(labels=scales::percent) +
-  theme_minimal()
+(Age_visualization+
+    Exploratory_visualization(survey_clean$Gender, "Gender")+
+    Exploratory_visualization(survey_clean$family_history, "family_history"))/
+  (Exploratory_visualization(survey_clean$work_interfere, "work_interfere")+
+     Exploratory_visualization(survey_clean$mental_care, "mental_care")+
+     Exploratory_visualization(survey_clean$tech_company, "tech_company"))
 ```
 
 #### **Insight:**
@@ -197,7 +219,7 @@ survey_model <- survey_clean %>%
 predictors <- c(
   "Age", "Gender", "family_history",
   "work_interfere", "no_employees", "remote_work", "tech_company",
-  "benefits", "care_options", "wellness_program", "seek_help",
+  "mental_care",
   "anonymity", "leave",
   "mental_health_consequence", "phys_health_consequence",
   "coworkers", "supervisor", "mental_health_interview",
@@ -227,6 +249,8 @@ cat("Test set size:", nrow(test_data), "\n")
 
 ### 4.3 Logistic Regression Model
 
+target variable & feature variable are both discrete, most of them with only 2\~3 levels. So, we can not use linear regression, but logistic regression to explore what are the significant features associated with our target value "treatment"
+
 ```{r}
 logit_model <- glm(treatment_binary ~ ., data=train_data, family="binomial")
 
@@ -237,39 +261,12 @@ summary(logit_model)
 #### Significant predictors (p \< .05)
 
 ```{r}
-significant_predictors <- broom::tidy(logit_model) %>%
-  filter(p.value < 0.05 & term != "(Intercept)")
-#Significant Predictors
+significant_predictors <- broom::tidy(logit_model) |>
+  arrange(p.value)
 significant_predictors
 ```
 
 ------------------------------------------------------------------------
-
-### 4.4 Model Evaluation
-
-#### Prediction (training set)
-
-```{r}
-train_data$predicted_prob <- predict(logit_model, type="response")
-train_data$predicted_class <- ifelse(train_data$predicted_prob > 0.5, 1, 0)
-train_conf <- confusionMatrix(as.factor(train_data$predicted_class), as.factor(train_data$treatment_binary))
-print(train_conf)
-```
-
-#### Prediction (test set) and ROC Curve
-
-```{r}
-test_data$predicted_prob <- predict(logit_model, newdata=test_data, type="response")
-test_data$predicted_class <- ifelse(test_data$predicted_prob > 0.5, 1, 0)
-
-test_conf <- confusionMatrix(as.factor(test_data$predicted_class), as.factor(test_data$treatment_binary))
-print(test_conf)
-
-roc_curve <- roc(test_data$treatment_binary, test_data$predicted_prob)
-cat("AUC on test:", auc(roc_curve), "\n")
-plot(roc_curve, main="ROC Curve for Mental Health Treatment Prediction", col="#2c3e50", lwd=3)
-abline(a=0, b=1, col="grey", lty=2)
-```
 
 #### Feature Importance Plot
 
@@ -289,35 +286,77 @@ ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction))
   theme_minimal()
 ```
 
-------------------------------------------------------------------------
+### 5. Model Evaluation
 
-## **5. Subgroup Analysis**
+#### Prediction (test set) and ROC Curve
 
-### By Gender
+AUC=0.8476716,
 
-```{r}
-#Treatment Rate by Gender
-model_data |>
-  group_by(Gender) %>%
-  summarise(
-    n = n(),
-    treatment_rate = mean(treatment_binary)*100
-  )
+```         
+0.8476716
 ```
 
-### By Company Size
-
 ```{r}
-#Treatment Rate by Company Size
-model_data |>
-  group_by(no_employees) |>
-  summarise(
-    n = n(),
-    treatment_rate = mean(treatment_binary)*100
-  )
+test_data$predicted_prob <- predict(logit_model, newdata=test_data, type="response")
+test_data$predicted_class <- ifelse(test_data$predicted_prob > 0.5, 1, 0)
+
+test_conf <- confusionMatrix(as.factor(test_data$predicted_class), as.factor(test_data$treatment_binary))
+print(test_conf)
+
+roc_curve <- roc(test_data$treatment_binary, test_data$predicted_prob)
+cat("AUC on test:", auc(roc_curve), "\n")
+plot(roc_curve, main="ROC Curve for Mental Health Treatment Prediction", col="#2c3e50", lwd=3)
+abline(a=0, b=1, col="grey", lty=2)
 ```
 
-------------------------------------------------------------------------
+#### Prediction (training set)
+
+-   Strength of model:\
+     **High Specificity (91.91%)**: Excellent at identifying people who truly need treatment\
+     **Good Overall Accuracy (80.23%)**: Beats baseline by 16 percentage points\
+     **Balanced Precision**: Similar precision for both classes (\~80%)\
+     **Statistical Significance**: Results are not due to chance
+
+-   Concerns\
+     **Low Sensitivity (59.27%)**: Poor at identifying people who don't need treatment\
+     **Imbalanced Performance**: Much better at detecting treatment needs than non-needs\
+     **Potential Over-intervention**: 40.73% of "No treatment" people are incorrectly flagged
+
+```{r}
+train_data$predicted_prob <- predict(logit_model, type="response")
+train_data$predicted_class <- ifelse(train_data$predicted_prob > 0.5, 1, 0)
+train_conf <- confusionMatrix(as.factor(train_data$predicted_class), as.factor(train_data$treatment_binary))
+print(train_conf)
+
+# vusualize confusion data
+conf_matrix_data <- as.data.frame(as.table(train_conf$table))
+names(conf_matrix_data) <- c("Predicted", "Actual", "Freq")
+
+# calculate relevant statistics
+conf_matrix_data <- conf_matrix_data %>%
+  group_by(Actual) %>%
+  mutate(
+    Percentage = Freq / sum(Freq) * 100,
+    Label = paste0(Freq, "\n(", round(Percentage, 1), "%)")
+  )
+
+# plot heatmap ofr confusion matrix
+ggplot(conf_matrix_data, aes(x = Actual, y = Predicted, fill = Freq)) +
+  geom_tile(color = "white", alpha = 0.8) +
+  geom_text(aes(label = Label), color = "black", size = 5) +
+  scale_fill_gradient(low = "#F8F9FA", high = "blue", name = "frequency") +
+  labs(
+    title = "heatmap ofr confusion matrix",
+    subtitle = paste("Accuracy:", round(train_conf$overall["Accuracy"]*100, 1), "%"),
+    x = "Actural class",
+    y = "Predicted class",
+    caption = paste("sensitivity:", round(train_conf$byClass["Sensitivity"]*100, 1), "% |",
+                   "Specificity:", round(train_conf$byClass["Specificity"]*100, 1), "%")
+  ) +
+  theme_minimal() 
+```
+
+#### 
 
 ## **6. Business Insights & Interpretation**
 
@@ -339,32 +378,6 @@ risk_factors <- feature_importance %>%
 #Key variables increasing risk of needing treatment
 risk_factors
 ```
-
-------------------------------------------------------------------------
-
-## **7. Prediction Example: New Employees**
-
-```{r}
-example_employees <- data.frame(
-  Age = c(30, 45),
-  Gender = factor(c("Male", "Female"), levels=levels(model_data$Gender)),
-  family_history = factor(c("Yes", "No"), levels=levels(model_data$family_history)),
-  work_interfere = factor(c("Often", "Never"), levels=levels(model_data$work_interfere))
-)
-for(col in predictors) {
-  if(!col %in% colnames(example_employees)) {
-    mode_val <- names(sort(table(model_data[[col]]), decreasing = TRUE))[1]
-    example_employees[[col]] <- factor(rep(mode_val, nrow(example_employees)), levels=levels(model_data[[col]]))
-  }
-}
-example_employees$predicted_prob <- predict(logit_model, newdata = example_employees, type = "response")
-example_employees$predicted_class <- ifelse(example_employees$predicted_prob > 0.5, "High Risk", "Low Risk")
-
-#Example Employee Predictions
-example_employees[,c("Age", "Gender", "family_history", "work_interfere", "predicted_prob", "predicted_class")]
-```
-
-------------------------------------------------------------------------
 
 # **8. Conclusion**
 
@@ -436,17 +449,17 @@ ggplot(gender_benefits_data, aes(x = Gender, y = treatment_rate,
   scale_fill_brewer(palette = "Set2")
 ```
 
-"When we dug deeper into our analysis, we discovered a crucial insight: risk factors don't operate in isolation - they amplify or buffer each other.
+**"When we dug deeper into our analysis, we discovered a crucial insight: risk factors don't operate in isolation - they amplify or buffer each other.”**
 
-**The first chart reveals** a powerful interaction between work interference and family history:
+**The first chart reveals** a powerful interaction between **work interference and family history**:
 
 -   For employees without family history, even frequent work interference leads to only 60% treatment rate
 
 -   But for those with family history, the same level of work interference drives treatment rates above 90%
 
--   **Business Insight**: This tells us screening should prioritize employees who report both family history AND work interference
+-   **Business Insight**: This tells us screening should **prioritize employees who report both family history AND work interference**
 
-**The second chart shows** how gender and benefits interact to reveal important organizational patterns:
+**The second chart shows** how **gender and (mental health)benefits** interact to reveal important organizational patterns:
 
 -   Male employees are highly sensitive to benefits availability - treatment rates drop sharply without benefits
 
@@ -530,4 +543,40 @@ p4 <- ggplot(rf_importance[1:6, ], aes(x = reorder(Variable, MeanDecreaseGini),
     title = "Advanced Analytics: Four Key Insights Beyond Simple Correlations",
     theme = theme(plot.title = element_text(size = 16, face = "bold"))
   )
+```
+
+```{r correlation-heatmap, warning=FALSE, message=FALSE}
+# 说明：
+# - 我们把因子变量临时编码为数值（as.numeric(as.factor(.))）来计算 Spearman 相关系数。
+# - 这只是用于“可视化与探索”目的：因子->数值的转换会改变变量含义，不能当作严格的相关性/因果性证据。
+# - 对于类别-类别的关联，更合适的方法是 Cramer's V；对于数值-二分类可用 point-biserial 等。
+#
+# 需要的包：corrplot, reshape2, Hmisc（可选，用于 p 值）
+if(!requireNamespace("corrplot", quietly=TRUE)) install.packages("corrplot")
+if(!requireNamespace("reshape2", quietly=TRUE)) install.packages("reshape2")
+if(!requireNamespace("Hmisc", quietly=TRUE)) install.packages("Hmisc")
+
+library(corrplot); library(reshape2); library(Hmisc)
+
+# 选取用于可视化的变量（使用在建模中挑选的 predictors）
+corr_df <- model_data 
+
+# 把因子变量临时编码为数值（仅用于计算相关矩阵）
+corr_num <- corr_df |>
+  mutate(across(everything(), ~ if(is.factor(.)) as.numeric(as.factor(.)) else .))
+
+# 计算 Spearman 相关系数（对有序/非正态数据更稳健）
+corr_mat <- cor(corr_num, use = "pairwise.complete.obs", method = "spearman")
+
+corr_mat[upper.tri(corr_mat_masked, diag = TRUE)] <- NA
+
+# 备用：用 ggplot2 绘制完整的热图（旋转标签更友好）
+melted <- reshape2::melt(corr_mat, na.rm = TRUE)
+ggplot(melted, aes(x = Var2, y = Var1, fill = value)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0, limits = c(-0.5,0.6)) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  labs(x = "", y = "", fill = "Spearman\nrho",
+       title = "Spearman Correlation Heatmap (factors -> numeric)")
 ```
