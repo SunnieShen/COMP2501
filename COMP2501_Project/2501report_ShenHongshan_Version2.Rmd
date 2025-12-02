@@ -50,7 +50,21 @@ Previous studies and open-source projects have shown that factors such as *work 
 
 ------------------------------------------------------------------------
 
-## **1. Data Loading & Exploration**
+## **1. Introduction**
+
+### 1.1 Background
+
+Mental health issues in the workplace have deep economic and social consequences. E**arly identification of at-risk individuals** enables timely intervention, improved well-being, and productivity.
+
+### 1.2 Data science question
+
+-   **What are the most significant demographics and workplace features associated with employees seeking mental health treatment?**
+
+-   **Based on these associations, what targeted interventions can employers prioritize?**
+
+## **2. Data Loading & Cleaning**
+
+### 2.1 Data loading
 
 ```{r}
 library(tidyverse)
@@ -72,11 +86,13 @@ cat("Column names:\n")
 names(survey_data)
 ```
 
-------------------------------------------------------------------------
+### 2.2 Handle Missing Values, drop Irrelevant biased sampled variables
 
-## **2. Data Preparation & Cleaning**
+-   Check the number of missing value for each variable, delete those with too many NAs: comments, state
 
-### 2.1 Handle Missing Values, Drop Irrelevant Columns
+-   delete irrelevant variable for analysis: Timestamp
+
+-   delete biased sampled variable: Country (60% from USA, mostcountries which have only 1 respondents)
 
 ```{r}
 # Missing value summary
@@ -84,12 +100,12 @@ data.frame(Missing_data=sort(colSums(is.na(survey_data)),decreasing=TRUE))
 
 # Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)
 survey_clean <- survey_data |>
-  select(-Timestamp, -comments, -state)
+  select(-Timestamp, -Country, -comments, -state)
 
 cat("Columns left after removal:", names(survey_clean))
 ```
 
-### 2.2 Standardize Variables
+### 2.3 Standardize Variables
 
 -   Convert gender variable into standard level: Male/ Female/ Transgender/Non-binary/Others
 
@@ -122,7 +138,7 @@ survey_clean <- survey_clean |>
 
 ### 2.3 Combine variables with similar meaning
 
--   Notice: "benefits", "care_options", "wellness_program", "seek_help" are all related to one perspectives regarding whether the employer has provided mental_care resources with different approach. We can combine them into one single variable "mental_care" (Yes/ No).
+-   The variables "benefits," "care_options," "wellness_program," and "seek_help" each measure a different facet of employers' support for mental health. So, they can be consolidated into a single variable, "mental_care," with a binary (Yes/No) level.
 
 ```{r}
 survey_clean <- survey_clean|>
@@ -132,7 +148,13 @@ survey_clean<- survey_clean|>
   select(-benefits, -care_options, -wellness_program, -seek_help)
 ```
 
-### 2.3 Target Variable Check
+## **3. Exploratory Data Analysis & Visualization**
+
+### 3.1 Target Variable Check
+
+-   The target variable **"treatment"** indicates whether an employee is currently seeking treatment for a mental health condition.
+
+-   **49.48%** report **No** and **50.52%** report **Yes**, which underscoring the significance of mental health conditions in the workplace.
 
 ```{r}
 #Distribution of treatment status
@@ -141,11 +163,9 @@ as.data.frame(table(survey_clean$treatment))
 as.data.frame(prop.table(table(survey_clean$treatment)))
 ```
 
-------------------------------------------------------------------------
+### 3.2 Demographic Overview
 
-## **3. Exploratory Data Analysis & Visualization**
-
-### 3.1 Demographic Overview
+-   sample is skewed to male by Gender, thus it is important to notice the potential bias caused by this during analysis
 
 ```{r}
 demographic_summary <- survey_clean %>%
@@ -201,8 +221,6 @@ Exploratory_visualization<-function(feature,feature_name){
 #### **Insight:**
 
 *Individuals with family history of mental illness and those reporting frequent work interference are much more likely to seek treatment.*
-
-------------------------------------------------------------------------
 
 ## **4. Modelling & Statistical Analysis**
 
@@ -288,13 +306,9 @@ ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction))
 
 ### 5. Model Evaluation
 
-#### Prediction (test set) and ROC Curve
+#### ROC Curve
 
 AUC=0.8476716,
-
-```         
-0.8476716
-```
 
 ```{r}
 test_data$predicted_prob <- predict(logit_model, newdata=test_data, type="response")
@@ -356,15 +370,19 @@ ggplot(conf_matrix_data, aes(x = Actual, y = Predicted, fill = Freq)) +
   theme_minimal() 
 ```
 
-#### 
+## **6. Answering data science questions**
 
-## **6. Business Insights & Interpretation**
+#### How to identify potential mental issue, In other words, what features are most predictive of needing mental health treatment?
 
-Insights:
+-   Employees with family history, reporting frequent work interference, and lack of mental care are more likely to need treatment.
 
--   Employees with a family history, frequent work interference, and lack of benefits are more likely to need treatment.
+#### What could employers do reducing risks?
 
--   Organizational support, especially in benefits and anonymity, may reduce barriers to help-seeking.
+-   A logistic regression model can reasonably predict employees at higher risk and support HR in targeted interventions.
+
+<!-- -->
+
+-   Increasing mental health care benefits, easy-access mental care treatment resources,
 
 -   Companies should focus on improving support structures for employees showing risk factors.
 
@@ -379,10 +397,9 @@ risk_factors <- feature_importance %>%
 risk_factors
 ```
 
-# **8. Conclusion**
+# **7.** 
 
 -   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need.
--   A logistic model can reasonably predict employees at higher risk and support HR in targeted interventions.
 -   **Visualizations** in this report highlight key risk factors and their relationship with treatment-seeking.
 -   **Limitations:** Subjective survey responses, possible response bias, and missingness may affect generalizability.
 -   Future work could include more advanced ML (random forest, boosting), longitudinal data, and testing interventions.
