@@ -180,7 +180,7 @@ demographic_summary <- survey_clean %>%
 demographic_summary
 ```
 
-### 3.2 Key Visualisations 
+### 3.2 Key Visualisations
 
 -   Treatment rate by Age, Gender, family history, work_interference, mental_care, tech_company
 
@@ -397,7 +397,7 @@ risk_factors <- feature_importance %>%
 risk_factors
 ```
 
-# **7.** 
+# **7.**
 
 -   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need.
 -   **Visualizations** in this report highlight key risk factors and their relationship with treatment-seeking.
