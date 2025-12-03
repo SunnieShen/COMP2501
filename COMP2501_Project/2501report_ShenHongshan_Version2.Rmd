@@ -3,9 +3,9 @@ title: "2501report_ShenHongshan"
 author: "Shen Hongshan"
 date: "2025-11-20"
 output:
-  word_document: default
-  pdf_document: default
   html_document: default
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -18,49 +18,25 @@ knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 
 ### Data source: [Kaggle Mental Health in Tech Survey](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data)
 
-------------------------------------------------------------------------
-
-## **Project Overview**
-
-### **Proposal**
-
-> **Research Questions:** 1. Which **workplace factors** and **demographic characteristics** are most predictive of needing mental health treatment? 2. How can we build a **regression model** to identify individuals who would **benefit from mental health intervention** based on their survey responses?
-
-**Importance:**\
-Mental health issues in the workplace have deep economic and social consequences. E**arly identification of at-risk individuals** enables timely intervention, improved well-being, and productivity.
-
-**Challenges:**\
-Handling class imbalance in responses (many may not report needing treatment). - Missing data and survey noise (subjectivity in self-reporting). - Potential bias in responses.
-
-**Existing Work:**\
-Previous studies and open-source projects have shown that factors such as *work interference*, *family history*, and *employer support* strongly impact mental health needs.
-
-**Methodology:**\
-1. Data loading and exploration
-
-2\. Data cleaning: remove irrelevant columns, handle missingness & outliers
-
-3\. Variable standardisation
-
-4\. Visualisation of key factors
-
-5\. Statistical modelling: logistic regression for predictor analysis + subgroup analyses
-
-6\. Summary of findings and implications for workplace mental health policy
-
-------------------------------------------------------------------------
-
 ## **1. Introduction**
 
 ### 1.1 Background
 
-Mental health issues in the workplace have deep economic and social consequences. E**arly identification of at-risk individuals** enables timely intervention, improved well-being, and productivity.
+Mental health issues in workplace environments represent a significant public health concern with substantial economic and social consequences. Early identification of individuals who need mental health support can facilitate timely intervention, reduce workplace productivity loss, and improve overall well-being. This project addresses the critical need for data-driven approaches to mental health screening in professional settings, particularly in high-pressure sectors like technology.
+
+This project, analyzes the OSMI Mental Health in Tech Survey dataset from Kaggle to model how workplace conditions and demographic factors are associated with issue. The dataset contains survey responses to workplace, demographic and mental health questions, providing rich information for data-driven analysis of this spublic health issue.
 
 ### 1.2 Data science question
+
+The analysis focuses on two primary research questions:
 
 -   **What are the most significant demographics and workplace features associated with employees seeking mental health treatment?**
 
 -   **Based on these associations, what targeted interventions can employers prioritize?**
+
+### 1.3 Methodological Challenges
+
+Challenges are anticipated in this analysis, including handling **class imbalance** in the target variable, managing missing survey data, and addressing potential **response bias**.The subjective nature of self-reported mental health data may introduce measurement noise, requiring careful data cleaning and validation approaches.
 
 ## **2. Data Loading & Cleaning**
 
@@ -103,7 +79,7 @@ data.frame(Missing_data=sort(colSums(is.na(survey_data)),decreasing=TRUE))
 survey_clean0 <- survey_data |>
   select(-Timestamp, -Country, -comments, -state)
 
-cat("Columns left after removal:", names(survey_clean))
+cat("Columns left after removal:", names(survey_clean0))
 ```
 
 ### 2.3 Standardize Variables
@@ -140,11 +116,11 @@ survey_clean0 <- survey_clean0 |>
 
 #sort the levels of variables
 survey_clean0$work_interfere <- 
-  factor(survey_clean$work_interfere,levels = c("Never", "Rarely", "Sometimes", "Often"))
+  factor(survey_clean0$work_interfere,levels = c("Never", "Rarely", "Sometimes", "Often"))
 survey_clean0$leave <- 
-  factor(survey_clean$leave,levels = c("Very difficult","Somewhat difficult","Somewhat easy","Very easy","Don't know"))
+  factor(survey_clean0$leave,levels = c("Very difficult","Somewhat difficult","Somewhat easy","Very easy","Don't know"))
 survey_clean0$no_employees <-
-  factor(survey_clean$no_employees,levels = c("1-5", "6-25", "26-100", "100-500", "500-1000", "More than 1000"))
+  factor(survey_clean0$no_employees,levels = c("1-5", "6-25", "26-100", "100-500", "500-1000", "More than 1000"))
 ```
 
 ### 2.3 Combine variables with similar meaning
@@ -374,7 +350,7 @@ ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction))
 
 -   Company provisions (**mental_care TRUE, anonymity TRUE**) are positively associated with treatment.This can mean:
 
-    -    access to care increases uptake
+    -   access to care increases uptake
 
     -   companies experiencing higher demand put programs in place (reverse causality)
 
@@ -482,7 +458,7 @@ gender_care_data <- survey_clean0 |>
     .groups = 'drop'
   )
 
-p_benefits<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = benefits)) +
+ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = benefits)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
             position = position_dodge(width = 0.9), vjust = -0.5) +
@@ -510,7 +486,7 @@ gender_care_data <- survey_clean0 |>
     .groups = 'drop'
   )
 
-p_seek_help<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = seek_help)) +
+ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = seek_help)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
             position = position_dodge(width = 0.9), vjust = -0.5) +
@@ -537,7 +513,7 @@ gender_care_data <- survey_clean0 |>
     .groups = 'drop'
   )
 
-p_care_options<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options)) +
+ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
             position = position_dodge(width = 0.9), vjust = -0.5) +
@@ -550,19 +526,21 @@ p_care_options<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fil
   theme_minimal() +
   scale_y_continuous(labels = scales::percent) +
   scale_fill_brewer(palette = "Set2")
-
-p_benefits + p_seek_help + p_care_options
 ```
 
 ## 7. Limitation & possible improvement
 
 -   **Most significant limitation:** Subjective survey responses, possible response bias.
-    -   target variable "treatment" demonstrate the actual need for mental treatment (**real mental issue posed**). However, due to subjective survey response
--   Future work could include more advanced ML (random forest, boosting), longitudinal data, and testing interventions.
+    -   **target variable "treatment"** indicates whether respondents are currently receiving mental health treatment. It may demonstrate the actual need for mental treatment (**real mental issue posed**). However, due to subjective survey response **"willingness to get treatment"** also affected whether or not they are receiving treatment. This **self-report bias** means some individuals with mental health conditions may not seek or report treatment, while others receiving treatment may do so preventively rather than for diagnosed conditions.
+-   **one-to-one association** between one feature and target variable"treatment" is investigated, but the **interactions between** different features and how their combinations is associated with need for treatment is not considered. this is an aspect of future investigation.
+    -   an example is given below to explore the relationship between two factors **"work_interfere" & "family_history"**
+    -   **Heatmap** indicating the correlation between features are provided below
+-   assessing the **association** between demographic&workplace features and treatment is enough to **identify individuals at risk**, but from employers prospect, if they want to address mental issue for employees more effectively, analyzing the causual relationship should be considered.
+    -   This can be solved by using more advanced ML (random forest, boosting), longitudinal data, and testing interventions...
 
-------------------------------------------------------------------------
+### example demonstration:
 
-### 7.1 Simple correlation to interaction effects
+1.  simple correlation to interaction
 
 ```{r}
 # 1. Interaction Effects Visualization - work_interfere * family_history
@@ -593,112 +571,31 @@ ggplot(interaction_data, aes(x = work_interfere, y = treatment_rate,
   scale_color_manual(values = c("No" = "red", "Yes" = "blue"))
 ```
 
--   female is more sensitive to male regarding mental heath benefit
+-   There is a powerful interaction between work interference and family history:
 
-```{r}
+    -   For employees without family history, even frequent work interference leads to only 60% treatment rate.
 
-```
+    -   But for those with family history, the same level of work interference drives treatment rates above 90%.
 
-```{r}
-# 2. Interaction Effects Visualization - care_options * Gender
-gender_care_data <- survey_clean0 |>
-  filter(Gender!="Transgender/Non-binary/Others")|>
-  mutate(
-    treatment_binary = ifelse(treatment == "Yes", 1, 0)
-  )|>
-  group_by(Gender, care_options) |>
-  summarise(
-    treatment_rate = mean(treatment_binary),
-    n = n(),
-    .groups = 'drop'
-  )
+-   This tells us screening should **prioritize employees who report both family history AND work interference.**
 
-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
-            position = position_dodge(width = 0.9), vjust = -0.5) +
-  labs(
-    title = "Interaction Effect: Gender × mental care options",
-    x = "Gender",
-    y = "Treatment Rate",
-    fill = "Company Provides\nMental care options"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_brewer(palette = "Set2")
-
-
-```
-
-```{r}
-# 2. Interaction Effects Visualization - seek_help * Gender
-gender_care_data <- survey_clean0 |>
-  filter(Gender!="Transgender/Non-binary/Others")|>
-  mutate(
-    treatment_binary = ifelse(treatment == "Yes", 1, 0)
-  )|>
-  group_by(Gender, seek_help) |>
-  summarise(
-    treatment_rate = mean(treatment_binary),
-    n = n(),
-    .groups = 'drop'
-  )
-
-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = seek_help)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
-            position = position_dodge(width = 0.9), vjust = -0.5) +
-  labs(
-    title = "Interaction Effect: Gender × Access to help",
-    x = "Gender",
-    y = "Treatment Rate",
-    fill = "Company Provides\nAccess to help"
-  ) +
-  theme_minimal() +
-  scale_y_continuous(labels = scales::percent) +
-  scale_fill_brewer(palette = "Set2")
-```
-
-**"When we dug deeper into our analysis, we discovered a crucial insight: risk factors don't operate in isolation - they amplify or buffer each other.”**
-
-**The first chart reveals** a powerful interaction between **work interference and family history**:
-
--   For employees without family history, even frequent work interference leads to only 60% treatment rate
-
--   But for those with family history, the same level of work interference drives treatment rates above 90%
-
--   **Business Insight**: This tells us screening should **prioritize employees who report both family history AND work interference**
-
-**The second chart shows** how **gender and (mental health)benefits** interact to reveal important organizational patterns:
-
--   Male employees are highly sensitive to benefits availability - treatment rates drop sharply without benefits
+2.  correlation heatmap
 
 ```{r correlation-heatmap, warning=FALSE, message=FALSE}
-# 说明：
-# - 我们把因子变量临时编码为数值（as.numeric(as.factor(.))）来计算 Spearman 相关系数。
-# - 这只是用于“可视化与探索”目的：因子->数值的转换会改变变量含义，不能当作严格的相关性/因果性证据。
-# - 对于类别-类别的关联，更合适的方法是 Cramer's V；对于数值-二分类可用 point-biserial 等。
-#
-# 需要的包：corrplot, reshape2, Hmisc（可选，用于 p 值）
 if(!requireNamespace("corrplot", quietly=TRUE)) install.packages("corrplot")
 if(!requireNamespace("reshape2", quietly=TRUE)) install.packages("reshape2")
 if(!requireNamespace("Hmisc", quietly=TRUE)) install.packages("Hmisc")
-
 library(corrplot); library(reshape2); library(Hmisc)
 
-# 选取用于可视化的变量（使用在建模中挑选的 predictors）
 corr_df <- model_data 
 
-# 把因子变量临时编码为数值（仅用于计算相关矩阵）
 corr_num <- corr_df |>
   mutate(across(everything(), ~ if(is.factor(.)) as.numeric(as.factor(.)) else .))
 
-# 计算 Spearman 相关系数（对有序/非正态数据更稳健）
 corr_mat <- cor(corr_num, use = "pairwise.complete.obs", method = "spearman")
 
 corr_mat[upper.tri(corr_mat, diag = TRUE)] <- NA
 
-# 备用：用 ggplot2 绘制完整的热图（旋转标签更友好）
 melted <- reshape2::melt(corr_mat, na.rm = TRUE)
 ggplot(melted, aes(x = Var2, y = Var1, fill = value)) +
   geom_tile(color = "white") +
@@ -709,8 +606,20 @@ ggplot(melted, aes(x = Var2, y = Var1, fill = value)) +
        title = "Spearman Correlation Heatmap (factors -> numeric)")
 ```
 
-## 8. References
+-   notice the correlation between **supervisor** (feel free to discuss mental issue with direct supervisor) & **coworkers (**feel free to discuss mental issue with coworkers) is quite high
 
-OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [R for Data Science](https://r4ds.had.co.nz/) - [Tidyverse Documentation](https://www.tidyverse.org/) - [Introduction to Statistical Learning](https://www.statlearning.com/)
+    -   is there any potential causation ? any insightful management approach for employers?
 
-### 
+    -   Supervisors may serve as **tone-setters** for team culture. When supervisors openly discuss mental health and demonstrate empathy, they model vulnerable communication, giving employees 'permission' to have similar conversations with peers. This aligns with social learning theory, where employees observe and mimic leader behaviors.
+
+    -   A supportive peer culture might **normalize** mental health discussions, making it safer for employees to approach supervisors. This creates a **virtuous cycle** where peer support builds confidence for upward communication.
+
+## 8. Conclusion
+
+This study utilized the OSMI Mental Health in Tech Survey to investigate the relationship between workplace factors, demographic characteristics, and mental health treatment-seeking behavior. My analysis revealed that **work interference** and **family history** of mental illness are the **strongest predictors** of treatment need, with employees reporting frequent work interference and those with family history showing substantially higher treatment rates. Additionally, company's **support systems**—including mental health benefits, confidential resources, and supportive workplace cultures—significantly correlate with treatment engagement. The logistic regression model demonstrated good predictive capability with an AUC of 0.85 and overall accuracy of 80%, though it exhibited higher specificity than sensitivity, indicating better performance at identifying treatment needs than non-needs.
+
+From a practical perspective, these findings suggest employers should implement **targeted screening for employees experiencing work interference**, particularly those with **family mental health history,** and develop **gender-sensitive interventions** given the pronounced differences in treatment-seeking patterns. The strong correlation between supervisor and coworker support highlights the importance of creating psychologically safe environments at multiple organizational levels. While these associative findings provide valuable insights for identifying at-risk individuals, establishing causal relationships would further enhance employers' ability to design effective interventions. Future research employing longitudinal designs and causal inference methods could build upon these findings to develop more targeted workplace mental health strategies that promote employee well-being and organizational resilience.
+
+## reference:
+
+OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [Introduction to Statistical Learning](https://www.statlearning.com/)
