@@ -96,8 +96,16 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 	**This approach will provide valuable insights for employers and healthcare providers to develop targeted mental health support programs.**
 # 2.
 # report 
-• Compose your report in **R Markdown** and knit it into an html page; 
-• Include the data files used in your analysis in t he submission, i.e., zip them together; 
+- [x] exploratory data analysis (respond proportion + treatment proportion)
+- [ ] key features by regression
+- [ ] model evaluation
+	- [ ] ROC
+	- [ ] training set
+- [ ] answering the question
+- [ ] some limitation
+- [ ] conclusion
+• Compose your report in **R Markdown** and knit it into an **html page**; 
+• Include the **data files** used in your analysis in the submission, i.e., zip them together; 
 	• Or add a note if the data is private or too large to be uploaded (>100M, in which case attach a link to the data); 
 • Ensure your R Markdown file is fully runnable and reproducible. 
 • Include **graphics (preferably), data visualization, description,** and **analysis to explain what you are doing and what data insights you have gained from the results/plots**. **The report should NOT contain only codes.** 

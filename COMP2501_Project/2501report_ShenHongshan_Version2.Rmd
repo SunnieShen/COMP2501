@@ -76,6 +76,7 @@ library(caret)
 library(broom) 
 library(car)  # for VIF
 library(pROC) 
+library(patchwork)
 
 # Read the dataset (make sure 'survey.csv' is in the same folder)
 survey_data <- read_csv("survey.csv")
@@ -92,7 +93,7 @@ names(survey_data)
 
 -   delete irrelevant variable for analysis: Timestamp
 
--   delete biased sampled variable: Country (60% from USA, mostcountries which have only 1 respondents)
+-   delete biased sampled variable: Country (60% from USA, most countries which have only 1 respondents)
 
 ```{r}
 # Missing value summary
@@ -107,9 +108,11 @@ cat("Columns left after removal:", names(survey_clean))
 
 ### 2.3 Standardize Variables
 
--   Convert gender variable into standard level: Male/ Female/ Transgender/Non-binary/Others
+-   Convert **Gender** variable into standard level: Male/ Female/ Transgender/Non-binary/Others
 
--   remove unrealistic age input, only maintain age within 18\~100 years old
+-   Remove unrealistic **Age** input, only maintain age within 18\~100 years old
+
+-   sort the levels for better visualization latter: work_interfere(4 level), leave(5 level), no_employees(6 level)
 
 ```{r}
 survey_clean <- survey_clean |>
@@ -134,6 +137,14 @@ survey_clean <- survey_clean |>
     )
   ) |>
   filter(!is.na(Age))  # Remove rows with invalid ages
+
+#sort the levels of variables
+survey_clean$work_interfere <- 
+  factor(survey_clean$work_interfere,levels = c("Never", "Rarely", "Sometimes", "Often"))
+survey_clean$leave <- 
+  factor(survey_clean$leave,levels = c("Very difficult","Somewhat difficult","Somewhat easy","Very easy","Don't know"))
+survey_clean$no_employees <-
+  factor(survey_clean$leave,levels = c("1-5", "6-25", "26-100", "100-500", "500-1000", "More than 1000"))
 ```
 
 ### 2.3 Combine variables with similar meaning
@@ -180,11 +191,12 @@ demographic_summary <- survey_clean %>%
 demographic_summary
 ```
 
-### 3.2 Key Visualisations
+### 3.3 Key Visualizations
 
--   Treatment rate by Age, Gender, family history, work_interference, mental_care, tech_company
+-   Treatment rate by Age, Gender, family_history, work_interference, mental_care, tech_company
 
-```{r, cache=TRUE}
+```{r}
+# prepare Age-treatment information for visualization
 Age_summary<-survey_clean|> 
   group_by(Age)|>
   summarise(
@@ -194,33 +206,90 @@ Age_summary<-survey_clean|>
     .groups = "drop"
   )|>
   filter(n_total>=5)
-
+#
 Age_visualization<-ggplot(Age_summary , aes(x = Age, y = prop_treatment, size = n_total)) +
   geom_point(alpha = 0.6) +
   geom_smooth(alpha = 0.2)+
   theme_minimal()+
   theme(legend.position = "none")
 
-
-Exploratory_visualization<-function(feature,feature_name){
-  ggplot(survey_clean, aes(x=feature, fill=treatment)) +
-  geom_bar(position="fill") +
-  labs(y="Proportion",x=feature_name) +
-  scale_y_continuous(labels=scales::percent) +
-  theme_minimal()
-}
-
-(Age_visualization+
-    Exploratory_visualization(survey_clean$Gender, "Gender")+
-    Exploratory_visualization(survey_clean$family_history, "family_history"))/
-  (Exploratory_visualization(survey_clean$work_interfere, "work_interfere")+
-     Exploratory_visualization(survey_clean$mental_care, "mental_care")+
-     Exploratory_visualization(survey_clean$tech_company, "tech_company"))
+Age_visualization
 ```
 
-#### **Insight:**
+```{r}
+# proportion of answers for different features 
+feature_prop <- function(data, var, var_name) {
+  # Use tidy evaluation with {{var}}
+  percentage_data <- data |>
+    count({{var}}) |>
+    mutate(Percentage = n / sum(n))
+  
+  # Create plot
+  ggplot(percentage_data, aes(x = {{var}}, y = Percentage, fill = {{var}})) +
+    geom_bar(stat = "identity") +
+    scale_y_continuous(labels = scales::percent_format(),
+                       limits = c(0, max(percentage_data$Percentage) * 1.15)) +
+    labs(title = paste(var_name, "of Survey Respondents"),
+         x = var_name, y = "Percentage") +
+    theme_minimal() +
+    theme(legend.position = "none")
+}
 
-*Individuals with family history of mental illness and those reporting frequent work interference are much more likely to seek treatment.*
+# Treatment rate by feature (function) - FIXED to use tidy evaluation
+treatment_prop <- function(data, feature, feature_name) {
+  ggplot(data, aes(x = {{feature}}, fill = treatment)) +
+    geom_bar(position = "fill") +
+    labs(y = "Proportion", x = feature_name) +
+    scale_y_continuous(labels = scales::percent) +
+    theme_minimal()
+}
+
+#plots for each feature
+feature_prop(survey_clean, Gender, "Gender")+
+  treatment_prop(survey_clean, Gender, "Gender")
+
+feature_prop(survey_clean, family_history, "Family History")+
+  treatment_prop(survey_clean, family_history, "Family History")
+
+feature_prop(survey_clean, work_interfere, "Work Interference")+
+  treatment_prop(survey_clean, work_interfere, "Work Interference")
+
+feature_prop(survey_clean, tech_company, "Tech Company")+
+  treatment_prop(survey_clean, tech_company, "Tech Company")
+
+feature_prop(survey_clean, remote_work, "remote_work")+
+  treatment_prop(survey_clean, remote_work, "remote_work")
+
+feature_prop(survey_clean, self_employed, "self_employed")+
+  treatment_prop(survey_clean, self_employed, "self_employed")
+
+#company resourses
+feature_prop(survey_clean, mental_care, "Mental Health Care")+
+  treatment_prop(survey_clean, mental_care, "Mental Health Care")
+
+feature_prop(survey_clean, anonymity, "anonymity for mental health information")+
+  treatment_prop(survey_clean, anonymity, "anonymity for mental health information")
+
+feature_prop(survey_clean, leave, "availability for taking medical leave for mental treatment")+
+  treatment_prop(survey_clean, leave, "availability for taking medical leave for mental treatment")
+
+feature_prop(survey_clean, coworkers,"feel free to discuss mental issue with coworkers")+
+  treatment_prop(survey_clean,coworkers,"feel free to discuss mental issue with coworkers")
+```
+
+#### **3.4 Insight**
+
+-   Age: Treatment needs show a continuous increase from age 18, peaking at around 40 years old, followed by a significant decline in later years. This pattern may reflect several factors: increased mental health awareness and openness to treatment in middle adulthood, workplace stressors reaching their peak during career-building years, or potentially changing attitudes toward mental health across generations.
+
+-   Gender: Females show approximately 20% higher treatment rates compared to males, while non-binary and gender-diverse individuals demonstrate over 80% need for mental treatment.
+
+-   family_history: Those who have a family history of mental illness are around 35% more likely to get treatment rather than without a family history. This is aligns with thecommon snese that family history is a significant risk factor for many mental health disorders.
+
+-   Work_interfere: 认为mental issue的工作的影响越大, 参与心理治疗的比例就越大
+
+-   tech_company/ self_employed: 是否在科技公司工作, 是否远程办公 的治疗比例差距微小可以说明...?
+
+-   Mental healthcare/ anonymity/ leave: 如果公司提供mental care 服务, 保证心里问题信息保密工作做得很好, 且在mental issue leave 程序上有保障, 那么更多的人愿意接受治疗
 
 ## **4. Modelling & Statistical Analysis**
 
@@ -319,7 +388,7 @@ print(test_conf)
 
 roc_curve <- roc(test_data$treatment_binary, test_data$predicted_prob)
 cat("AUC on test:", auc(roc_curve), "\n")
-plot(roc_curve, main="ROC Curve for Mental Health Treatment Prediction", col="#2c3e50", lwd=3)
+plot(roc_curve, main="ROC Curve for Mental Health Treatment Prediction", col="blue", lwd=3)
 abline(a=0, b=1, col="grey", lty=2)
 ```
 
