@@ -102,7 +102,7 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 	- [ ] ROC
 	- [ ] training set
 - [ ] answering the question
-- [ ] some limitation
+- [ ] some limitation, advance analysis
 - [ ] conclusion
 • Compose your report in **R Markdown** and knit it into an **html page**; 
 • Include the **data files** used in your analysis in the submission, i.e., zip them together; 

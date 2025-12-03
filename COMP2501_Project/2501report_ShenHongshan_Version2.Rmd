@@ -100,7 +100,7 @@ names(survey_data)
 data.frame(Missing_data=sort(colSums(is.na(survey_data)),decreasing=TRUE))
 
 # Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)
-survey_clean <- survey_data |>
+survey_clean0 <- survey_data |>
   select(-Timestamp, -Country, -comments, -state)
 
 cat("Columns left after removal:", names(survey_clean))
@@ -115,7 +115,7 @@ cat("Columns left after removal:", names(survey_clean))
 -   sort the levels for better visualization latter: work_interfere(4 level), leave(5 level), no_employees(6 level)
 
 ```{r}
-survey_clean <- survey_clean |>
+survey_clean0 <- survey_clean0 |>
   mutate(
     # Gender standardization
     Gender = case_when(
@@ -128,7 +128,7 @@ survey_clean <- survey_clean |>
   )
 
 # Handle age outliers
-survey_clean <- survey_clean |>
+survey_clean0 <- survey_clean0 |>
   mutate(
     Age = case_when(
       Age < 18 ~ NA,    # Remove unrealistic ages
@@ -139,11 +139,11 @@ survey_clean <- survey_clean |>
   filter(!is.na(Age))  # Remove rows with invalid ages
 
 #sort the levels of variables
-survey_clean$work_interfere <- 
+survey_clean0$work_interfere <- 
   factor(survey_clean$work_interfere,levels = c("Never", "Rarely", "Sometimes", "Often"))
-survey_clean$leave <- 
+survey_clean0$leave <- 
   factor(survey_clean$leave,levels = c("Very difficult","Somewhat difficult","Somewhat easy","Very easy","Don't know"))
-survey_clean$no_employees <-
+survey_clean0$no_employees <-
   factor(survey_clean$no_employees,levels = c("1-5", "6-25", "26-100", "100-500", "500-1000", "More than 1000"))
 ```
 
@@ -152,7 +152,7 @@ survey_clean$no_employees <-
 -   The variables "benefits," "care_options," "wellness_program," and "seek_help" each measure a different facet of employers' support for mental health. So, they can be consolidated into a single variable, "mental_care," with a binary (Yes/No) level.
 
 ```{r}
-survey_clean <- survey_clean|>
+survey_clean <- survey_clean0|>
   mutate(mental_care=if_any(c(benefits, care_options, wellness_program, seek_help), ~ . == "Yes"))
 
 survey_clean<- survey_clean|> 
@@ -327,8 +327,6 @@ cat("Training set size:", nrow(train_data), "\n")
 cat("Test set size:", nrow(test_data), "\n")
 ```
 
-------------------------------------------------------------------------
-
 ### 4.3 Logistic Regression Model
 
 target variable & feature variable are both discrete, most of them with only 2\~3 levels. So, we can not use linear regression, but logistic regression to explore what are the significant features associated with our target value "treatment"
@@ -340,7 +338,7 @@ cat("Model summary (logistic regression):\n")
 summary(logit_model)
 ```
 
-#### Significant predictors (p \< .05)
+#### Predictors sorted by p-value (significance)
 
 ```{r}
 significant_predictors <- broom::tidy(logit_model) |>
@@ -368,11 +366,29 @@ ggplot(top_features, aes(x=reorder(term, estimate), y=estimate, fill=direction))
   theme_minimal()
 ```
 
+### 4.4 Insights
+
+-   **Work interference** is the single strongest signal: respondents saying their mental health often interferes with work are far more likely to be in treatment. This supports screening based on self‑reported work interference.
+
+-   **Family history** and **coworker openness** are also meaningful predictors. Family history increases risk, and feeling free to discuss with coworkers is positively associated with being in treatment, reflecting greater willingness to seek help or workplaces where issues are more openly discussed.
+
+-   Company provisions (**mental_care TRUE, anonymity TRUE**) are positively associated with treatment.This can mean:
+
+    -    access to care increases uptake
+
+    -   companies experiencing higher demand put programs in place (reverse causality)
+
+    -   confounding by unmeasured factors.
+
+-   Male gender is associated with lower odds of being in treatment. That likely reflects **differing help‑seeking behavior**, **not necessarily lower need.**
+
 ### 5. Model Evaluation
 
 #### ROC Curve
 
-AUC=0.8476716,
+-   ROC plots **sensitivity (true positive rate)** vs **1 − specificity (false positive rate)** over thresholds. The curve is **well above the diagonal:** model discriminates much better than random.
+
+-   **AUC = 0.8476716** indicates good ranking/discrimination: the model usually gives higher predicted probabilities to respondents who are actually in treatment than to those who are not.
 
 ```{r}
 test_data$predicted_prob <- predict(logit_model, newdata=test_data, type="response")
@@ -436,43 +452,117 @@ ggplot(conf_matrix_data, aes(x = Actual, y = Predicted, fill = Freq)) +
 
 ## **6. Answering data science questions**
 
-#### How to identify potential mental issue, In other words, what features are most predictive of needing mental health treatment?
+### 6.1. How to identify potential mental issue, In other words, what features are most predictive of needing mental health treatment?
 
--   Employees with family history, reporting frequent work interference, and lack of mental care are more likely to need treatment.
+-   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need. (detailed analysis seen in **section 3.4 & 4.4**)
 
-#### What could employers do reducing risks?
+### 6.2 What could employers do to reduce mental issue's risks?
 
--   A logistic regression model can reasonably predict employees at higher risk and support HR in targeted interventions.
-
-<!-- -->
-
--   Increasing mental health care benefits, easy-access mental care treatment resources,
-
--   Companies should focus on improving support structures for employees showing risk factors.
+-   A logistic regression model giving **the most predictive factors** can reasonably **identify potnetial employees at higher risk.**
+-   Companies should focus on improving **support policies** for employees showing risk factors.
+    -   easier access to a**pplying for medical leave due to mental issue**
+    -   protect workers **anonymity regarding mental health issue**, and creating a non-judgmental environment
+-   Increasing mental health care benefits, easy-access mental care treatment resources.
+    -   **interesting** to notice the **different approach** that may apply to different Gender (see visualization below!)
+        -   **women are more sensitive to mental care benefit (money)**: providing more money on mental health care have a greater positive effect on seeking treatment for women(nearly **30%** more) compared to men(around **10%** more).
+        -   on the other hand, **men are more sensitive to giving health care access**: providing more money on mental health care have a greater positive effect on seeking treatment for men(around **15%** increase) compared to women(lower than **5%** increase).
+        -   giving **direct mental care options at work place**, is the **most effective** way to encourage employees seeking treatment, for both men and women.
 
 ```{r}
-# Simplified risk scoring suggestion for workplace HR
-risk_factors <- feature_importance %>%
-  select(term, odds_ratio, p.value) %>%
-  filter(p.value < 0.05) %>%
-  arrange(desc(abs(log(odds_ratio))))
+# 1. Interaction Effects Visualization - benefit * Gender
+gender_care_data <- survey_clean0 |>
+  filter(Gender!="Transgender/Non-binary/Others")|>
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )|>
+  group_by(Gender, benefits) |>
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  )
 
-#Key variables increasing risk of needing treatment
-risk_factors
+p_benefits<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = benefits)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(
+    title = "Interaction Effect: Gender × mental health benefits",
+    x = "Gender",
+    y = "Treatment Rate",
+    fill = "Company Provides\nMental Health Benefits"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set2")
+
+
+# 2. Interaction Effects Visualization - seek_help * Gender
+gender_care_data <- survey_clean0 |>
+  filter(Gender!="Transgender/Non-binary/Others")|>
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )|>
+  group_by(Gender, seek_help) |>
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  )
+
+p_seek_help<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = seek_help)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(
+    title = "Interaction Effect: Gender × Access to help",
+    x = "Gender",
+    y = "Treatment Rate",
+    fill = "Company Provides\nAccess to help"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set2")
+
+# 3. Interaction Effects Visualization - care_options * Gender
+gender_care_data <- survey_clean0 |>
+  filter(Gender!="Transgender/Non-binary/Others")|>
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )|>
+  group_by(Gender, care_options) |>
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  )
+
+p_care_options<-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(
+    title = "Interaction Effect: Gender × mental care options",
+    x = "Gender",
+    y = "Treatment Rate",
+    fill = "Company Provides\nMental care options"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set2")
+
+p_benefits + p_seek_help + p_care_options
 ```
 
-# **7.**
+## 7. Limitation & possible improvement
 
--   We identified that **family history**, **work interference**, and **workplace support systems** are among the strongest predictors of mental health treatment need.
--   **Visualizations** in this report highlight key risk factors and their relationship with treatment-seeking.
--   **Limitations:** Subjective survey responses, possible response bias, and missingness may affect generalizability.
+-   **Most significant limitation:** Subjective survey responses, possible response bias.
+    -   target variable "treatment" demonstrate the actual need for mental treatment (**real mental issue posed**). However, due to subjective survey response
 -   Future work could include more advanced ML (random forest, boosting), longitudinal data, and testing interventions.
 
 ------------------------------------------------------------------------
 
-> **References** - OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [R for Data Science](https://r4ds.had.co.nz/) - [Tidyverse Documentation](https://www.tidyverse.org/) - [Introduction to Statistical Learning](https://www.statlearning.com/)
-
-# Simple correlation to interaction effects
+### 7.1 Simple correlation to interaction effects
 
 ```{r}
 # 1. Interaction Effects Visualization - work_interfere * family_history
@@ -500,30 +590,69 @@ ggplot(interaction_data, aes(x = work_interfere, y = treatment_rate,
   ) +
   theme_minimal() +
   scale_y_continuous(labels = scales::percent) +
-  scale_color_manual(values = c("No" = "#E74C3C", "Yes" = "#3498DB"))
+  scale_color_manual(values = c("No" = "red", "Yes" = "blue"))
+```
+
+-   female is more sensitive to male regarding mental heath benefit
+
+```{r}
+
 ```
 
 ```{r}
-# 2. Interaction Effects Visualization -care * Gender
-gender_care_data <- train_data %>%
-  group_by(Gender, mental_care) %>%
+# 2. Interaction Effects Visualization - care_options * Gender
+gender_care_data <- survey_clean0 |>
+  filter(Gender!="Transgender/Non-binary/Others")|>
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )|>
+  group_by(Gender, care_options) |>
   summarise(
     treatment_rate = mean(treatment_binary),
     n = n(),
     .groups = 'drop'
   )
 
-ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, 
-                                fill = mental_care)) +
+ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
             position = position_dodge(width = 0.9), vjust = -0.5) +
   labs(
-    title = "Interaction Effect: Gender × care Access",
-    subtitle = "Male treatment rates drop significantly without mental care, while females show more resilience",
+    title = "Interaction Effect: Gender × mental care options",
     x = "Gender",
     y = "Treatment Rate",
-    fill = "Company Provides\nMental Health Benefits"
+    fill = "Company Provides\nMental care options"
+  ) +
+  theme_minimal() +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Set2")
+
+
+```
+
+```{r}
+# 2. Interaction Effects Visualization - seek_help * Gender
+gender_care_data <- survey_clean0 |>
+  filter(Gender!="Transgender/Non-binary/Others")|>
+  mutate(
+    treatment_binary = ifelse(treatment == "Yes", 1, 0)
+  )|>
+  group_by(Gender, seek_help) |>
+  summarise(
+    treatment_rate = mean(treatment_binary),
+    n = n(),
+    .groups = 'drop'
+  )
+
+ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = seek_help)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = paste0(round(treatment_rate*100, 1), "%")), 
+            position = position_dodge(width = 0.9), vjust = -0.5) +
+  labs(
+    title = "Interaction Effect: Gender × Access to help",
+    x = "Gender",
+    y = "Treatment Rate",
+    fill = "Company Provides\nAccess to help"
   ) +
   theme_minimal() +
   scale_y_continuous(labels = scales::percent) +
@@ -579,3 +708,9 @@ ggplot(melted, aes(x = Var2, y = Var1, fill = value)) +
   labs(x = "", y = "", fill = "Spearman\nrho",
        title = "Spearman Correlation Heatmap (factors -> numeric)")
 ```
+
+## 8. References
+
+OSMI Mental Health in Tech Survey [Kaggle Dataset](https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data) - [R for Data Science](https://r4ds.had.co.nz/) - [Tidyverse Documentation](https://www.tidyverse.org/) - [Introduction to Statistical Learning](https://www.statlearning.com/)
+
+### 
