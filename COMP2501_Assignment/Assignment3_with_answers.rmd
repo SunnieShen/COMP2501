@@ -30,9 +30,9 @@ For assignment submission, please knit your final Rmd file into a Word document,
 
 ## Name and UID
 
-Name: Shen Hongshan
+Name: [Input here]
 
-UID: 3036290936
+UID: [Input here]
 
 ------------------------------------------------------------------------
 
@@ -45,20 +45,18 @@ You need to have the `dplyr`, `ggplot2`, and `HistData` packages installed. If n
 library(dplyr)
 library(ggplot2)
 library(HistData)
-library(tidyverse)
-library(tidyr)
 ```
 
 ### 1. (3 points) Suppose you have a biased coin where the probability of heads is p=0.75. Use Monte Carlo simulation with 10,000 repetitions to estimate the probability of getting exactly 6 heads out of 10 tosses.
 
 ```{r}
-six_head <- function(){
-  head <- sample(c(1,0), 10, prob = c(0.75,0.25), replace = TRUE)
-  if(sum(head)==6){return(1)}
-  else{return(0)}
-  #return (as.integer(sum(head)==6))
+sample_from_biased_coin <- function(){
+  results <- sample(c(0, 1), 10, replace = TRUE, prob = c(0.25, 0.75))
+  sum(results) == 6
 }
-mean(replicate(1e4, six_head()))
+
+prob <- mean(replicate(10000, sample_from_biased_coin()))
+print(prob)
 ```
 
 ### 2. (15 points) Gambler's ruin
@@ -66,172 +64,151 @@ mean(replicate(1e4, six_head()))
 #### a. (3 points) Consider a game where a player starts with \$5 and plays a gambling game involving tossing a coin. For each flip: If it is head, the player gains \$1. If it is tail, the player loses \$1. The game ends when the player either reaches \$10 or goes bankrupt (reaches \$0). Denote the chance of getting a head from the coin toss as `p`. With a fair coin (`p` = 0.5), simulate this game using Monte Carlo simulations with 10,000 repetitions to compute: the probability of the player going bankrupt, and the average number of flips it takes for the game to end.
 
 ```{r}
-gamble<-function(prob_head=0.5,limit=10){
-  money_in_hand <-5
-  bankrupt<-0
-  flips<-0
-  while(TRUE){
-    money_in_hand <- money_in_hand + sample(c(1,-1),1,prob=c(prob_head,1-prob_head))
-    flips<-flips+1
-    if(money_in_hand==0){
-      bankrupt<-1
-      break
-    }
-    else if(money_in_hand==limit){
-      break
-    }
+simulate_step <- function(p, end1=0, end0=10){
+  cur <- 5
+  n_step <- 0
+  while (TRUE) {
+    flag <- sample(c(-1, 1), 1, prob = c(1-p, p))
+    cur <- cur + flag
+    n_step <- n_step + 1
+    if (cur == end1) {return(c(n_step, 1))}
+    if (cur == end0) {return(c(n_step, 0))}
   }
-  return(c(bankrupt,flips)) #returns a vector (col)
 }
-gamble_result<-replicate(1e4,gamble(0.5))
-prob_bankrupt<-mean(gamble_result[1,])
-avg_flips<-mean(gamble_result[2,])
-prob_bankrupt
-avg_flips
+
+set.seed(42)
+results <- replicate(
+  10000, simulate_step(0.5, end0=10, end1=0), simplify = TRUE)
+results <- data.frame(n_steps = results[1,], bankrupt = results[2,])
+avg_loss <- mean(results$bankrupt)
+avg_n_steps <- mean(results$n_steps)
+
+print(paste("Probability of bankruptcy:", avg_loss))
+print(paste("Average number of flips:", avg_n_steps))
 ```
 
 #### b. (2 points) For a fair coin, plot the distribution of number of flips it takes for the game to end. You can reuse results from part a.
 
 ```{r}
-gamble_df<-data.frame(
-  bankrupt=gamble_result[1,],
-  flips=gamble_result[2,] 
-)
-n_flip_plot<-gamble_df|>
-  ggplot(aes(flips))+
-  geom_histogram(binwidth = 1)
-n_flip_plot
+results |>
+  ggplot(aes(n_steps)) +
+  geom_density(fill="blue", alpha=0.25) +
+  theme_minimal()
 ```
 
 #### c. (5 points) If the coin is not fair (`p` != 0.5), how will the chance of bankruptcy change? Use Monte Carlo simulation (with appropriate number of repetitions) to plot a smooth curve of bankruptcy chance (as vertical axis) against `p` (as horizontal axis). You only need to consider the scenario of 0.3 \<= `p` \<= 0.7.
 
 ```{r, cache=TRUE}
-p<-seq(0.3,0.7,0.01)
-estimate_bankrupt<-function(p,n_iter=1e4){
-  result<-replicate(n_iter,gamble(p))
-  mean(result[1,])
+get_bankruptcy_chance <- function(p){
+  results <- replicate(
+    2000, simulate_step(p, end0=10, end1=0), simplify = TRUE)
+  results <- data.frame(n_steps = results[1,], bankrupt = results[2,])
+  mean(results$bankrupt)
 }
-df<-data.frame(
-  prob=p,
-  prob_bankrupt=sapply(p,estimate_bankrupt)#sapply: function can only take one number, can not
-)
-df|>ggplot(aes(prob,prob_bankrupt))+
-  geom_smooth()
+
+set.seed(42)
+df <- data.frame(p = seq(0.3, 0.7, 0.01))
+df <- df |> mutate(bankruptcy = sapply(p, get_bankruptcy_chance))
+  
+df |> ggplot(aes(p, bankruptcy)) +
+  geom_point() +
+  geom_line() +
+  xlab("p (probability of head)") +
+  ylab("Probability of bankruptcy") +
+  theme_minimal()
+
 ```
 
 #### d. (5 points) Now let's assume that the player is very greedy, he will only exit the game after he reaches \$50 (or bankrupted). Assuming all other settings being identical, in scenarios with 0.3 \<= `p` \<= 0.7, simulate this game using Monte Carlo simulations to compute the curve of bankruptcy chance against `p`.
 
-```{r, cache=TRUE}
-estimate_bankrupt_50<-function(p,n_iter=1e4){
-  result<-replicate(n_iter,gamble(p,50))
-  mean(result[1,])
+```{r}
+get_bankruptcy_chance_greedy <- function(p){
+  results <- replicate(
+    2000, simulate_step(p, end0=50, end1=0), simplify = TRUE)
+  results <- data.frame(n_steps = results[1,], bankrupt = results[2,])
+  mean(results$bankrupt)
 }
-df_50<-data.frame(
-  prob=p,
-  prob_bankrupt=sapply(p,estimate_bankrupt_50)#sapply: function can only take one number, can not take seq
-)
-df_50|>ggplot(aes(prob,prob_bankrupt))+
-  geom_smooth()
+
+set.seed(42)
+df <- data.frame(p = seq(0.3, 0.7, 0.01))
+df <- df |> mutate(bankruptcy = sapply(p, get_bankruptcy_chance_greedy))
+  
+df |> ggplot(aes(p, bankruptcy)) +
+  geom_point() +
+  geom_line() +
+  xlab("p (probability of head)") +
+  ylab("Probability of bankruptcy") +
+  theme_minimal()
 ```
 
 ### 3. (5 points) Bayesian inference: we will re-visit the calculation of a professional baseball player's batting average using Bayes theorem. Historically, professional baseball players have had a batting average (AVG), representing the probability of success when batting, with a mean of 0.275 and a standard deviation of 0.027. You can assume it to be a normal distribution. During his first month in Major League Baseball (MLB), José Iglesias displayed exceptional performance, successfully batting 9 times out of 20 attempts. Based on this observation, calculate and plot the posterior PDF of José's batting average (AVG). Think of the batting average (AVG) as the probability of getting head in a coin toss game, where each "coin toss" corresponds to a batting attempt. The posterior PDF should be a curve defined over the range of (0, 1) and its integral being 1.
 
 ```{r}
-df<-data.frame(p=seq(0,1,0.01))
-df<-df|>mutate(
-  prior=dnorm(p, mean = 0.275, sd = 0.027),
-  likelihood = dbinom(9, size = 20, prob = p),
-  posterior = prior*likelihood
-)
+probs <- data.frame(p=seq(0, 1, 0.001))
+probs <- probs |>
+  mutate(prior=dnorm(p, mean=0.275, sd=0.027)) |>
+  mutate(
+    likelihood=choose(20, 9) * (p ** 9) * ((1 - p) ** 11)) |>
+  mutate(posterior_unnormalized=prior * likelihood)
 
-#approximate the area under the curve
-total_area<-sum(df$posterior*0.01)
-#normalization, s.t. area under curve is 1
-df$posterior <- df$posterior/total_area
+Z <- sum(probs$posterior_unnormalized * 0.001)
+probs <- probs |>
+  mutate(posterior = posterior_unnormalized / Z)
 
-df|>ggplot(aes(p,posterior))+
-  geom_line()+
-  labs(x="p", y="probability density (posterior)")+
+probs |>
+  ggplot(aes(p, posterior)) +
+  geom_line() +
+  xlab("AVG") +
+  ylab("Posterior PDF") +
   theme_minimal()
+
 ```
 
 ### 4. (12 points) Using the GaltonFamilies dataset, analyze which parent's height has a stronger association with children's height.
 
 #### a. (5 points) We will work on daughter (female) heights. Calculate the slope coefficients for the two linear regression scenarios: daughter \~ father, and daughter \~ mother.
 
-```{r, cache=TRUE}
+```{r}
 data("GaltonFamilies")
-galton_heights <- GaltonFamilies|>
-  filter(gender=="female")|>
-  group_by(family) |>
-  sample_n(1) |>  # Sample one child per family
-  ungroup() |>
-  dplyr::select(father,mother, childHeight) |>
-  rename(daughter = childHeight)
 
-mu_d<-galton_heights$daughter
-mu_f<-galton_heights$father
-mu_m<-galton_heights$mother
-s_d<-sd(galton_heights$daughter)
-s_f<-sd(galton_heights$father)
-s_m<-sd(galton_heights$mother)
-rho_f<-cor(galton_heights$father, galton_heights$daughter)
-rho_m<-cor(galton_heights$mother, galton_heights$daughter)
+daughter_heights <- GaltonFamilies |>
+  filter(gender == "female")
 
-slope_f<-rho_f* s_d/s_f
-slope_m<-rho_m* s_d/s_m
-cat("slope coefficients, daughter ~ father:", slope_f,"\n")
-cat("slope coefficients, daughter ~ mother:", slope_m)
+model <- lm(childHeight ~ father, data=daughter_heights)
+print(paste("Slope (father)", coef(model)[2]))
+
+model <- lm(childHeight ~ mother, data=daughter_heights)
+print(paste("Slope (mother)", coef(model)[2]))
 ```
 
 #### b. (5 points) To estimate the uncertainty of model parameters, we can utilize a technique called bootstrapping. In this method, for a dataset of `n` data points, we can randomly subsample `n/2` data points WITH replacement and calculate the parameters of interest. This procedure can be repeated many times to derive distributions for the parameters of interest. Perform bootstrapping on the two slope coefficients we derived from part a and plot their distributions.
 
-```{r, cache=TRUE}
-n_bootstrap <- 1000 
-n_original <- nrow(galton_heights)
-sample_size <- n_original/2
-bootstrap_slopes_father <- numeric(n_bootstrap)
-bootstrap_slopes_mother <- numeric(n_bootstrap)
+```{r}
+n_total <- dim(daughter_heights)[1]
 
-set.seed(42)
-for(i in 1:n_bootstrap) {
-  bootstrap_sample <- galton_heights[sample(1:n_original, sample_size, replace = TRUE), ]
-  # Calculate statistics of bootstrap sample
-  s_d_boot <- sd(bootstrap_sample$daughter)
-  s_f_boot <- sd(bootstrap_sample$father)
-  s_m_boot <- sd(bootstrap_sample$mother)
-  rho_f_boot <- cor(bootstrap_sample$father, bootstrap_sample$daughter)
-  rho_m_boot <- cor(bootstrap_sample$mother, bootstrap_sample$daughter)
-  bootstrap_slopes_father[i] <- rho_f_boot * s_d_boot / s_f_boot
-  bootstrap_slopes_mother[i] <- rho_m_boot * s_d_boot / s_m_boot
+get_slope <- function(column="father", n_cases=round(n_total / 2)){
+  random_rows <- sample(seq(1:n_total), n_cases, replace=TRUE)
+  sub_df <- daughter_heights[random_rows,]
+  
+  formula <- as.formula(paste("childHeight ~", column))
+  model <- lm(formula, data=sub_df)
+  coef(model)[2]
 }
-bootstrap_results <- data.frame(
-  father_slope = bootstrap_slopes_father,
-  mother_slope = bootstrap_slopes_mother
-)
-bootstrap_results|>
-  pivot_longer(cols = everything(), names_to = "parent", values_to = "slope") |>
-  mutate(
-    parent = ifelse(parent == "father_slope", "Father", "Mother")) |>
-  ggplot(aes(x = slope, fill = parent)) +
-  geom_density(alpha = 0.6) +
-  labs(
-    title = "Bootstrap distributions of slope coefficients",
-    x = "Slope Coefficient"
-  )
+
+df <- expand.grid(rep_ind=seq(1:1000), var=c("father", "mother")) |>
+  mutate(slope=sapply(var, get_slope))
+
+df |>
+  ggplot(aes(slope, group=var, fill=var)) +
+  geom_density(alpha=0.5) +
+  theme_minimal()
+
 ```
 
 #### c. (2 points) From the distributions above, do you think that one parent has a significantly stronger effect on child's height than the other parent? If yes, use statistical test to prove your point. If not, explain why you think so.
 
-NO, because 0 in CI(95%), effect has no significant difference
-
 ```{r}
-slope_diff <- bootstrap_results$father_slope - bootstrap_results$mother_slope
-#check whether 0 is in CI(95%)
-CI_lower <- quantile(slope_diff, 0.025)
-CI_upper <- quantile(slope_diff, 0.975)
-CI_lower
-CI_upper
+# Nope, genetically their influence should be equal. The distribution in b also does not support a significant difference.
 ```
 
 ### 5. (15 points) Pólya’s random walk problem
@@ -241,135 +218,113 @@ CI_upper
 #### a. (3 points) A drunk man starts at the origin (x = 0) of an 1D axis. At each step, he moves one unit in a random direction: left (+1) or right (-1). He can keep walking forever — but we’re interested in whether he ever returns to the origin (i.e., home). We will use Monte Carlo simulation to estimate that. With 1000 repetitions, calculate the probability of whether the drunk man can come home within 1 million steps.
 
 ```{r, cache=TRUE}
-n_simulation<-1000
-simulate_random_walk<-function(max_steps=1e6){ #N:n_steps
-  position<-0
-  n_step<-0
-  while(n_step<max_steps){
-    position<-position + sample(c(-1,1),1,prob=c(0.5,0.5))
-    n_step<-n_step + 1
-    
-    if(position==0){
-      return(n_step)
-    }
-  }
-  return(NA)
+drunk_man_come_home <- function(max_steps=1e6){
+  dx <- sample(c(1, -1), size = max_steps, replace = TRUE)
+  x_movement <- cumsum(dx)
+  match(0, x_movement)
 }
-set.seed(42)
 
-return_times<-replicate(n_simulation,simulate_random_walk())
-returned_home<-!is.na(return_times)
-prob_return<-mean(returned_home)
-prob_return
+steps_took_to_come_home <- replicate(1000, drunk_man_come_home(1e6))
+prob_home <- mean(!is.na(steps_took_to_come_home))
+print(prob_home)
 ```
 
 #### b. (6 points) Now consider a two-dimensional scenario: the drunk man starts at the origin (x=0, y=0) of an infinite lattice grid on a 2D plane. At each step, he moves one unit in a random cardinal direction: North (y axis +1), South (y axis -1), East (x axis +1), or West (x axis -1). Use Monte Carlo simulation with 1000 repetitions to visualize the empirical cumulative probability function (eCDF) curve for: number of steps it takes for the drunk man to return to the origin (x=0, y=0) for the first time after simulation started. Plot the eCDF up to 1 million steps. If the simulation takes too long, you can plot up to 100 thousand steps.
 
 ```{r, cache=TRUE}
-n_simulation<-1000
-simulate_random_walk_2D<-function(max_steps=1e5){
-  x<-0
-  y<-0
-  n_step<-0
-  while(n_step<max_steps){
-    move<-sample(c("x+1","x-1","y+1","y-1"),1,
-      prob=c(0.25,0.25,0.25,0.25)
-    )
-    if(move=="x+1"){x<-x+1}
-    else if(move=="x-1"){x<-x-1}
-    else if(move=="y+1"){y<-y+1}
-    else{y<-y-1}
+drunk_man_come_home_2d <- function(max_steps = 1e6) {
+  # 4 directions: 1=East, 2=West, 3=North, 4=South
+  step_dir <- sample(1:4, size = max_steps, replace = TRUE)
   
-    n_step<-n_step + 1
-    if(x==0 && y==0){return(n_step)}
-  }
-  return(Inf)
+  dx <- ifelse(step_dir %in% c(1,2), ifelse(step_dir == 1, 1, -1), 0)
+  dy <- ifelse(step_dir %in% c(3,4), ifelse(step_dir == 3, 1, -1), 0)
+  
+  x <- cumsum(dx)
+  y <- cumsum(dy)
+  dist <- abs(x) ee+ abs(y)
+  match(0, dist)
 }
 
 set.seed(42)
-return_times<-replicate(n_simulation,simulate_random_walk_2D())
-result_df <- data.frame(
-  return_time = return_times,
-  returned = return_times
-)
+max_steps <- 1e6
+n_rep <- 1000
+n_steps <- replicate(n_rep, drunk_man_come_home_2d(max_steps))
 
-result_df|> ggplot(aes(x = return_time)) +
-  stat_ecdf(geom = "step") +
-  coord_cartesian(xlim = c(0, 1e5)) +
-  labs(
-    title = "eCDF of number of steps needed to return to origin(2D)",
-    x = "Number of Steps")
+get_ecdf <- function(threshold){
+  finished_by_threshold <- sum(n_steps < threshold, na.rm=TRUE)
+  finished_by_threshold / n_rep
+}
+
+ecdf_df <- data.frame(threshold=seq(1e3, 1e6, 1e3))
+ecdf_df <- ecdf_df |>
+  mutate(ecdf=sapply(threshold, get_ecdf))
+
+ecdf_df |>
+  ggplot(aes(threshold, ecdf)) +
+  geom_point() +
+  geom_line() +
+  xlab("Steps") +
+  ylab("eCDF") +
+  scale_x_log10() +  # Optional log scaling of x axis
+  theme_minimal()
 ```
-
-![](images/clipboard-1179531002.png)
 
 #### c. (3 points) If the number of steps extends to infinity, will the drunk man be guaranteed to return to the origin? Extract eCDF values from part b after 10,000 steps (or after 1,000 steps if your simulation only goes up to 1e5 steps) to analyze this. Plot the [probability of returning to the origin within `n` steps] against [`1/log(n)`]. Perform a linear regression on the data and make an educated guess: will the probability approach 1 as `n` approaches infinity?
 
-Yes, probability will approach 1 as n approached infinity. y-axes intersection is 0.9504273 is very close to 1.
+```{r}
+plot_df <- ecdf_df |>
+  filter(between(threshold, 1e4, 1e6)) |>
+  mutate(x=1/(log(threshold)))
 
-```{r, cache=TRUE}
-step_intervals <- c(1e3,2e3,5e3,1e4,2e4,5e4,1e5)
-ecdf_values <- sapply(step_intervals, function(n) {
-  mean(return_times <= n, na.rm = TRUE)
-})
-analysis_df <- data.frame(
-  steps = step_intervals,
-  prob_return = ecdf_values,
-  inv_log_n = 1 / log(step_intervals)
-)
-#regression
-model <- lm(prob_return ~ inv_log_n, data = analysis_df)
-summary_model <- summary(model)
+model <- lm(ecdf ~ x, data=plot_df)
+summary(model)
 
-analysis_df |> ggplot(aes(x = inv_log_n, y = prob_return)) +
-  geom_point(size = 3) +
-  geom_smooth(method = "lm", se = TRUE, color = "blue", alpha = 0.2) +
-  labs(
-    title = "Probability of Return vs 1/log(n)",
-    x = "1 / log(n)",
-    y = "Prob(back to origin)"
-  )
-
-intercept <- coef(model)[1]
-intercept
+plot_df |>
+  ggplot(aes(x, ecdf)) +
+  geom_point() +
+  geom_abline(intercept = coef(model)[1], slope=coef(model)[2], color="blue") +
+  xlab("1 / log(steps)") +
+  ylab("Probability of drunk man coming home") +
+  theme_minimal()
 ```
 
 #### d. (3 points) Now consider a three-dimensional scenario: a drunk bird starts at the origin (x=0, y=0, z=0) of an infinite lattice grid in 3D space. At each step, it moves one unit in a random direction: North (y axis +1), South (y axis -1), East (x axis +1), West (x axis -1), Up (z axis +1), or Down (z axis -1). Use Monte Carlo simulation with 1000 repetitions to visualize the empirical cumulative probability function (eCDF) curve for: number of steps it takes for the drunk bird to return to the origin (x=0, y=0, z=0) for the first time after simulation started. Plot the eCDF up to 100,000 steps. Based on the plot, is the drunk bird guaranteed to return to the origin?
 
-No, eCDF level up around 0.2\~0.3 as number of steps goes to infinity.
-
 ```{r, cache=TRUE}
-simulate_random_walk_3D <- function(max_steps = 1e5){
-  x <- 0
-  y <- 0
-  z <- 0
-  n_step <- 0
-
-  while(n_step < max_steps){
-    move <- sample(c("x+1", "x-1", "y+1", "y-1", "z+1", "z-1"), 1)
-    if(move == "x+1"){x <- x + 1}
-    else if(move == "x-1"){x <- x - 1}
-    else if(move == "y+1"){y <- y + 1}
-    else if(move == "y-1"){y <- y - 1}
-    else if(move == "z+1"){z <- z + 1}
-    else {z <- z - 1}
-    n_step <- n_step + 1
-    if(x == 0 && y == 0 && z == 0){return(n_step)}
-  }
-  return(1e6)
+drunk_bird_come_home_3d <- function(max_steps = 1e5) {
+  # 4 directions: 1=East, 2=West, 3=North, 4=South
+  step_dir <- sample(1:6, size = max_steps, replace = TRUE)
+  dx <- ifelse(step_dir %in% c(1,2), ifelse(step_dir == 1, 1, -1), 0)
+  dy <- ifelse(step_dir %in% c(3,4), ifelse(step_dir == 3, 1, -1), 0)
+  dz <- ifelse(step_dir %in% c(5,6), ifelse(step_dir == 5, 1, -1), 0)
+  
+  x <- cumsum(dx)
+  y <- cumsum(dy)
+  z <- cumsum(dz)
+  dist <- abs(x) + abs(y) + abs(z)
+  match(0, dist)
 }
 
 set.seed(42)
-return_times_3D <- replicate(n_simulation, simulate_random_walk_3D())
+max_steps_3d <- 1e5
+n_rep <- 1000
+n_steps_3d <- replicate(n_rep, drunk_bird_come_home_3d(max_steps_3d))
 
-# Create result dataframe with successful returns
-result_df_3D <- data.frame(return_time = return_times_3D)
+get_ecdf_3d <- function(threshold){
+  finished_by_threshold <- sum(n_steps_3d < threshold, na.rm=TRUE)
+  finished_by_threshold / n_rep
+}
 
-result_df_3D |> 
-  ggplot(aes(x = return_time)) +
-  stat_ecdf(geom = "step") +
-  coord_cartesian(xlim = c(0, 1e5)) +
-  labs(
-    title = "eCDF of number of steps needed to return to origin(3D)" ,
-    x = "Number of Steps")
+ecdf_df_3d <- data.frame(threshold=seq(1, 1e5, 2))
+ecdf_df_3d <- ecdf_df_3d |>
+  mutate(ecdf_3d=sapply(threshold, get_ecdf_3d))
+
+ecdf_df_3d |>
+  ggplot(aes(threshold, ecdf_3d)) +
+  geom_point() +
+  geom_line() +
+  xlab("Steps") +
+  ylab("eCDF") +
+  scale_x_log10() +  # Optional log scaling of x axis
+  theme_minimal()
 ```

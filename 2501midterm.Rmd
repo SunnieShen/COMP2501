@@ -135,7 +135,17 @@ library(stringr)
 
 39. Refer to the provided Netflix dataset ([http://www.bio8.cs.hku.hk/comp2501/Netflix.csv)](http://www.bio8.cs.hku.hk/comp2501/Netflix.csv)) for the next 6 questions. How many productions does 'David Fincher' directed?
 
+    ```{r}
+    Netflix<-read.csv("http://www.bio8.cs.hku.hk/comp2501/Netflix.csv")
+    Netflix|>filter(director=="David Fincher")|>nrow()
+
+    ```
+
 40. Refer to the provided Netflix dataset. How many movies released after 2015 (inclusive) have a duration between 100 and 120 minutes (inclusive)?
+
+    ```{r}
+
+    ```
 
 41. Refer to the provided Netflix dataset. How many productions released in 2018 have a cast size of 10 or more actors? (Assume cast size is the number of names listed in the "cast" column, separated by commas.)
 

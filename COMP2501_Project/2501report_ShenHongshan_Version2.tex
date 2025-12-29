@@ -1,0 +1,1431 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdftitle={2501report\_ShenHongshan},
+  pdfauthor={Shen Hongshan},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{2501report\_ShenHongshan}
+\author{Shen Hongshan}
+\date{2025-11-20}
+
+\begin{document}
+\maketitle
+
+\section{Predicting Mental Health Treatment Needs Based on Workplace
+Factors and Demographic
+Characteristics}\label{predicting-mental-health-treatment-needs-based-on-workplace-factors-and-demographic-characteristics}
+
+\subsubsection{Author: Shen Hongshan
+(3036290936)}\label{author-shen-hongshan-3036290936}
+
+\subsubsection{\texorpdfstring{Data source:
+\href{https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data}{Kaggle
+Mental Health in Tech
+Survey}}{Data source: Kaggle Mental Health in Tech Survey}}\label{data-source-kaggle-mental-health-in-tech-survey}
+
+\subsection{\texorpdfstring{\textbf{1.
+Introduction}}{1. Introduction}}\label{introduction}
+
+\subsubsection{1.1 Background}\label{background}
+
+Mental health issues in workplace environments represent a significant
+public health concern with substantial economic and social consequences.
+Early identification of individuals who need mental health support can
+facilitate timely intervention, reduce workplace productivity loss, and
+improve overall well-being. This project addresses the critical need for
+data-driven approaches to mental health screening in professional
+settings, particularly in high-pressure sectors like technology.
+
+This project, analyzes the OSMI Mental Health in Tech Survey dataset
+from Kaggle to model how workplace conditions and demographic factors
+are associated with issue. The dataset contains survey responses to
+workplace, demographic and mental health questions, providing rich
+information for data-driven analysis of this spublic health issue.
+
+\subsubsection{1.2 Data science question}\label{data-science-question}
+
+The analysis focuses on two primary research questions:
+
+\begin{itemize}
+\item
+  \textbf{What are the most significant demographics and workplace
+  features associated with employees seeking mental health treatment?}
+\item
+  \textbf{Based on these associations, what targeted interventions can
+  employers prioritize?}
+\end{itemize}
+
+\subsubsection{1.3 Methodological
+Challenges}\label{methodological-challenges}
+
+Challenges are anticipated in this analysis, including handling
+\textbf{class imbalance} in the target variable, managing missing survey
+data, and addressing potential \textbf{response bias}.The subjective
+nature of self-reported mental health data may introduce measurement
+noise, requiring careful data cleaning and validation approaches.
+
+\subsection{\texorpdfstring{\textbf{2. Data Loading \&
+Cleaning}}{2. Data Loading \& Cleaning}}\label{data-loading-cleaning}
+
+\subsubsection{2.1 Data loading}\label{data-loading}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tidyverse)}
+\FunctionTok{library}\NormalTok{(readr)}
+\FunctionTok{library}\NormalTok{(dplyr)}
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(knitr)}
+\FunctionTok{library}\NormalTok{(caret) }
+\FunctionTok{library}\NormalTok{(broom) }
+\FunctionTok{library}\NormalTok{(car)  }\CommentTok{\# for VIF}
+\FunctionTok{library}\NormalTok{(pROC) }
+\FunctionTok{library}\NormalTok{(patchwork)}
+
+\CommentTok{\# Read the dataset (make sure \textquotesingle{}survey.csv\textquotesingle{} is in the same folder)}
+\NormalTok{survey\_data }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"survey.csv"}\NormalTok{)}
+
+\CommentTok{\# Overview: dimensions and column names}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Dataset dimensions:"}\NormalTok{, }\FunctionTok{dim}\NormalTok{(survey\_data), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Dataset dimensions: 1259 27
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Column names:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Column names:
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{names}\NormalTok{(survey\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  [1] "Timestamp"                 "Age"                      
+##  [3] "Gender"                    "Country"                  
+##  [5] "state"                     "self_employed"            
+##  [7] "family_history"            "treatment"                
+##  [9] "work_interfere"            "no_employees"             
+## [11] "remote_work"               "tech_company"             
+## [13] "benefits"                  "care_options"             
+## [15] "wellness_program"          "seek_help"                
+## [17] "anonymity"                 "leave"                    
+## [19] "mental_health_consequence" "phys_health_consequence"  
+## [21] "coworkers"                 "supervisor"               
+## [23] "mental_health_interview"   "phys_health_interview"    
+## [25] "mental_vs_physical"        "obs_consequence"          
+## [27] "comments"
+\end{verbatim}
+
+\subsubsection{2.2 Handle Missing Values, drop Irrelevant biased sampled
+variables}\label{handle-missing-values-drop-irrelevant-biased-sampled-variables}
+
+\begin{itemize}
+\item
+  Check the number of missing value for each variable, delete those with
+  too many NAs: comments, state
+\item
+  delete irrelevant variable for analysis: Timestamp
+\item
+  delete biased sampled variable: Country (60\% from USA, most countries
+  which have only 1 respondents)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Missing value summary}
+\FunctionTok{data.frame}\NormalTok{(}\AttributeTok{Missing\_data=}\FunctionTok{sort}\NormalTok{(}\FunctionTok{colSums}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(survey\_data)),}\AttributeTok{decreasing=}\ConstantTok{TRUE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##                           Missing_data
+## comments                          1096
+## state                              515
+## work_interfere                     264
+## self_employed                       18
+## Timestamp                            0
+## Age                                  0
+## Gender                               0
+## Country                              0
+## family_history                       0
+## treatment                            0
+## no_employees                         0
+## remote_work                          0
+## tech_company                         0
+## benefits                             0
+## care_options                         0
+## wellness_program                     0
+## seek_help                            0
+## anonymity                            0
+## leave                                0
+## mental_health_consequence            0
+## phys_health_consequence              0
+## coworkers                            0
+## supervisor                           0
+## mental_health_interview              0
+## phys_health_interview                0
+## mental_vs_physical                   0
+## obs_consequence                      0
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Drop columns with too many NAs or irrelevant for analysis (comments, Timestamp, state)}
+\NormalTok{survey\_clean0 }\OtherTok{\textless{}{-}}\NormalTok{ survey\_data }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{Timestamp, }\SpecialCharTok{{-}}\NormalTok{Country, }\SpecialCharTok{{-}}\NormalTok{comments, }\SpecialCharTok{{-}}\NormalTok{state)}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Columns left after removal:"}\NormalTok{, }\FunctionTok{names}\NormalTok{(survey\_clean0))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Columns left after removal: Age Gender self_employed family_history treatment work_interfere no_employees remote_work tech_company benefits care_options wellness_program seek_help anonymity leave mental_health_consequence phys_health_consequence coworkers supervisor mental_health_interview phys_health_interview mental_vs_physical obs_consequence
+\end{verbatim}
+
+\subsubsection{2.3 Standardize Variables}\label{standardize-variables}
+
+\begin{itemize}
+\item
+  Convert \textbf{Gender} variable into standard level: Male/ Female/
+  Transgender/Non-binary/Others
+\item
+  Remove unrealistic \textbf{Age} input, only maintain age within
+  18\textasciitilde100 years old
+\item
+  sort the levels for better visualization latter: work\_interfere(4
+  level), leave(5 level), no\_employees(6 level)
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey\_clean0 }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \CommentTok{\# Gender standardization}
+    \AttributeTok{Gender =} \FunctionTok{case\_when}\NormalTok{(}
+      \FunctionTok{str\_detect}\NormalTok{(}\FunctionTok{tolower}\NormalTok{(Gender), }\StringTok{"\^{}m|\^{}male|\^{}man|\^{}maile|\^{}make|\^{}mal$|\^{}male{-}ish|\^{}guy"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Male"}\NormalTok{,}
+      \FunctionTok{str\_detect}\NormalTok{(}\FunctionTok{tolower}\NormalTok{(Gender), }\StringTok{"\^{}f|\^{}female|\^{}woman|\^{}femaile|\^{}femake|\^{}fem"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Female"}\NormalTok{,}
+      \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Transgender/Non{-}binary/Others"}
+\NormalTok{    ),}
+    \CommentTok{\# Convert character columns to factors}
+    \FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.character), as.factor)}
+\NormalTok{  )}
+
+\CommentTok{\# Handle age outliers}
+\NormalTok{survey\_clean0 }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{Age =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{      Age }\SpecialCharTok{\textless{}} \DecValTok{18} \SpecialCharTok{\textasciitilde{}} \ConstantTok{NA}\NormalTok{,    }\CommentTok{\# Remove unrealistic ages}
+\NormalTok{      Age }\SpecialCharTok{\textgreater{}} \DecValTok{100} \SpecialCharTok{\textasciitilde{}} \ConstantTok{NA}\NormalTok{,}
+      \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}}\NormalTok{ Age}
+\NormalTok{    )}
+\NormalTok{  ) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(Age))  }\CommentTok{\# Remove rows with invalid ages}
+
+\CommentTok{\#sort the levels of variables}
+\NormalTok{survey\_clean0}\SpecialCharTok{$}\NormalTok{work\_interfere }\OtherTok{\textless{}{-}} 
+  \FunctionTok{factor}\NormalTok{(survey\_clean0}\SpecialCharTok{$}\NormalTok{work\_interfere,}\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Never"}\NormalTok{, }\StringTok{"Rarely"}\NormalTok{, }\StringTok{"Sometimes"}\NormalTok{, }\StringTok{"Often"}\NormalTok{))}
+\NormalTok{survey\_clean0}\SpecialCharTok{$}\NormalTok{leave }\OtherTok{\textless{}{-}} 
+  \FunctionTok{factor}\NormalTok{(survey\_clean0}\SpecialCharTok{$}\NormalTok{leave,}\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Very difficult"}\NormalTok{,}\StringTok{"Somewhat difficult"}\NormalTok{,}\StringTok{"Somewhat easy"}\NormalTok{,}\StringTok{"Very easy"}\NormalTok{,}\StringTok{"Don\textquotesingle{}t know"}\NormalTok{))}
+\NormalTok{survey\_clean0}\SpecialCharTok{$}\NormalTok{no\_employees }\OtherTok{\textless{}{-}}
+  \FunctionTok{factor}\NormalTok{(survey\_clean0}\SpecialCharTok{$}\NormalTok{no\_employees,}\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"1{-}5"}\NormalTok{, }\StringTok{"6{-}25"}\NormalTok{, }\StringTok{"26{-}100"}\NormalTok{, }\StringTok{"100{-}500"}\NormalTok{, }\StringTok{"500{-}1000"}\NormalTok{, }\StringTok{"More than 1000"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{2.3 Combine variables with similar
+meaning}\label{combine-variables-with-similar-meaning}
+
+\begin{itemize}
+\tightlist
+\item
+  The variables ``benefits,'' ``care\_options,'' ``wellness\_program,''
+  and ``seek\_help'' each measure a different facet of employers'
+  support for mental health. So, they can be consolidated into a single
+  variable, ``mental\_care,'' with a binary (Yes/No) level.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{survey\_clean }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{mental\_care=}\FunctionTok{if\_any}\NormalTok{(}\FunctionTok{c}\NormalTok{(benefits, care\_options, wellness\_program, seek\_help), }\SpecialCharTok{\textasciitilde{}}\NormalTok{ . }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{))}
+
+\NormalTok{survey\_clean}\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean}\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{select}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{benefits, }\SpecialCharTok{{-}}\NormalTok{care\_options, }\SpecialCharTok{{-}}\NormalTok{wellness\_program, }\SpecialCharTok{{-}}\NormalTok{seek\_help)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{\texorpdfstring{\textbf{3. Exploratory Data Analysis \&
+Visualization}}{3. Exploratory Data Analysis \& Visualization}}\label{exploratory-data-analysis-visualization}
+
+\subsubsection{3.1 Target Variable Check}\label{target-variable-check}
+
+\begin{itemize}
+\item
+  The target variable~\textbf{``treatment''}~indicates whether an
+  employee is currently seeking treatment for a mental health condition.
+\item
+  \textbf{49.48\%}~report~\textbf{No}~and~\textbf{50.52\%}~report~\textbf{Yes},
+  which underscoring the significance of mental health conditions in the
+  workplace.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Distribution of treatment status}
+\FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{table}\NormalTok{(survey\_clean}\SpecialCharTok{$}\NormalTok{treatment))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Var1 Freq
+## 1   No  619
+## 2  Yes  632
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Proportion table}
+\FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{prop.table}\NormalTok{(}\FunctionTok{table}\NormalTok{(survey\_clean}\SpecialCharTok{$}\NormalTok{treatment)))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   Var1      Freq
+## 1   No 0.4948042
+## 2  Yes 0.5051958
+\end{verbatim}
+
+\subsubsection{3.2 Demographic Overview}\label{demographic-overview}
+
+\begin{itemize}
+\tightlist
+\item
+  sample is skewed to male by Gender, thus it is important to notice the
+  potential bias caused by this during analysis
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{demographic\_summary }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{avg\_age =} \FunctionTok{mean}\NormalTok{(Age, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{male\_pct =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(Gender }\SpecialCharTok{==} \StringTok{"Male"}\NormalTok{)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{,}\DecValTok{1}\NormalTok{),}
+    \AttributeTok{female\_pct =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(Gender }\SpecialCharTok{==} \StringTok{"Female"}\NormalTok{)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{,}\DecValTok{1}\NormalTok{),}
+    \AttributeTok{treatment\_rate =} \FunctionTok{round}\NormalTok{(}\FunctionTok{mean}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{)}\SpecialCharTok{*}\DecValTok{100}\NormalTok{,}\DecValTok{1}\NormalTok{)}
+\NormalTok{  )}
+\CommentTok{\#Sample Demographic Summary}
+\NormalTok{demographic\_summary}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 1 x 5
+##       n avg_age male_pct female_pct treatment_rate
+##   <int>   <dbl>    <dbl>      <dbl>          <dbl>
+## 1  1251    32.1     78.7       19.8           50.5
+\end{verbatim}
+
+\subsubsection{3.3 Key Visualizations}\label{key-visualizations}
+
+\begin{itemize}
+\tightlist
+\item
+  Treatment rate by Age, Gender, family\_history, work\_interference,
+  mental\_care, tech\_company
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# prepare Age{-}treatment information for visualization}
+\NormalTok{Age\_summary}\OtherTok{\textless{}{-}}\NormalTok{survey\_clean}\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{group\_by}\NormalTok{(Age)}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{n\_total =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{n\_treatment =} \FunctionTok{sum}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{),}
+    \AttributeTok{prop\_treatment =}\NormalTok{ n\_treatment }\SpecialCharTok{/}\NormalTok{ n\_total,}
+    \AttributeTok{.groups =} \StringTok{"drop"}
+\NormalTok{  )}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(n\_total}\SpecialCharTok{\textgreater{}=}\DecValTok{5}\NormalTok{)}
+\CommentTok{\#}
+\NormalTok{Age\_visualization}\OtherTok{\textless{}{-}}\FunctionTok{ggplot}\NormalTok{(Age\_summary , }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Age, }\AttributeTok{y =}\NormalTok{ prop\_treatment, }\AttributeTok{size =}\NormalTok{ n\_total)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.6}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_smooth}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.2}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+
+\NormalTok{Age\_visualization}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-7-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# proportion of answers for different features }
+\NormalTok{feature\_prop }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, var, var\_name) \{}
+  \CommentTok{\# Use tidy evaluation with \{\{var\}\}}
+\NormalTok{  percentage\_data }\OtherTok{\textless{}{-}}\NormalTok{ data }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{count}\NormalTok{(\{\{var\}\}) }\SpecialCharTok{|\textgreater{}}
+    \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Percentage =}\NormalTok{ n }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(n))}
+  
+  \CommentTok{\# Create plot}
+  \FunctionTok{ggplot}\NormalTok{(percentage\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ \{\{var\}\}, }\AttributeTok{y =}\NormalTok{ Percentage, }\AttributeTok{fill =}\NormalTok{ \{\{var\}\})) }\SpecialCharTok{+}
+    \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{percent\_format}\NormalTok{(),}
+                       \AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\FunctionTok{max}\NormalTok{(percentage\_data}\SpecialCharTok{$}\NormalTok{Percentage) }\SpecialCharTok{*} \FloatTok{1.15}\NormalTok{)) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \FunctionTok{paste}\NormalTok{(var\_name, }\StringTok{"of Survey Respondents"}\NormalTok{),}
+         \AttributeTok{x =}\NormalTok{ var\_name, }\AttributeTok{y =} \StringTok{"Percentage"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"none"}\NormalTok{)}
+\NormalTok{\}}
+
+\CommentTok{\# Treatment rate by feature (function) {-} FIXED to use tidy evaluation}
+\NormalTok{treatment\_prop }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, feature, feature\_name) \{}
+  \FunctionTok{ggplot}\NormalTok{(data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ \{\{feature\}\}, }\AttributeTok{fill =}\NormalTok{ treatment)) }\SpecialCharTok{+}
+    \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{position =} \StringTok{"fill"}\NormalTok{) }\SpecialCharTok{+}
+    \FunctionTok{labs}\NormalTok{(}\AttributeTok{y =} \StringTok{"Proportion"}\NormalTok{, }\AttributeTok{x =}\NormalTok{ feature\_name) }\SpecialCharTok{+}
+    \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}
+    \FunctionTok{theme\_minimal}\NormalTok{()}
+\NormalTok{\}}
+
+\CommentTok{\#plots for each feature}
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, Gender, }\StringTok{"Gender"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, Gender, }\StringTok{"Gender"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, family\_history, }\StringTok{"Family History"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, family\_history, }\StringTok{"Family History"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-2.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, work\_interfere, }\StringTok{"Work Interference"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, work\_interfere, }\StringTok{"Work Interference"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-3.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, tech\_company, }\StringTok{"Tech Company"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, tech\_company, }\StringTok{"Tech Company"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-4.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, remote\_work, }\StringTok{"remote\_work"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, remote\_work, }\StringTok{"remote\_work"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-5.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, self\_employed, }\StringTok{"self\_employed"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, self\_employed, }\StringTok{"self\_employed"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-6.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#company resourses}
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, mental\_care, }\StringTok{"Mental Health Care"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, mental\_care, }\StringTok{"Mental Health Care"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-7.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, anonymity, }\StringTok{"anonymity for mental health information"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, anonymity, }\StringTok{"anonymity for mental health information"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-8.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, leave, }\StringTok{"availability for taking medical leave for mental treatment"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean, leave, }\StringTok{"availability for taking medical leave for mental treatment"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-9.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{feature\_prop}\NormalTok{(survey\_clean, coworkers,}\StringTok{"feel free to discuss mental issue with coworkers"}\NormalTok{)}\SpecialCharTok{+}
+  \FunctionTok{treatment\_prop}\NormalTok{(survey\_clean,coworkers,}\StringTok{"feel free to discuss mental issue with coworkers"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-8-10.pdf}}
+
+\subsubsection{\texorpdfstring{\textbf{3.4
+Insights}}{3.4 Insights}}\label{insights}
+
+\begin{itemize}
+\tightlist
+\item
+  Age: Treatment needs show a continuous increase from age 18, peaking
+  at around 40 years old, followed by a significant decline in later
+  years. This pattern may reflect several factors: increased mental
+  health awareness and openness to treatment in middle adulthood,
+  workplace stressors reaching their peak during career-building years,
+  or potentially changing attitudes toward mental health across
+  generations.
+\item
+  Gender: Females show approximately 20\% higher treatment rates
+  compared to males, while non-binary and gender-diverse individuals
+  demonstrate over 80\% need for mental treatment.
+\item
+  family\_history: Those who have a family history of mental illness are
+  around 35\% more likely to get treatment rather than without a family
+  history. This aligns with clinical understanding, as family history is
+  a well-established risk factor for many mental health disorders.
+\item
+  Work\_interfere: Respondents who report that mental health concerns
+  ``often'' interfere with their work show the highest treatment rates,
+  while those reporting ``never'' experiencing work interference show
+  the lowest. This suggests that work interference serves as a
+  significant motivator for seeking treatment, highlighting the
+  \textbf{importance of workplace mental health interventions.}
+\item
+  tech\_company/ self\_employed: The little difference in treatment
+  rates between tech company employees, non-tech employees, and
+  self-employed individuals suggests that industry type and employment
+  structure have limited influence on treatment-seeking behavior.
+\item
+  Mental healthcare/ anonymity/ leave: Companies that provide
+  comprehensive mental health care programs---including confidential
+  counseling services, robust privacy protections for mental health
+  information, and clear mental health leave policies---show
+  significantly higher treatment rates among employees. This supports
+  the implementation of workplace mental health programs and policies
+  are effective strategy for increasing treatment engagement.
+\end{itemize}
+
+\subsection{\texorpdfstring{\textbf{4. Modelling \& Statistical
+Analysis}}{4. Modelling \& Statistical Analysis}}\label{modelling-statistical-analysis}
+
+\subsubsection{4.1 Prepare Data for
+Modelling}\label{prepare-data-for-modelling}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Create binary target variable}
+\NormalTok{survey\_model }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{treatment\_binary =} \FunctionTok{ifelse}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  )}
+
+\CommentTok{\# Select key predictors as per project proposal}
+\NormalTok{predictors }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}
+  \StringTok{"Age"}\NormalTok{, }\StringTok{"Gender"}\NormalTok{, }\StringTok{"family\_history"}\NormalTok{,}
+  \StringTok{"work\_interfere"}\NormalTok{, }\StringTok{"no\_employees"}\NormalTok{, }\StringTok{"remote\_work"}\NormalTok{, }\StringTok{"tech\_company"}\NormalTok{,}
+  \StringTok{"mental\_care"}\NormalTok{,}
+  \StringTok{"anonymity"}\NormalTok{, }\StringTok{"leave"}\NormalTok{,}
+  \StringTok{"mental\_health\_consequence"}\NormalTok{, }\StringTok{"phys\_health\_consequence"}\NormalTok{,}
+  \StringTok{"coworkers"}\NormalTok{, }\StringTok{"supervisor"}\NormalTok{, }\StringTok{"mental\_health\_interview"}\NormalTok{,}
+  \StringTok{"mental\_vs\_physical"}\NormalTok{, }\StringTok{"obs\_consequence"}
+\NormalTok{)}
+
+\NormalTok{model\_data }\OtherTok{\textless{}{-}}\NormalTok{ survey\_model }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{all\_of}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"treatment\_binary"}\NormalTok{, predictors))) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{na.omit}\NormalTok{() }\DocumentationTok{\#\#删除数据缺失行}
+
+\FunctionTok{head}\NormalTok{(model\_data)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 6 x 18
+##   treatment_binary   Age Gender family_history work_interfere no_employees  
+##              <dbl> <dbl> <fct>  <fct>          <fct>          <fct>         
+## 1                1    37 Female No             Often          6-25          
+## 2                0    44 Male   No             Rarely         More than 1000
+## 3                0    32 Male   No             Rarely         6-25          
+## 4                1    31 Male   Yes            Often          26-100        
+## 5                0    31 Male   No             Never          100-500       
+## 6                0    33 Male   Yes            Sometimes      6-25          
+## # i 12 more variables: remote_work <fct>, tech_company <fct>,
+## #   mental_care <lgl>, anonymity <fct>, leave <fct>,
+## #   mental_health_consequence <fct>, phys_health_consequence <fct>,
+## #   coworkers <fct>, supervisor <fct>, mental_health_interview <fct>,
+## #   mental_vs_physical <fct>, obs_consequence <fct>
+\end{verbatim}
+
+\subsubsection{4.2 Split Data: Train/Test}\label{split-data-traintest}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{42}\NormalTok{)}
+\NormalTok{train\_idx }\OtherTok{\textless{}{-}} \FunctionTok{createDataPartition}\NormalTok{(model\_data}\SpecialCharTok{$}\NormalTok{treatment\_binary, }\AttributeTok{p=}\FloatTok{0.7}\NormalTok{, }\AttributeTok{list=}\ConstantTok{FALSE}\NormalTok{)}
+\NormalTok{train\_data }\OtherTok{\textless{}{-}}\NormalTok{ model\_data[train\_idx, ]}
+\NormalTok{test\_data }\OtherTok{\textless{}{-}}\NormalTok{ model\_data[}\SpecialCharTok{{-}}\NormalTok{train\_idx, ]}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Training set size:"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(train\_data), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Training set size: 693
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Test set size:"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(test\_data), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Test set size: 296
+\end{verbatim}
+
+\subsubsection{4.3 Logistic Regression
+Model}\label{logistic-regression-model}
+
+target variable \& feature variable are both discrete, most of them with
+only 2\textasciitilde3 levels. So, we can not use linear regression, but
+logistic regression to explore what are the significant features
+associated with our target value ``treatment''
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{logit\_model }\OtherTok{\textless{}{-}} \FunctionTok{glm}\NormalTok{(treatment\_binary }\SpecialCharTok{\textasciitilde{}}\NormalTok{ ., }\AttributeTok{data=}\NormalTok{train\_data, }\AttributeTok{family=}\StringTok{"binomial"}\NormalTok{)}
+
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Model summary (logistic regression):}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Model summary (logistic regression):
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(logit\_model)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## glm(formula = treatment_binary ~ ., family = "binomial", data = train_data)
+## 
+## Coefficients:
+##                                     Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                         -3.05835    0.89832  -3.405 0.000663 ***
+## Age                                  0.03011    0.01450   2.077 0.037837 *  
+## GenderMale                          -0.79747    0.28035  -2.845 0.004448 ** 
+## GenderTransgender/Non-binary/Others  0.19497    0.91680   0.213 0.831584    
+## family_historyYes                    1.08318    0.21276   5.091 3.56e-07 ***
+## work_interfereRarely                 2.11481    0.32405   6.526 6.75e-11 ***
+## work_interfereSometimes              2.68910    0.29640   9.072  < 2e-16 ***
+## work_interfereOften                  2.88780    0.38183   7.563 3.94e-14 ***
+## no_employees6-25                     0.36963    0.35319   1.047 0.295310    
+## no_employees26-100                   0.65790    0.36357   1.810 0.070367 .  
+## no_employees100-500                  0.70573    0.43058   1.639 0.101205    
+## no_employees500-1000                 0.85216    0.60058   1.419 0.155930    
+## no_employeesMore than 1000           0.26291    0.37641   0.698 0.484892    
+## remote_workYes                       0.01822    0.23748   0.077 0.938838    
+## tech_companyYes                     -0.06577    0.28103  -0.234 0.814958    
+## mental_careTRUE                      0.57800    0.22927   2.521 0.011699 *  
+## anonymityNo                         -0.01578    0.45670  -0.035 0.972441    
+## anonymityYes                         0.47029    0.26063   1.804 0.071163 .  
+## leaveSomewhat difficult             -0.27922    0.47677  -0.586 0.558115    
+## leaveSomewhat easy                  -0.72958    0.44131  -1.653 0.098288 .  
+## leaveVery easy                      -0.32236    0.48513  -0.664 0.506384    
+## leaveDon't know                     -0.51625    0.41638  -1.240 0.215023    
+## mental_health_consequenceNo         -0.25477    0.28531  -0.893 0.371878    
+## mental_health_consequenceYes        -0.11745    0.30379  -0.387 0.699050    
+## phys_health_consequenceNo            0.17988    0.27915   0.644 0.519329    
+## phys_health_consequenceYes          -0.61063    0.48552  -1.258 0.208507    
+## coworkersSome of them                0.44016    0.28520   1.543 0.122747    
+## coworkersYes                         1.09031    0.42254   2.580 0.009870 ** 
+## supervisorSome of them              -0.25823    0.29497  -0.875 0.381345    
+## supervisorYes                       -0.32457    0.33779  -0.961 0.336621    
+## mental_health_interviewNo            0.31513    0.31713   0.994 0.320365    
+## mental_health_interviewYes           0.16143    0.72359   0.223 0.823457    
+## mental_vs_physicalNo                -0.04933    0.26430  -0.187 0.851929    
+## mental_vs_physicalYes                0.04360    0.29458   0.148 0.882340    
+## obs_consequenceYes                   0.23140    0.30289   0.764 0.444886    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 903.92  on 692  degrees of freedom
+## Residual deviance: 622.27  on 658  degrees of freedom
+## AIC: 692.27
+## 
+## Number of Fisher Scoring iterations: 5
+\end{verbatim}
+
+\paragraph{Predictors sorted by p-value
+(significance)}\label{predictors-sorted-by-p-value-significance}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{significant\_predictors }\OtherTok{\textless{}{-}}\NormalTok{ broom}\SpecialCharTok{::}\FunctionTok{tidy}\NormalTok{(logit\_model) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{arrange}\NormalTok{(p.value)}
+\NormalTok{significant\_predictors}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 35 x 5
+##    term                    estimate std.error statistic  p.value
+##    <chr>                      <dbl>     <dbl>     <dbl>    <dbl>
+##  1 work_interfereSometimes   2.69      0.296       9.07 1.16e-19
+##  2 work_interfereOften       2.89      0.382       7.56 3.94e-14
+##  3 work_interfereRarely      2.11      0.324       6.53 6.75e-11
+##  4 family_historyYes         1.08      0.213       5.09 3.56e- 7
+##  5 (Intercept)              -3.06      0.898      -3.40 6.63e- 4
+##  6 GenderMale               -0.797     0.280      -2.84 4.45e- 3
+##  7 coworkersYes              1.09      0.423       2.58 9.87e- 3
+##  8 mental_careTRUE           0.578     0.229       2.52 1.17e- 2
+##  9 Age                       0.0301    0.0145      2.08 3.78e- 2
+## 10 no_employees26-100        0.658     0.364       1.81 7.04e- 2
+## # i 25 more rows
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\paragraph{Feature Importance Plot}\label{feature-importance-plot}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{feature\_importance }\OtherTok{\textless{}{-}}\NormalTok{ broom}\SpecialCharTok{::}\FunctionTok{tidy}\NormalTok{(logit\_model) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(term }\SpecialCharTok{!=} \StringTok{"(Intercept)"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{odds\_ratio=}\FunctionTok{exp}\NormalTok{(estimate),}
+         \AttributeTok{direction=}\FunctionTok{ifelse}\NormalTok{(estimate}\SpecialCharTok{\textgreater{}}\DecValTok{0}\NormalTok{,}\StringTok{"Increased"}\NormalTok{,}\StringTok{"Decreased"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{arrange}\NormalTok{(}\FunctionTok{desc}\NormalTok{(}\FunctionTok{abs}\NormalTok{(estimate)))}
+\NormalTok{top\_features }\OtherTok{\textless{}{-}}\NormalTok{ feature\_importance }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{head}\NormalTok{(}\DecValTok{15}\NormalTok{)}
+
+\FunctionTok{ggplot}\NormalTok{(top\_features, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x=}\FunctionTok{reorder}\NormalTok{(term, estimate), }\AttributeTok{y=}\NormalTok{estimate, }\AttributeTok{fill=}\NormalTok{direction)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_col}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{coord\_flip}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{title=}\StringTok{"Top 15 Most Important Predictors of Mental Health Treatment Need"}\NormalTok{,}
+       \AttributeTok{x=}\StringTok{"Predictor"}\NormalTok{, }\AttributeTok{y=}\StringTok{"Estimate (log{-}odds)"}\NormalTok{, }\AttributeTok{fill=}\StringTok{"Direction"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-13-1.pdf}}
+
+\subsubsection{4.4 Insights}\label{insights-1}
+
+\begin{itemize}
+\item
+  \textbf{Work interference} is the single strongest signal: respondents
+  saying their mental health often interferes with work are far more
+  likely to be in treatment. This supports screening based on
+  self‑reported work interference.
+\item
+  \textbf{Family history} and \textbf{coworker openness} are also
+  meaningful predictors. Family history increases risk, and feeling free
+  to discuss with coworkers is positively associated with being in
+  treatment, reflecting greater willingness to seek help or workplaces
+  where issues are more openly discussed.
+\item
+  Company provisions (\textbf{mental\_care TRUE, anonymity TRUE}) are
+  positively associated with treatment.This can mean:
+
+  \begin{itemize}
+  \item
+    access to care increases uptake
+  \item
+    companies experiencing higher demand put programs in place (reverse
+    causality)
+  \item
+    confounding by unmeasured factors.
+  \end{itemize}
+\item
+  Male gender is associated with lower odds of being in treatment. That
+  likely reflects \textbf{differing help‑seeking behavior}, \textbf{not
+  necessarily lower need.}
+\end{itemize}
+
+\subsubsection{5. Model Evaluation}\label{model-evaluation}
+
+\paragraph{ROC Curve}\label{roc-curve}
+
+\begin{itemize}
+\item
+  ROC plots \textbf{sensitivity (true positive rate)} vs \textbf{1 −
+  specificity (false positive rate)} over thresholds. The curve is
+  \textbf{well above the diagonal:} model discriminates much better than
+  random.
+\item
+  \textbf{AUC = 0.8476716} indicates good ranking/discrimination: the
+  model usually gives higher predicted probabilities to respondents who
+  are actually in treatment than to those who are not.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{test\_data}\SpecialCharTok{$}\NormalTok{predicted\_prob }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(logit\_model, }\AttributeTok{newdata=}\NormalTok{test\_data, }\AttributeTok{type=}\StringTok{"response"}\NormalTok{)}
+\NormalTok{test\_data}\SpecialCharTok{$}\NormalTok{predicted\_class }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(test\_data}\SpecialCharTok{$}\NormalTok{predicted\_prob }\SpecialCharTok{\textgreater{}} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+
+\NormalTok{test\_conf }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}\FunctionTok{as.factor}\NormalTok{(test\_data}\SpecialCharTok{$}\NormalTok{predicted\_class), }\FunctionTok{as.factor}\NormalTok{(test\_data}\SpecialCharTok{$}\NormalTok{treatment\_binary))}
+\FunctionTok{print}\NormalTok{(test\_conf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0  69  15
+##          1  44 168
+##                                           
+##                Accuracy : 0.8007          
+##                  95% CI : (0.7506, 0.8447)
+##     No Information Rate : 0.6182          
+##     P-Value [Acc > NIR] : 1.045e-11       
+##                                           
+##                   Kappa : 0.5559          
+##                                           
+##  Mcnemar's Test P-Value : 0.0002671       
+##                                           
+##             Sensitivity : 0.6106          
+##             Specificity : 0.9180          
+##          Pos Pred Value : 0.8214          
+##          Neg Pred Value : 0.7925          
+##              Prevalence : 0.3818          
+##          Detection Rate : 0.2331          
+##    Detection Prevalence : 0.2838          
+##       Balanced Accuracy : 0.7643          
+##                                           
+##        'Positive' Class : 0               
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{roc\_curve }\OtherTok{\textless{}{-}} \FunctionTok{roc}\NormalTok{(test\_data}\SpecialCharTok{$}\NormalTok{treatment\_binary, test\_data}\SpecialCharTok{$}\NormalTok{predicted\_prob)}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"AUC on test:"}\NormalTok{, }\FunctionTok{auc}\NormalTok{(roc\_curve), }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## AUC on test: 0.8476716
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(roc\_curve, }\AttributeTok{main=}\StringTok{"ROC Curve for Mental Health Treatment Prediction"}\NormalTok{, }\AttributeTok{col=}\StringTok{"blue"}\NormalTok{, }\AttributeTok{lwd=}\DecValTok{3}\NormalTok{)}
+\FunctionTok{abline}\NormalTok{(}\AttributeTok{a=}\DecValTok{0}\NormalTok{, }\AttributeTok{b=}\DecValTok{1}\NormalTok{, }\AttributeTok{col=}\StringTok{"grey"}\NormalTok{, }\AttributeTok{lty=}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-14-1.pdf}}
+
+\paragraph{Prediction (training set)}\label{prediction-training-set}
+
+\begin{itemize}
+\item
+  Strength of model:\\
+  \strut ~\textbf{High Specificity (91.91\%)}: Excellent at identifying
+  people who truly need treatment\\
+  \strut ~\textbf{Good Overall Accuracy (80.23\%)}: Beats baseline by 16
+  percentage points\\
+  \strut ~\textbf{Balanced Precision}: Similar precision for both
+  classes (\textasciitilde80\%)\\
+  \strut ~\textbf{Statistical Significance}: Results are not due to
+  chance
+\item
+  Concerns\\
+  \strut ~\textbf{Low Sensitivity (59.27\%)}: Poor at identifying people
+  who don't need treatment\\
+  \strut ~\textbf{Imbalanced Performance}: Much better at detecting
+  treatment needs than non-needs\\
+  \strut ~\textbf{Potential Over-intervention}: 40.73\% of ``No
+  treatment'' people are incorrectly flagged
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{train\_data}\SpecialCharTok{$}\NormalTok{predicted\_prob }\OtherTok{\textless{}{-}} \FunctionTok{predict}\NormalTok{(logit\_model, }\AttributeTok{type=}\StringTok{"response"}\NormalTok{)}
+\NormalTok{train\_data}\SpecialCharTok{$}\NormalTok{predicted\_class }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(train\_data}\SpecialCharTok{$}\NormalTok{predicted\_prob }\SpecialCharTok{\textgreater{}} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{train\_conf }\OtherTok{\textless{}{-}} \FunctionTok{confusionMatrix}\NormalTok{(}\FunctionTok{as.factor}\NormalTok{(train\_data}\SpecialCharTok{$}\NormalTok{predicted\_class), }\FunctionTok{as.factor}\NormalTok{(train\_data}\SpecialCharTok{$}\NormalTok{treatment\_binary))}
+\FunctionTok{print}\NormalTok{(train\_conf)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction   0   1
+##          0 147  36
+##          1 101 409
+##                                           
+##                Accuracy : 0.8023          
+##                  95% CI : (0.7707, 0.8313)
+##     No Information Rate : 0.6421          
+##     P-Value [Acc > NIR] : < 2.2e-16       
+##                                           
+##                   Kappa : 0.5434          
+##                                           
+##  Mcnemar's Test P-Value : 4.554e-08       
+##                                           
+##             Sensitivity : 0.5927          
+##             Specificity : 0.9191          
+##          Pos Pred Value : 0.8033          
+##          Neg Pred Value : 0.8020          
+##              Prevalence : 0.3579          
+##          Detection Rate : 0.2121          
+##    Detection Prevalence : 0.2641          
+##       Balanced Accuracy : 0.7559          
+##                                           
+##        'Positive' Class : 0               
+## 
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# vusualize confusion data}
+\NormalTok{conf\_matrix\_data }\OtherTok{\textless{}{-}} \FunctionTok{as.data.frame}\NormalTok{(}\FunctionTok{as.table}\NormalTok{(train\_conf}\SpecialCharTok{$}\NormalTok{table))}
+\FunctionTok{names}\NormalTok{(conf\_matrix\_data) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Predicted"}\NormalTok{, }\StringTok{"Actual"}\NormalTok{, }\StringTok{"Freq"}\NormalTok{)}
+
+\CommentTok{\# calculate relevant statistics}
+\NormalTok{conf\_matrix\_data }\OtherTok{\textless{}{-}}\NormalTok{ conf\_matrix\_data }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(Actual) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{Percentage =}\NormalTok{ Freq }\SpecialCharTok{/} \FunctionTok{sum}\NormalTok{(Freq) }\SpecialCharTok{*} \DecValTok{100}\NormalTok{,}
+    \AttributeTok{Label =} \FunctionTok{paste0}\NormalTok{(Freq, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{("}\NormalTok{, }\FunctionTok{round}\NormalTok{(Percentage, }\DecValTok{1}\NormalTok{), }\StringTok{"\%)"}\NormalTok{)}
+\NormalTok{  )}
+
+\CommentTok{\# plot heatmap ofr confusion matrix}
+\FunctionTok{ggplot}\NormalTok{(conf\_matrix\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Actual, }\AttributeTok{y =}\NormalTok{ Predicted, }\AttributeTok{fill =}\NormalTok{ Freq)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_tile}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.8}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =}\NormalTok{ Label), }\AttributeTok{color =} \StringTok{"black"}\NormalTok{, }\AttributeTok{size =} \DecValTok{5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_gradient}\NormalTok{(}\AttributeTok{low =} \StringTok{"\#F8F9FA"}\NormalTok{, }\AttributeTok{high =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{name =} \StringTok{"frequency"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"heatmap ofr confusion matrix"}\NormalTok{,}
+    \AttributeTok{subtitle =} \FunctionTok{paste}\NormalTok{(}\StringTok{"Accuracy:"}\NormalTok{, }\FunctionTok{round}\NormalTok{(train\_conf}\SpecialCharTok{$}\NormalTok{overall[}\StringTok{"Accuracy"}\NormalTok{]}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{),}
+    \AttributeTok{x =} \StringTok{"Actural class"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Predicted class"}\NormalTok{,}
+    \AttributeTok{caption =} \FunctionTok{paste}\NormalTok{(}\StringTok{"sensitivity:"}\NormalTok{, }\FunctionTok{round}\NormalTok{(train\_conf}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Sensitivity"}\NormalTok{]}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\% |"}\NormalTok{,}
+                   \StringTok{"Specificity:"}\NormalTok{, }\FunctionTok{round}\NormalTok{(train\_conf}\SpecialCharTok{$}\NormalTok{byClass[}\StringTok{"Specificity"}\NormalTok{]}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-15-1.pdf}}
+
+\subsection{\texorpdfstring{\textbf{6. Answering data science
+questions}}{6. Answering data science questions}}\label{answering-data-science-questions}
+
+\subsubsection{6.1. How to identify potential mental issue, In other
+words, what features are most predictive of needing mental health
+treatment?}\label{how-to-identify-potential-mental-issue-in-other-words-what-features-are-most-predictive-of-needing-mental-health-treatment}
+
+\begin{itemize}
+\tightlist
+\item
+  We identified that \textbf{family history}, \textbf{work
+  interference}, and \textbf{workplace support systems} are among the
+  strongest predictors of mental health treatment need. (detailed
+  analysis seen in \textbf{section 3.4 \& 4.4})
+\end{itemize}
+
+\subsubsection{6.2 What could employers do to reduce mental issue's
+risks?}\label{what-could-employers-do-to-reduce-mental-issues-risks}
+
+\begin{itemize}
+\tightlist
+\item
+  A logistic regression model giving \textbf{the most predictive
+  factors} can reasonably \textbf{identify potnetial employees at higher
+  risk.}
+\item
+  Companies should focus on improving \textbf{support policies} for
+  employees showing risk factors.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    easier access to a\textbf{pplying for medical leave due to mental
+    issue}
+  \item
+    protect workers \textbf{anonymity regarding mental health issue},
+    and creating a non-judgmental environment
+  \end{itemize}
+\item
+  Increasing mental health care benefits, easy-access mental care
+  treatment resources.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{interesting} to notice the \textbf{different approach} that
+    may apply to different Gender (see visualization below!)
+
+    \begin{itemize}
+    \tightlist
+    \item
+      \textbf{women are more sensitive to mental care benefit (money)}:
+      providing more money on mental health care have a greater positive
+      effect on seeking treatment for women(nearly \textbf{30\%} more)
+      compared to men(around \textbf{10\%} more).
+    \item
+      on the other hand, \textbf{men are more sensitive to giving health
+      care access}: providing more money on mental health care have a
+      greater positive effect on seeking treatment for men(around
+      \textbf{15\%} increase) compared to women(lower than \textbf{5\%}
+      increase).
+    \item
+      giving \textbf{direct mental care options at work place}, is the
+      \textbf{most effective} way to encourage employees seeking
+      treatment, for both men and women.
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 1. Interaction Effects Visualization {-} benefit * Gender}
+\NormalTok{gender\_care\_data }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(Gender}\SpecialCharTok{!=}\StringTok{"Transgender/Non{-}binary/Others"}\NormalTok{)}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{treatment\_binary =} \FunctionTok{ifelse}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  )}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(Gender, benefits) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{treatment\_rate =} \FunctionTok{mean}\NormalTok{(treatment\_binary),}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}
+\NormalTok{  )}
+
+\FunctionTok{ggplot}\NormalTok{(gender\_care\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Gender, }\AttributeTok{y =}\NormalTok{ treatment\_rate, }\AttributeTok{fill =}\NormalTok{ benefits)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\FunctionTok{round}\NormalTok{(treatment\_rate}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)), }
+            \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.9}\NormalTok{), }\AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Interaction Effect: Gender × mental health benefits"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Gender"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Treatment Rate"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Company Provides}\SpecialCharTok{\textbackslash{}n}\StringTok{Mental Health Benefits"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Set2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-16-1.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 2. Interaction Effects Visualization {-} seek\_help * Gender}
+\NormalTok{gender\_care\_data }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(Gender}\SpecialCharTok{!=}\StringTok{"Transgender/Non{-}binary/Others"}\NormalTok{)}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{treatment\_binary =} \FunctionTok{ifelse}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  )}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(Gender, seek\_help) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{treatment\_rate =} \FunctionTok{mean}\NormalTok{(treatment\_binary),}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}
+\NormalTok{  )}
+
+\FunctionTok{ggplot}\NormalTok{(gender\_care\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Gender, }\AttributeTok{y =}\NormalTok{ treatment\_rate, }\AttributeTok{fill =}\NormalTok{ seek\_help)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\FunctionTok{round}\NormalTok{(treatment\_rate}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)), }
+            \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.9}\NormalTok{), }\AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Interaction Effect: Gender × Access to help"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Gender"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Treatment Rate"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Company Provides}\SpecialCharTok{\textbackslash{}n}\StringTok{Access to help"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Set2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-16-2.pdf}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 3. Interaction Effects Visualization {-} care\_options * Gender}
+\NormalTok{gender\_care\_data }\OtherTok{\textless{}{-}}\NormalTok{ survey\_clean0 }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(Gender}\SpecialCharTok{!=}\StringTok{"Transgender/Non{-}binary/Others"}\NormalTok{)}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}
+    \AttributeTok{treatment\_binary =} \FunctionTok{ifelse}\NormalTok{(treatment }\SpecialCharTok{==} \StringTok{"Yes"}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{)}
+\NormalTok{  )}\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(Gender, care\_options) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{treatment\_rate =} \FunctionTok{mean}\NormalTok{(treatment\_binary),}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}
+\NormalTok{  )}
+
+\FunctionTok{ggplot}\NormalTok{(gender\_care\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Gender, }\AttributeTok{y =}\NormalTok{ treatment\_rate, }\AttributeTok{fill =}\NormalTok{ care\_options)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \StringTok{"dodge"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\FunctionTok{round}\NormalTok{(treatment\_rate}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)), }
+            \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\AttributeTok{width =} \FloatTok{0.9}\NormalTok{), }\AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Interaction Effect: Gender × mental care options"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Gender"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Treatment Rate"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Company Provides}\SpecialCharTok{\textbackslash{}n}\StringTok{Mental care options"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_brewer}\NormalTok{(}\AttributeTok{palette =} \StringTok{"Set2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-16-3.pdf}}
+
+\subsection{7. Limitation \& possible
+improvement}\label{limitation-possible-improvement}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Most significant limitation:} Subjective survey responses,
+  possible response bias.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{target variable ``treatment''} indicates whether respondents
+    are currently receiving mental health treatment. It may demonstrate
+    the actual need for mental treatment (\textbf{real mental issue
+    posed}). However, due to subjective survey response
+    \textbf{``willingness to get treatment''} also affected whether or
+    not they are receiving treatment. This \textbf{self-report bias}
+    means some individuals with mental health conditions may not seek or
+    report treatment, while others receiving treatment may do so
+    preventively rather than for diagnosed conditions.
+  \end{itemize}
+\item
+  \textbf{one-to-one association} between one feature and target
+  variable''treatment'' is investigated, but the \textbf{interactions
+  between} different features and how their combinations is associated
+  with need for treatment is not considered. this is an aspect of future
+  investigation.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    an example is given below to explore the relationship between two
+    factors \textbf{``work\_interfere'' \& ``family\_history''}
+  \item
+    \textbf{Heatmap} indicating the correlation between features are
+    provided below
+  \end{itemize}
+\item
+  assessing the \textbf{association} between demographic\&workplace
+  features and treatment is enough to \textbf{identify individuals at
+  risk}, but from employers prospect, if they want to address mental
+  issue for employees more effectively, analyzing the causual
+  relationship should be considered.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    This can be solved by using more advanced ML (random forest,
+    boosting), longitudinal data, and testing interventions\ldots{}
+  \end{itemize}
+\end{itemize}
+
+\subsubsection{example demonstration:}\label{example-demonstration}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  simple correlation to interaction
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 1. Interaction Effects Visualization {-} work\_interfere * family\_history}
+\NormalTok{interaction\_data }\OtherTok{\textless{}{-}}\NormalTok{ train\_data }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(work\_interfere, family\_history) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}
+    \AttributeTok{treatment\_rate =} \FunctionTok{mean}\NormalTok{(treatment\_binary),}
+    \AttributeTok{n =} \FunctionTok{n}\NormalTok{(),}
+    \AttributeTok{.groups =} \StringTok{\textquotesingle{}drop\textquotesingle{}}
+\NormalTok{  ) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(work\_interfere))}
+
+\FunctionTok{ggplot}\NormalTok{(interaction\_data, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ work\_interfere, }\AttributeTok{y =}\NormalTok{ treatment\_rate, }
+                             \AttributeTok{color =}\NormalTok{ family\_history, }\AttributeTok{group =}\NormalTok{ family\_history)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{(}\AttributeTok{size =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{label =} \FunctionTok{paste0}\NormalTok{(}\FunctionTok{round}\NormalTok{(treatment\_rate}\SpecialCharTok{*}\DecValTok{100}\NormalTok{, }\DecValTok{1}\NormalTok{), }\StringTok{"\%"}\NormalTok{)), }
+            \AttributeTok{vjust =} \SpecialCharTok{{-}}\FloatTok{0.8}\NormalTok{, }\AttributeTok{size =} \DecValTok{3}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Interaction Effect: Work Interference × Family History"}\NormalTok{,}
+    \AttributeTok{subtitle =} \StringTok{"Family history significantly amplifies the impact of work interference on treatment needs"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Frequency of Work Interference"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Treatment Rate"}\NormalTok{,}
+    \AttributeTok{color =} \StringTok{"Family History of}\SpecialCharTok{\textbackslash{}n}\StringTok{Mental Health"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\NormalTok{percent) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values =} \FunctionTok{c}\NormalTok{(}\StringTok{"No"} \OtherTok{=} \StringTok{"red"}\NormalTok{, }\StringTok{"Yes"} \OtherTok{=} \StringTok{"blue"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/unnamed-chunk-17-1.pdf}}
+
+\begin{itemize}
+\item
+  There is a powerful interaction between work interference and family
+  history:
+
+  \begin{itemize}
+  \item
+    For employees without family history, even frequent work
+    interference leads to only 60\% treatment rate.
+  \item
+    But for those with family history, the same level of work
+    interference drives treatment rates above 90\%.
+  \end{itemize}
+\item
+  This tells us screening should \textbf{prioritize employees who report
+  both family history AND work interference.}
+\end{itemize}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  correlation heatmap
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"corrplot"}\NormalTok{, }\AttributeTok{quietly=}\ConstantTok{TRUE}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"corrplot"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"reshape2"}\NormalTok{, }\AttributeTok{quietly=}\ConstantTok{TRUE}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"reshape2"}\NormalTok{)}
+\ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{requireNamespace}\NormalTok{(}\StringTok{"Hmisc"}\NormalTok{, }\AttributeTok{quietly=}\ConstantTok{TRUE}\NormalTok{)) }\FunctionTok{install.packages}\NormalTok{(}\StringTok{"Hmisc"}\NormalTok{)}
+\FunctionTok{library}\NormalTok{(corrplot); }\FunctionTok{library}\NormalTok{(reshape2); }\FunctionTok{library}\NormalTok{(Hmisc)}
+
+\NormalTok{corr\_df }\OtherTok{\textless{}{-}}\NormalTok{ model\_data }
+
+\NormalTok{corr\_num }\OtherTok{\textless{}{-}}\NormalTok{ corr\_df }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{everything}\NormalTok{(), }\SpecialCharTok{\textasciitilde{}} \ControlFlowTok{if}\NormalTok{(}\FunctionTok{is.factor}\NormalTok{(.)) }\FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{as.factor}\NormalTok{(.)) }\ControlFlowTok{else}\NormalTok{ .))}
+
+\NormalTok{corr\_mat }\OtherTok{\textless{}{-}} \FunctionTok{cor}\NormalTok{(corr\_num, }\AttributeTok{use =} \StringTok{"pairwise.complete.obs"}\NormalTok{, }\AttributeTok{method =} \StringTok{"spearman"}\NormalTok{)}
+
+\NormalTok{corr\_mat[}\FunctionTok{upper.tri}\NormalTok{(corr\_mat, }\AttributeTok{diag =} \ConstantTok{TRUE}\NormalTok{)] }\OtherTok{\textless{}{-}} \ConstantTok{NA}
+
+\NormalTok{melted }\OtherTok{\textless{}{-}}\NormalTok{ reshape2}\SpecialCharTok{::}\FunctionTok{melt}\NormalTok{(corr\_mat, }\AttributeTok{na.rm =} \ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{ggplot}\NormalTok{(melted, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ Var2, }\AttributeTok{y =}\NormalTok{ Var1, }\AttributeTok{fill =}\NormalTok{ value)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_tile}\NormalTok{(}\AttributeTok{color =} \StringTok{"white"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_fill\_gradient2}\NormalTok{(}\AttributeTok{low =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{mid =} \StringTok{"white"}\NormalTok{, }\AttributeTok{high =} \StringTok{"red"}\NormalTok{, }\AttributeTok{midpoint =} \DecValTok{0}\NormalTok{, }\AttributeTok{limits =} \FunctionTok{c}\NormalTok{(}\SpecialCharTok{{-}}\FloatTok{0.5}\NormalTok{,}\FloatTok{0.6}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{45}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{""}\NormalTok{, }\AttributeTok{y =} \StringTok{""}\NormalTok{, }\AttributeTok{fill =} \StringTok{"Spearman}\SpecialCharTok{\textbackslash{}n}\StringTok{rho"}\NormalTok{,}
+       \AttributeTok{title =} \StringTok{"Spearman Correlation Heatmap (factors {-}\textgreater{} numeric)"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio]{2501report_ShenHongshan_Version2_files/figure-latex/correlation-heatmap-1.pdf}}
+
+\begin{itemize}
+\item
+  notice the correlation between \textbf{supervisor} (feel free to
+  discuss mental issue with direct supervisor) \& \textbf{coworkers
+  (}feel free to discuss mental issue with coworkers) is quite high
+
+  \begin{itemize}
+  \item
+    is there any potential causation ? any insightful management
+    approach for employers?
+  \item
+    Supervisors may serve as \textbf{tone-setters} for team culture.
+    When supervisors openly discuss mental health and demonstrate
+    empathy, they model vulnerable communication, giving employees
+    `permission' to have similar conversations with peers. This aligns
+    with social learning theory, where employees observe and mimic
+    leader behaviors.
+  \item
+    A supportive peer culture might \textbf{normalize} mental health
+    discussions, making it safer for employees to approach supervisors.
+    This creates a \textbf{virtuous cycle} where peer support builds
+    confidence for upward communication.
+  \end{itemize}
+\end{itemize}
+
+\subsection{8. Conclusion}\label{conclusion}
+
+This study utilized the OSMI Mental Health in Tech Survey to investigate
+the relationship between workplace factors, demographic characteristics,
+and mental health treatment-seeking behavior. My analysis revealed that
+\textbf{work interference} and \textbf{family history} of mental illness
+are the \textbf{strongest predictors} of treatment need, with employees
+reporting frequent work interference and those with family history
+showing substantially higher treatment rates. Additionally, company's
+\textbf{support systems}---including mental health benefits,
+confidential resources, and supportive workplace
+cultures---significantly correlate with treatment engagement. The
+logistic regression model demonstrated good predictive capability with
+an AUC of 0.85 and overall accuracy of 80\%, though it exhibited higher
+specificity than sensitivity, indicating better performance at
+identifying treatment needs than non-needs.
+
+From a practical perspective, these findings suggest employers should
+implement \textbf{targeted screening for employees experiencing work
+interference}, particularly those with \textbf{family mental health
+history,} and develop \textbf{gender-sensitive interventions} given the
+pronounced differences in treatment-seeking patterns. The strong
+correlation between supervisor and coworker support highlights the
+importance of creating psychologically safe environments at multiple
+organizational levels. While these associative findings provide valuable
+insights for identifying at-risk individuals, establishing causal
+relationships would further enhance employers' ability to design
+effective interventions. Future research employing longitudinal designs
+and causal inference methods could build upon these findings to develop
+more targeted workplace mental health strategies that promote employee
+well-being and organizational resilience.
+
+\subsection{reference:}\label{reference}
+
+OSMI Mental Health in Tech Survey
+\href{https://www.kaggle.com/datasets/osmi/mental-health-in-tech-survey/data}{Kaggle
+Dataset} - \href{https://www.statlearning.com/}{Introduction to
+Statistical Learning}
+
+\end{document}

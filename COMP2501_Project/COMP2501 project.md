@@ -97,13 +97,13 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 # 2.
 # report 
 - [x] exploratory data analysis (respond proportion + treatment proportion)
-- [ ] key features by regression
-- [ ] model evaluation
-	- [ ] ROC
-	- [ ] training set
-- [ ] answering the question
-- [ ] some limitation, advance analysis
-- [ ] conclusion
+- [x] key features by regression
+- [x] model evaluation
+	- [x] ROC
+	- [x] training set
+- [x] answering the question
+- [x] some limitation, advance analysis
+- [x] conclusion
 • Compose your report in **R Markdown** and knit it into an **html page**; 
 • Include the **data files** used in your analysis in the submission, i.e., zip them together; 
 	• Or add a note if the data is private or too large to be uploaded (>100M, in which case attach a link to the data); 
@@ -117,6 +117,9 @@ Mental Health in Tech Survey dataset from Open Sourcing Mental Illness (OSMI), s
 - [x]  tech company vs non-tech
 # 3.
 # presentation
+- [ ] script (1h)
+- [ ] slide (1h)
+- [ ] practice & record(1h)
 Presentation video (5-10 min), share the following: 
 • Problem definition & background 
 	• Data science questions in the project, their importance, challenges, related works 
@@ -132,7 +135,7 @@ Presentation video (5-10 min), share the following:
 ## Mental Health Treatment Prediction 
 
 ### **Slide 1: Crisis in Tech**
-"In the tech industry, we celebrate innovation and disruption, but we rarely talk about the human cost. Behind the screens and code, there's a silent crisis affecting thousands of professionals. My project addresses this critical question: **Can we use data to identify who needs mental health support before it's too late?**"
+**Hello everyone.** Today I'll present my project on **"Predicting Mental Health Treatment Needs Based on Workplace Factors and Demographic Characteristics."**This analysis explores how we can use data science to better understand and address mental health challenges in workplace environments.
 - ==+ data?news?fact?==
 ### **Slide 2: The Core Problem **
 "The challenge is clear: mental health issues often go **undetected** until they become severe. But what if we could **spot the warning signs early**? This led me to two key **research questions**"
@@ -259,7 +262,173 @@ risk factors don't operate in isolation - they amplify or buffer each other.
 - Random forest model independently confirms feature importance rankings
 - **Work interference, family history, and age** consistently rank as top predictors across different methods
 
+# presentation script
+***(Start with a confident, engaging tone)***
 
+Hi
+
+Today, I'd like to share a project that sits at the intersection of data science and a very human challenge: mental health in the workplace.
+
+***(Pause briefly, gesture towards title slide)***
+
+My project asks: **Can we use data to better understand who needs mental health support at work?** And more importantly, can we use that understanding to help employers create more supportive environments?
+
+---
+
+***(Transition smoothly to the next slide)***
+
+So, why does this matter? Let's start with a startling number.
+
+***(Point to the statistic on the slide)***
+
+The World Health Organization estimates that depression and anxiety alone cost the global economy **one trillion dollars every year** in lost productivity. That's a staggering figure. But behind that number are real people—colleagues, team members—who might be struggling in silence.
+
+n fast-paced sectors like technology, where this data comes from, the pressure can be intense. Yet, figuring out who actually needs and seeks help is really difficult. Stigma, different attitudes towards getting help, and sometimes just not knowing where to start—these are all real barriers.
+
+My project tried to cut through some of that complexity by asking two specific questions with data:
+1.  **What specific things about a person's job or background are most linked to them getting mental health treatment?**
+2. from employers' perspective, can we build a simple tool—a model—to help spot people who might benefit from a supportive check-in? what are some insight for employers to reduce the impact of mental issue in work place
+
+---
+
+***(Move to the data slide)***
+
+To answer this, I turned to a really insightful public dataset: the **OSMI Mental Health in Tech Survey**. It's a collection of anonymous, honest responses from over a thousand tech workers around the world.
+
+It asks about everything from basic demographics... to their work environment... to very personal questions about how mental health affects their work and whether they're currently in treatment.
+
+---
+
+***(Stransition to cleaning slide)***
+
+We had some... creative entries. For example, in the 'Age' field, we had values ranging from 3 years old to 999. ***(Light chuckle)*** Clearly, some responses needed tidying up.
+
+There were also over 20 different ways people described their gender. My job was to respectfully standardize these into meaningful categories for analysis.
+
+Also, I notice some with same meaning , so we combine them
+
+---
+
+***(Shift tone to more analytical)***
+
+After the cleanup, the patterns started to emerge. Let's look at a few key demographics.
+
+***(Indicate the visualizations)***
+
+First, the gender breakdown itself tells a story about the tech industry—about 76% of respondents identified as male. But look at the treatment rates: they vary dramatically. While about 45% of men in the survey were in treatment, that number jumped to about 55% for women, and to over 80% for gender-diverse individuals.
+
+Age told another story. The need for treatment isn't static—it rises through early career, peaks in mid-life around age 40, and then gradually declines.
+
+So, right away, we see that a one-size-fits-all approach to workplace mental health probably isn't the answer.
+
+---
+
+***(Pivot to workplace factors)***
+
+for other features; Three factors stood out powerfully.
+
+***(Use fingers to count off)***
+
+**One: Work Interference.** Simply put, how much does a person feel their mental health affects their work? The difference is striking. the more frequent work interfere a person stated, the larger possibility of having mental issue.
+
+**Two: Family History.** Having a family history of mental illness increased the likelihood of being in treatment by about 35%. This makes clinical sense and highlights this key risk factor.
+
+**Three: Organizational Support.** When companies offered resources—like benefits, counseling, or clear policies—treatment rates were consistently about 20% higher.
+
+So, the environment a company creates really matters.
+
+---
+
+***(Transition to modeling)***
+
+Okay, we have these individual pieces. The next step was to put them together into a predictive picture.
+
+I used a **logistic regression**—most of the questions from source data are yes/no questions, the answer are no continuous variable, we cannot use linear regression. I trained it on most of the data and saved some to test its accuracy.
+
+The results were promising. The model achieved an **85% AUC score**, which is a strong measure of its ability to distinguish between groups. Its overall accuracy was about 80%.
+
+Now, it was better at correctly identifying people who *were* in treatment (92% specificity) than those who weren't (59% sensitivity). This means if we used it as a screening tool, we'd be really good at finding true needs, but we might also worry some people who are actually okay. **That's an important trade-off to remembe**r.
+
+---
+
+***(Point to the importance chart)***
+
+When we look under the hood of the model, it confirmed our earlier insights and added nuance.
+
+The single biggest signal was **Work Interference.** The next was **Family History.**
+
+But here’s a fascinating one: **Comfort talking to coworkers** was a strong positive predictor. This hints at the power of team culture.
+
+Also, identifying as **Male** was associated with a lower likelihood of treatment. This likely reflects well-documented differences in help-seeking behavior, not necessarily lower need.
+
+And interestingly, whether someone worked at a **tech company or not, or was self-employed**, barely moved the needle. Mental health challenges, it seems, don't discriminate by job title.
+
+---
+
+***(Lean in slightly for the next key insight)***
+
+But people aren't just a list of separate traits. These factors interact. And this is where it gets really crucial for taking action.
+
+Look at this chart.
+
+***(Explain the interaction plot)***
+
+For someone **without** a family history, even high work interference leads to a treatment rate around 60%. But for someone **with** that family history, the same high level of work interference pushes the rate above 90%.
+
+The takeaway? An employee reporting **both** a family history **and** that their mental health is often affecting their work is in a very high-risk category. Employers' screening and support should prioritize them.
+
+---
+
+***(Move to gender interactions)***
+
+Another **critical interaction** involves gender and the *type* of support offered.
+
+The data suggests men and women may respond to different kinds of initiatives.
+
+**For women,** the presence of **financial benefits** for mental health care was linked to a much larger increase in treatment rates—about 30%.
+
+**For men,** having **direct, accessible care options** at work seemed more impactful.
+
+But for everyone, the most effective approach was a **comprehensive program** that combined multiple types of support.
+
+The lesson here is clear: **Tailored, multi-faceted strategies are key.**
+
+---
+
+***(Shift to a conclusive, forward-looking tone)***
+
+So, what does all this mean for an employer who wants to do better?
+
+Based on the data, I'd suggest five actions:
+
+1.  **Screen proactively, but smartly.** Focus on employees who report work interference, especially those who also note a family history.
+2.  **Build programs with diversity in mind.** Recognize that men, women, and gender-diverse employees may face different barriers.
+3.  **Invest in your managers.** Train supervisors to foster psychological safety. Our data showed a strong link between comfort with a supervisor and comfort with peers—culture flows from the top.
+4.  **Go comprehensive.** Don't just offer one benefit. Combine financial support, confidential resources, clear leave policies, and anti-stigma campaigns.
+
+---
+
+***(Acknowledge limitations humbly)***
+
+Now, it's important to acknowledge what this data _can't_ tell us.
+
+Our analysis is built on self-reported survey data, which means we're measuring what people _say_about their treatment, not necessarily their clinical need. There might be employees with unmet needs who don't appear in our predictions.
+
+Also, while we've found strong associations—like the link between supervisor and peer support—we can't prove what causes what. Does a supportive manager create a safe team, or does a safe team make managers seem more approachable? For designing interventions, that direction matters.
+
+So our work is a strong starting point for **identifying patterns**, but moving from **spotting risks** to **designing proven interventions** would be the next exciting step.
+
+---
+
+***(Final summary)***
+
+To wrap up, this project showed me that data science can do more than find patterns—it can help us **listen better**.
+
+It can highlight signals like work interference as a call for help. It can remind us that support needs to be personalized. And it can give organizations a clearer starting point for building a workplace that doesn't just measure performance, but actively supports the people behind it.
+
+***(Pause, smile)***
+
+Thank you. I'm happy to take any questions you might have.
 
 
 

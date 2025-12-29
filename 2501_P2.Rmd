@@ -13,6 +13,55 @@ library(ggridges)
 library(ggplot2)
 ```
 
+# Lec12-text mining
+
+```{r}
+library(tidyverse)
+library(lubridate)
+library(tidytext)
+library(textdata) #unnest_tokens()
+
+all_tweets <- jsonlite::fromJSON("trump_tweets.json",
+                                 simplifyDataFrame = TRUE)
+trump_tweets <- all_tweets |>
+  filter(isRetweet == "f" & !str_detect(text, '^["\']')) |>
+  mutate(date = ymd_hms(date))
+#in target devices, time interval
+campaign_tweets <- trump_tweets |> 
+  extract(device, "source", "Twitter for (.*)") |>
+  filter(source %in% c("Android", "iPhone") &
+         date >= ymd("2015-06-17") & 
+         date < ymd("2016-11-08")) |>
+  arrange(date)
+#form of links
+links_re <- "https://t.co/[A-Za-z\\d]+|&amp;"
+# 分词示例
+example_tweet |> 
+  mutate(text = str_replace_all(text, links_re, "")) |>
+  unnest_tokens(word, text) |>
+  pull(word)
+
+# 批量分词并移除停用词
+all_campaign_tweet_words <- campaign_tweets |> 
+  mutate(text = str_replace_all(text, links_re, "")) |>
+  unnest_tokens(word, text) |>
+  filter(!word %in% stop_words$word)
+
+# 移除纯数字
+all_campaign_tweet_words_no_number <- all_campaign_tweet_words |>
+  filter(!str_detect(word, "^[\\d,.]+$"))
+
+# 词频统计
+top_words <- all_campaign_tweet_words_no_number |>
+  count(word) |>
+  top_n(10, n) |>
+  arrange(desc(n))
+```
+
+```{r}
+
+```
+
 # Lec13-Probability
 
 ### Important: Monte Carlo simulation
@@ -466,7 +515,7 @@ mean(replicate(1e4, take_sample_and_check(25)))
 
 ## 14.3.Power
 
--   (not mastered parts)
+-   (not mastered parts) OK
 
 ```{r}
 # Power analysis at different p
@@ -529,7 +578,7 @@ total_area <- sum(df$posterior * step_size)
 df <- df |> mutate(posterior = posterior / total_area)  # Normalize
 
 df |> ggplot(aes(p, posterior)) +
-  geom_line() +2
+  geom_line() +
   ylab("Probability density (posterior)") +
   theme_minimal()
 ```

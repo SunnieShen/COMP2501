@@ -3,9 +3,9 @@ title: "2501report_ShenHongshan"
 author: "Shen Hongshan"
 date: "2025-11-20"
 output:
+  word_document: default
   html_document: default
   pdf_document: default
-  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -24,7 +24,7 @@ knitr::opts_chunk$set(echo = TRUE, warning=FALSE, message=FALSE)
 
 Mental health issues in workplace environments represent a significant public health concern with substantial economic and social consequences. Early identification of individuals who need mental health support can facilitate timely intervention, reduce workplace productivity loss, and improve overall well-being. This project addresses the critical need for data-driven approaches to mental health screening in professional settings, particularly in high-pressure sectors like technology.
 
-This project, analyzes the OSMI Mental Health in Tech Survey dataset from Kaggle to model how workplace conditions and demographic factors are associated with issue. The dataset contains survey responses to workplace, demographic and mental health questions, providing rich information for data-driven analysis of this spublic health issue.
+This project, analyzes the OSMI Mental Health in Tech Survey dataset from Kaggle to model how workplace conditions and demographic factors are associated with issue. The dataset contains survey responses to workplace, demographic and mental health questions, providing rich information for data-driven analysis of this public health issue.
 
 ### 1.2 Data science question
 
@@ -533,7 +533,7 @@ ggplot(gender_care_data, aes(x = Gender, y = treatment_rate, fill = care_options
 -   **Most significant limitation:** Subjective survey responses, possible response bias.
     -   **target variable "treatment"** indicates whether respondents are currently receiving mental health treatment. It may demonstrate the actual need for mental treatment (**real mental issue posed**). However, due to subjective survey response **"willingness to get treatment"** also affected whether or not they are receiving treatment. This **self-report bias** means some individuals with mental health conditions may not seek or report treatment, while others receiving treatment may do so preventively rather than for diagnosed conditions.
 -   **one-to-one association** between one feature and target variable"treatment" is investigated, but the **interactions between** different features and how their combinations is associated with need for treatment is not considered. this is an aspect of future investigation.
-    -   an example is given below to explore the relationship between two factors **"work_interfere" & "family_history"**
+    -   **an example is given below to explore the relationship between two factors** **"work_interfere" & "family_history"**
     -   **Heatmap** indicating the correlation between features are provided below
 -   assessing the **association** between demographic&workplace features and treatment is enough to **identify individuals at risk**, but from employers prospect, if they want to address mental issue for employees more effectively, analyzing the causual relationship should be considered.
     -   This can be solved by using more advanced ML (random forest, boosting), longitudinal data, and testing interventions...

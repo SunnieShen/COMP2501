@@ -1,0 +1,169 @@
+---
+title: "COMP2501 Lab Sheet 2"
+output:
+  word_document: default
+  html_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Instructions
+
+-   You are expected to answer the questions in the sheet in class
+-   You are encouraged to try different code or arguments
+-   You can discuss with other students for ideas but do not copy from others
+-   If you have any questions, ask Google, the TAs or lecturer
+-   Sample answers will be given after the class on Moodle
+
+------------------------------------------------------------------------
+
+### Environmental setup
+
+You need to have the `tidyverse`, `caret`, `dslabs`, `lubridate` and `HistData` packages installed. If not yet, please run `install.packages(c("tidyverse", "caret", "dslabs", "lubridate", "HistData"))` in your R environment. Noting that if you have installed the `tidyverse` package, `dplyr` and `ggplot2` are installed by default.
+
+```{r}
+# Install the packages.
+# install.packages(c("tidyverse", "caret", "dslabs", "lubridate", "HistData"))
+# Load the packages.
+library(tidyverse)
+library(caret)
+library(dslabs)
+library(lubridate)
+library(HistData)
+```
+
+### 1. Practice with the dataset `reported_heights`.
+
+#### a. Load the dataset `reported_heights`. Print the dimension and the first 6 rows of the `reported_heights` dataset, respectively.
+
+```{r}
+library(dslabs)
+data("reported_heights")
+
+
+```
+
+#### b. Preprocess the dataset `reported_heights` with the following sub-questions step by step. Create a dataset copy of `reported_heights` named `dat`. 1) Add a new column `date_time` with the standard date&time format using `ymd_hms()` function of `lubridate` package to the `dat` dataset according to the `time_stamp` column. 2) Filter the `dat` dataset and just preserve the observations whose date is between `2016-01-25` and `2016-02-01`. (hint: `make_date(2016, 01, 25) <= date_time < make_date(2016, 02, 01)`. 3) Add a new column `type` to the `dat` dataset. If the observation happened between 08:15:00 and 08:30:59 on 2016-01-25, the `type` would be `inclass`, otherwise `online`. 4) Select just the `sex`, `height` and `type` columns to preserve. 5) Print the dimension and the first 6 rows of the `dat` dataset, respectively.
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+
+```
+
+#### c. Guessing the sex of each obsevation of the `dat` dataset. Assign `dat$type` to `x`, and `dat$sex` to `y`. Randomly splitting the data into training and test sets with a ratio of `0.5:0.5` using `createDataPartition()` funciton of `caret` package. Create the `y_hat` (y prediction) with the random `sample()` function and compute the overall accuracy of this method on the test set. Please fix the random seed to 2025.
+
+```{r}
+library(caret)
+set.seed(2025)
+
+
+```
+
+#### d. Similar to above, at this time, predicting the sex of each obsevation of the `dat` dataset with a heuristic rule: if the `type` is equal to `inclass`, the `sex` would be predicted as `Female`, otherwise `Male`. Define the `y_hat` and compute the overall accuracy of this method on test set. Please fix the random seed to 2025.
+
+```{r}
+library(caret)
+set.seed(2025)
+
+
+```
+
+#### e. Following above, show the confusion matrix as `cm`, and output the overall accuracy, sensitivity, specificity according to the confusion matrix. At the same time, use `sensitivity()`, `specificity()` and `F_meas()` to compute the sensitivity, specificity and F1 score, respectively.
+
+```{r}
+
+
+```
+
+### 2. Practice more with the dataset `galton_heights`.
+
+#### a. Load the dataset `GaltonFamilies` from the `HistData` package as `galton_heights`. Print the dimension, the variable names and the first 6 rows of the `galton_heights` dataset, respectively.
+
+```{r}
+library(HistData)
+
+
+```
+
+#### b. Preprocess the dataset `galton_heights` for subsequent analysis of father and son heights with the following sub-questions step by step. Create a dataset copy of `galton_heights` named `heights_father_son`. 1) Filter the `heights_father_son` dataset and just preserve the observations whose gender is `Male`. 2) Group the `heights_father_son` dataset by `family` and sample just one observation for each family. 3) Ungroup the `heights_father_son` dataset and select just the `father` and `childHeight` columns to preserve, and rename the column `childHeight` to `son`. 5) Print the dimension and the first 6 rows of the `heights_father_son` dataset, respectively.
+
+```{r}
+library(tidyverse)
+
+
+```
+
+#### c. Guessing the son's height with the average height of sons of the `heights_father_son` training set. Assign `heights_father_son$father` to `x`, and `heights_father_son$son` to `y`. Randomly splitting the data into training and test sets with a ratio of `0.5:0.5` using `createDataPartition()` funciton of `caret` package. Compute the root mean squared error of this method on test set. Please fix the random seed to 1234.
+
+```{r}
+library(caret)
+set.seed(1234)
+
+
+```
+
+#### d. Similar to above, at this time, predicting the son's height of the `heights_father_son` dataset with the least squares estimates between the father's and son's height by using `lm()` function. Construct the model as `fit` using the training set and print the estimated model coefficients with `fit$coef`. Define the `y_hat` as `fit$coef[1] + fit$coef[2]*test_set$father` and compute the root mean squared error of this method on test set. Please fix the random seed to 1234.
+
+```{r}
+library(caret)
+set.seed(1234)
+
+
+```
+
+#### e. Following above, define the `y_hat` by using `predict()` function at this time. Compute the root mean squared error of this method on test set and observe whether it is consistent with the above. Please fix the random seed to 1234.
+
+```{r}
+library(caret)
+set.seed(1234)
+
+
+```
+
+### 3. Practice more with the dataset `mnist`.
+
+#### a. Load the dataset `mnist_27`. Print the data type (`class()`) and the names of each element (`names()`) of the `mnist_27` dataset, respectively.
+
+```{r}
+library(dslabs)
+data("mnist_27")
+
+
+```
+
+#### b. Use the `mnist_27` training set to build a model with the following models respectively from the caret package. Noting that you might need to install some packages for some of the models. Now train all the models with all the default parameters and compute the overall accuracy for each model on the test set. And find out the highest accuracy and its corresponding model in this case.
+
+```{r}
+library(caret)
+
+
+```
+
+#### c. Load the dataset `mnist` with `read_mnist()`. Print the data type (`class()`) and the names of each element (`names()`) of the `mnist` dataset, respectively. Additionally, print the dimension of `mnist$train$images` and `mnist$test$images`.
+
+```{r}
+library(dslabs)
+
+
+```
+
+#### d. Use the subset of `mnist` dataset to build a model with the `knn` model from the caret package. Firstly sample 3,000 random rows from the training set and 500 random rows from the test set. Please fix the random seed to 2025. Now train the `knn` model with the default parameters and compute the overall accuracy on the test set. Noting that you don't need to preprocess the images here and remember to add column names to the training and test sets.
+
+```{r}
+library(caret)
+set.seed(2025)
+
+
+```
+
+#### e. Following above, use the `trainControl()` function to perform 10-fold cross validation and use the `tuneGrid` parameter with `k = seq(3, 21, 2)`. Show the results of the cross validation using the `ggplot` function, and highlight the max. Then find out the best k and best performing model, and compute the overall accuracy for the best performing model on the test set.
+
+```{r}
+
+
+```
